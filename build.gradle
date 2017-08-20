@@ -17,8 +17,10 @@ buildscript {
 
 apply plugin: 'net.minecraftforge.gradle.forge'
 
+targetCompatibility = "1.8"
+sourceCompatibility = "1.8"
 
-def simpleVersion = "1.4.2"
+def simpleVersion = "1.4.2-b1"
 
 group= "com.bymarcin.openglasses" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "OpenGlasses"
