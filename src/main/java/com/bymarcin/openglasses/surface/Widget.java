@@ -1,33 +1,55 @@
 package com.bymarcin.openglasses.surface;
 
 import java.util.HashMap;
-
+import java.util.UUID;
 import com.bymarcin.openglasses.lua.LuaReference;
 import com.bymarcin.openglasses.surface.widgets.core.AttributeRegistry;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IAttribute;
 
 import net.minecraft.nbt.NBTTagCompound;
 
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
+import io.netty.buffer.Unpooled; 
+
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.common.UsernameCache;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public abstract class Widget implements IAttribute{
-	boolean isVisable = true;
+	boolean isVisible = true;
+	UUID widgetOwner = null;
 	
 	public abstract void writeData(ByteBuf buff);
 
 	public abstract void readData(ByteBuf buff);
 	
+	public UUID string2UUID(String input){
+		UUID output = null;
+		try {
+			output = UUID.fromString(input);
+		} catch (Exception ex) {}
+		
+		return output;
+	}
+	
 	public final void write(ByteBuf buff){
-		buff.writeBoolean(isVisable);
+		buff.writeBoolean(this.isVisible);
+		
+		if(this.widgetOwner != null)
+			ByteBufUtils.writeUTF8String(buff, this.widgetOwner.toString());
+		else
+			ByteBufUtils.writeUTF8String(buff, "@NONE");
+			
 		writeData(buff);
 	}
 
 	public final void read(ByteBuf buff){
-		isVisable = buff.readBoolean();
+		this.isVisible = buff.readBoolean();
+		this.widgetOwner = string2UUID(ByteBufUtils.readUTF8String(buff));			
 		readData(buff);
 	}
 
@@ -63,12 +85,34 @@ public abstract class Widget implements IAttribute{
 	
 	@SideOnly(Side.CLIENT)
 	public abstract IRenderableWidget getRenderable();
-
+	
 	public boolean isVisible() {
-		return isVisable;
+		return isVisible;
 	}
 	
-	public void setVisable(boolean isVisable) {
-		this.isVisable = isVisable;
+	public void setVisible(boolean isVisible) {
+		this.isVisible = isVisible;
+	}
+	
+	public UUID getOwnerUUID() {
+		return this.widgetOwner;
+	}
+	
+	public String getOwner() {
+		if(this.widgetOwner != null)
+			return UsernameCache.getLastKnownUsername(this.widgetOwner);
+		else
+			return (String) "";
+	}
+	
+	//sets widget owner and returns the uuid
+	public UUID setOwner(String playerName) {
+		EntityPlayerMP newOwner = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(playerName);
+		if(newOwner != null)
+			this.widgetOwner = newOwner.getGameProfile().getId();
+		else
+			this.widgetOwner = null;
+		
+		return this.getOwnerUUID();
 	}
 }

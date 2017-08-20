@@ -9,6 +9,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.lwjgl.opengl.GL11;
 
+import java.util.UUID;
 import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.RenderType;
 import com.bymarcin.openglasses.surface.Widget;
@@ -16,9 +17,10 @@ import com.bymarcin.openglasses.surface.WidgetType;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DVertex;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IPrivate;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibility;
 
-public class Triangle3D extends Widget implements IAlpha, IColorizable, IThroughVisibility, I3DVertex {
+public class Triangle3D extends Widget implements IAlpha, IColorizable, IThroughVisibility, I3DVertex, IPrivate {
 	float x[];
 	float y[];
 	float z[];
@@ -114,7 +116,11 @@ public class Triangle3D extends Widget implements IAlpha, IColorizable, IThrough
 		public boolean shouldWidgetBeRendered() {
 			return isVisible();
 		}
-		
+				
+		@Override
+		public UUID getWidgetOwner() {
+			return getOwnerUUID();
+		}
 	}
 
 	@Override

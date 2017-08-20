@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.bymarcin.openglasses.surface.widgets.component.face.Text;
@@ -33,10 +34,10 @@ public class ClientSurface {
 	public boolean haveGlasses = false;
 	public Location lastBind;
 	IRenderableWidget noPowerRender;
+	
 	private ClientSurface() {
 		noPowerRender = getNoPowerRender();
-	}
-	
+	}	
 	
 	public void updateWigets(Set<Entry<Integer, Widget>> widgets){
 		for(Entry<Integer, Widget> widget : widgets){
@@ -64,15 +65,21 @@ public class ClientSurface {
 	
 	@SubscribeEvent
 	public void onRenderGameOverlay(RenderGameOverlayEvent evt) {
-		if (evt.getType() == ElementType.HELMET && evt instanceof RenderGameOverlayEvent.Post && haveGlasses) {
-			if(!isPowered || !haveGlasses || lastBind == null){ if(noPowerRender !=null)noPowerRender.render(null, 0, 0, 0); return;}
+		if(!haveGlasses) return;
+		
+		EntityPlayer player= Minecraft.getMinecraft().thePlayer;
+		UUID playerUUID = player.getGameProfile().getId();		
+		
+		if (evt.getType() == ElementType.HELMET && evt instanceof RenderGameOverlayEvent.Post) {
+			if(!isPowered || lastBind == null){ if(noPowerRender !=null)noPowerRender.render(null, 0, 0, 0); return;}
 			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 			GL11.glPushMatrix();
 			GL11.glScaled(evt.getResolution().getScaledWidth_double()/512D, evt.getResolution().getScaledHeight_double()/512D*16D/9D, 0);
 
 			for(IRenderableWidget renderable : renderables.values()){
-				if(renderable.shouldWidgetBeRendered())
+				if(renderable.shouldWidgetBeRendered() && playerUUID.equals(renderable.getWidgetOwner())){
 					renderable.render(null, 0, 0, 0);
+				}
 			}
 
 			GL11.glColor3f(1.0f,1.0f,1.0f);
@@ -82,12 +89,14 @@ public class ClientSurface {
 	}
 	
 	@SubscribeEvent
-	public void renderWorldLastEvent(RenderWorldLastEvent event)
-	{	
+	public void renderWorldLastEvent(RenderWorldLastEvent event)	{	
 		if(!isPowered || !haveGlasses || lastBind == null) return;
+		
+		EntityPlayer player= Minecraft.getMinecraft().thePlayer;
+		UUID playerUUID = player.getGameProfile().getId();		
+				
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glPushMatrix();
-		EntityPlayer player= Minecraft.getMinecraft().thePlayer;
 		double playerX = player.prevPosX + (player.posX - player.prevPosX) * event.getPartialTicks(); 
 		double playerY = player.prevPosY + (player.posY - player.prevPosY) * event.getPartialTicks();
 		double playerZ = player.prevPosZ + (player.posZ - player.prevPosZ) * event.getPartialTicks();
@@ -96,14 +105,11 @@ public class ClientSurface {
 		GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDepthMask(false);
-		//Start Drawing In World
-		
+		//Start Drawing In World		
 		for(IRenderableWidget renderable : renderablesWorld.values()){
-			if(renderable.shouldWidgetBeRendered())
+			if(renderable.shouldWidgetBeRendered() && playerUUID.equals(renderable.getWidgetOwner()))
 				renderable.render(player, playerX - lastBind.x, playerY - lastBind.y, playerZ - lastBind.z);
-		}
-		
-		
+		}		
 		//Stop Drawing In World
 		GL11.glDepthMask(true);
 		GL11.glEnable(GL11.GL_LIGHTING);

@@ -12,6 +12,7 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.IAttribute;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IViewDistance;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.ILookable;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IPrivate;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IPositionable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IResizable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IScalable;
@@ -65,6 +66,9 @@ public class AttributeRegistry {
 		addAtribute(ILookable.class, SetLookingAt.class);
 		addAtribute(ILookable.class, GetLookingAt.class);
 		
+		addAtribute(IPrivate.class, SetOwner.class);
+		addAtribute(IPrivate.class, GetOwner.class);		
+		addAtribute(IPrivate.class, GetOwnerUUID.class);		
 	}
 	
 	static HashMap<Class<? extends IAttribute>, LinkedList<Class<? extends LuaFunction>>> attributes;

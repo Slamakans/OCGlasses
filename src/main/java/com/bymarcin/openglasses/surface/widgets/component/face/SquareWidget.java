@@ -9,9 +9,11 @@ import net.minecraft.entity.player.EntityPlayer;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IPrivate;
 
 import org.lwjgl.opengl.GL11;
 
+import java.util.UUID;
 import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.RenderType;
 import com.bymarcin.openglasses.surface.Widget;
@@ -22,7 +24,7 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.IPositionable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IResizable;
 
 
-public class SquareWidget extends Widget implements IPositionable, IResizable, IColorizable, IAlpha{
+public class SquareWidget extends Widget implements IPositionable, IResizable, IColorizable, IAlpha, IPrivate{
 
 	float x;
 	float y;
@@ -101,6 +103,11 @@ public class SquareWidget extends Widget implements IPositionable, IResizable, I
 		@Override
 		public boolean shouldWidgetBeRendered() {
 			return isVisible();
+		}
+		
+		@Override
+		public UUID getWidgetOwner() {
+			return getOwnerUUID();
 		}
 	}
 

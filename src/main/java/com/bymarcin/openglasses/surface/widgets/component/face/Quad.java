@@ -12,6 +12,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.lwjgl.opengl.GL11;
 
+import java.util.UUID;
 import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.RenderType;
 import com.bymarcin.openglasses.surface.WidgetType;
@@ -75,6 +76,11 @@ public class Quad extends TriangleWidget {
 		@Override
 		public boolean shouldWidgetBeRendered() {
 			return isVisible();
+		}
+		
+		@Override
+		public UUID getWidgetOwner() {
+			return getOwnerUUID();
 		}
 		
 	}

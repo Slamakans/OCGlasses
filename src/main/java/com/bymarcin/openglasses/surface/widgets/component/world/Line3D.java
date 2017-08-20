@@ -9,6 +9,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.lwjgl.opengl.GL11;
 
+import java.util.UUID;
 import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.RenderType;
 import com.bymarcin.openglasses.surface.Widget;
@@ -17,9 +18,10 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DVertex;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IScalable;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IPrivate;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibility;
 
-public class Line3D extends Widget implements IAlpha, IColorizable, I3DVertex, IScalable, IThroughVisibility{
+public class Line3D extends Widget implements IAlpha, IColorizable, I3DVertex, IScalable, IThroughVisibility, IPrivate{
 	float x[];
 	float y[];
 	float z[];
@@ -112,6 +114,10 @@ public class Line3D extends Widget implements IAlpha, IColorizable, I3DVertex, I
 			return isVisible();
 		}
 		
+		@Override
+		public UUID getWidgetOwner() {
+			return getOwnerUUID();
+		}
 	}
 
 	@Override

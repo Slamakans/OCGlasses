@@ -20,7 +20,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 targetCompatibility = "1.8"
 sourceCompatibility = "1.8"
 
-def simpleVersion = "1.4.2-b3"
+def simpleVersion = "1.4.2-b4"
 
 group= "com.bymarcin.openglasses" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "OpenGlasses"

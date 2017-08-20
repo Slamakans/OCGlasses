@@ -10,19 +10,21 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.lwjgl.opengl.GL11;
 
+import java.util.UUID;
 import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.RenderType;
 import com.bymarcin.openglasses.surface.Widget;
 import com.bymarcin.openglasses.surface.WidgetType;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DPositionable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IPrivate;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IScalable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibility;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IViewDistance;
 import com.bymarcin.openglasses.utils.OGUtils;
 
-public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3DPositionable, IThroughVisibility, IViewDistance {
+public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3DPositionable, IPrivate, IThroughVisibility, IViewDistance {
 	float x;
 	float y;
 	float z;
@@ -124,6 +126,10 @@ public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3
 			return isVisible();
 		}
 		
+		@Override
+		public UUID getWidgetOwner() {
+			return getOwnerUUID();
+		}
 	}
 
 	@Override

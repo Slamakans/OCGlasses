@@ -2,11 +2,13 @@ package com.bymarcin.openglasses.surface.widgets.component.face;
 
 import io.netty.buffer.ByteBuf;
 
+import java.util.UUID;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.entity.player.EntityPlayer;
 
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IPrivate;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -21,7 +23,7 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
 
 
-public class TriangleWidget extends Widget implements IColorizable, IAlpha, I2DVertex{
+public class TriangleWidget extends Widget implements IColorizable, IAlpha, I2DVertex, IPrivate{
 	float x[];
 	float y[];
 	
@@ -101,6 +103,11 @@ public class TriangleWidget extends Widget implements IColorizable, IAlpha, I2DV
 		@Override
 		public boolean shouldWidgetBeRendered() {
 			return isVisible();
+		}
+		
+		@Override
+		public UUID getWidgetOwner() {
+			return getOwnerUUID();
 		}
 	}
 

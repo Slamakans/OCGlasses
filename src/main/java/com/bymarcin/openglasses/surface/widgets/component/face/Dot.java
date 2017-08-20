@@ -12,16 +12,18 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.lwjgl.opengl.GL11;
 
+import java.util.UUID;
 import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.RenderType;
 import com.bymarcin.openglasses.surface.Widget;
 import com.bymarcin.openglasses.surface.WidgetType;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IPrivate;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IPositionable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IScalable;
 
-public class Dot extends Widget implements IPositionable, IColorizable, IAlpha, IScalable{
+public class Dot extends Widget implements IPositionable, IColorizable, IAlpha, IScalable, IPrivate{
 	float x;
 	float y;
 	float size = 2;
@@ -94,6 +96,11 @@ public class Dot extends Widget implements IPositionable, IColorizable, IAlpha, 
 		@Override
 		public boolean shouldWidgetBeRendered() {
 			return isVisible();
+		}
+		
+		@Override
+		public UUID getWidgetOwner() {
+			return getOwnerUUID();
 		}
 	}
 

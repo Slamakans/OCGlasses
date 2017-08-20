@@ -10,6 +10,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.lwjgl.opengl.GL11;
 
+import java.util.UUID;
 import com.bymarcin.openglasses.surface.ClientSurface;
 import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.RenderType;
@@ -17,6 +18,7 @@ import com.bymarcin.openglasses.surface.Widget;
 import com.bymarcin.openglasses.surface.WidgetType;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DPositionable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IPrivate;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.ILookable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IScalable;
@@ -25,7 +27,7 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.IViewDistance;
 import com.bymarcin.openglasses.utils.OGUtils;
 
 
-public class Cube3D extends Widget implements I3DPositionable, IAlpha, IThroughVisibility, IColorizable, IViewDistance, ILookable, IScalable{
+public class Cube3D extends Widget implements I3DPositionable, IAlpha, IThroughVisibility, IPrivate, IColorizable, IViewDistance, ILookable, IScalable{
 
 	float x;
 	float y;
@@ -171,6 +173,10 @@ public class Cube3D extends Widget implements I3DPositionable, IAlpha, IThroughV
 			return isVisible();
 		}
 		
+		@Override
+		public UUID getWidgetOwner() {
+			return getOwnerUUID();
+		}
 	}
 
 	@Override

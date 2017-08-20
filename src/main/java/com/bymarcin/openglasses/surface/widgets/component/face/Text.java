@@ -6,14 +6,16 @@ import com.bymarcin.openglasses.surface.WidgetType;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.ITextable;
 import com.bymarcin.openglasses.utils.OGUtils;
 import io.netty.buffer.ByteBuf;
+import java.util.UUID;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IPrivate;
 import org.lwjgl.opengl.GL11;
 
-public class Text extends Dot implements ITextable{
+public class Text extends Dot implements ITextable, IPrivate{
 	String text="";
 
 	public Text() {}
@@ -61,6 +63,11 @@ public class Text extends Dot implements ITextable{
 		@Override
 		public boolean shouldWidgetBeRendered() {
 			return isVisible();
+		}
+		
+		@Override
+		public UUID getWidgetOwner() {
+			return getOwnerUUID();
 		}
 		
 	}
