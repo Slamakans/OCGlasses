@@ -3,11 +3,14 @@ package com.bymarcin.openglasses.event;
 import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.gui.InteractGui;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
+import com.bymarcin.openglasses.item.OpenGlassesBaubleItem;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket.EventType;
 import com.bymarcin.openglasses.surface.ClientSurface;
 import com.bymarcin.openglasses.utils.Location;
+import baubles.api.BaublesApi;
+import baubles.api.cap.IBaublesItemHandler;
 
 import li.cil.oc.client.KeyBindings;
 import net.minecraft.client.Minecraft;
@@ -36,24 +39,30 @@ public class ClientEventHandler {
 	@SubscribeEvent
 	public void onPlayerTick(PlayerTickEvent e){
 		if(e.player != Minecraft.getMinecraft().thePlayer) return;
-		tick ++;
-		if(tick%20 != 0){ 
-			return;
-		}
-		tick = 0;
+		tick++;
+		if(tick%20 != 0) return;
 		
-		ItemStack glassesStack= e.player.inventory.armorInventory[3];
-		Item glasses = glassesStack!=null?glassesStack.getItem():null;
+		tick = 0;		
+		checkGlasses(e);		
+	}
+	
+	public boolean checkGlasses(PlayerTickEvent e){
+		Item glasses = OpenGlasses.getGlasses(e.player);
 		
 		if(glasses instanceof OpenGlassesItem){
-			Location uuid  = OpenGlassesItem.getUUID(glassesStack);
+			Location uuid  = ((OpenGlassesItem) glasses).getUUID(OpenGlasses.getGlassesStack(e.player));
+			
 			if(uuid!=null && ClientSurface.instances.haveGlasses==false){
 				equiped(e, uuid);
-			}else if(ClientSurface.instances.haveGlasses == true && (uuid ==null || !uuid.equals(ClientSurface.instances.lastBind) ) ) {
-				unEquiped(e);
 			}
-		}else if(ClientSurface.instances.haveGlasses == true){
-			unEquiped(e);
+			else if(ClientSurface.instances.haveGlasses == true && (uuid ==null || !uuid.equals(ClientSurface.instances.lastBind) ) ) {
+				unEquiped(e);
+			}			
+			return true;
+		}
+		else {
+			if(ClientSurface.instances.haveGlasses == true)	unEquiped(e);
+			return false;
 		}
 	}
 	

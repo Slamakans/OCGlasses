@@ -2,6 +2,7 @@ package com.bymarcin.openglasses;
 
 import com.bymarcin.openglasses.block.OpenGlassesTerminalBlock;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
+import com.bymarcin.openglasses.item.OpenGlassesBaubleItem;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
@@ -14,6 +15,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -26,7 +28,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = OpenGlasses.MODID, version = OpenGlasses.VERSION, dependencies = "required-after:OpenComputers@[1.4.0,)")
+import baubles.api.BaublesApi;
+import baubles.api.cap.IBaublesItemHandler;
+
+import net.minecraft.entity.player.EntityPlayer;
+
+@Mod(modid = OpenGlasses.MODID, version = OpenGlasses.VERSION, dependencies = "required-after:OpenComputers@[1.4.0,);after:Baubles;")
 public class OpenGlasses
 {
 	public static final String MODID = "openglasses";
@@ -49,10 +56,13 @@ public class OpenGlasses
 	public static int energyBuffer = 100;
 	public static double energyMultiplier  = 1;
 
+	public static boolean baubles = false;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
+		if(Loader.isModLoaded("Baubles")) this.baubles = true;
+		
 		config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
 		NetworkRegistry.initialize();
@@ -67,21 +77,70 @@ public class OpenGlasses
 		
 		GameRegistry.registerTileEntity(OpenGlassesTerminalTileEntity.class, "openglassesterminalte");
 		
-		GameRegistry.register(openGlasses = new OpenGlassesItem());
-		proxy.registermodel(openGlasses, 0);
-		proxy.init();
+		openGlasses = getOGCObject(this.baubles);
+		
+		proxy.registermodel(openGlasses, 0);			
+		GameRegistry.register(openGlasses);
+		
+		proxy.init();			
 	}
-
+	
+	public Item getOGCObject(boolean bauble){
+		if(bauble == true)
+			return new OpenGlassesBaubleItem();
+		else
+			return new OpenGlassesItem();
+	}
+	
+	public static Item getGlasses(EntityPlayer e){
+		ItemStack glassesStack = getGlassesStack(e);
+		
+		if(!isGlassesStack(glassesStack))
+			return null;
+		
+		Item glasses = glassesStack!=null?glassesStack.getItem():null;
+		
+		return glasses;
+	}
+	
+	public static boolean isGlassesStack(ItemStack stack){
+		Item glasses = stack!=null?stack.getItem():null;
+		
+		if(glasses instanceof OpenGlassesItem)
+			return true;
+		else
+			return false;		
+	}
+	
+	public static ItemStack getGlassesStack(EntityPlayer e){
+		//get armor slot
+		ItemStack glassesStack = e.inventory.armorInventory[3];
+		
+		if(isGlassesStack(glassesStack)) 
+			return glassesStack;
+				
+		//get baubles slot if glasses arent found in armor slot
+		if(Loader.isModLoaded("Baubles")){
+			IBaublesItemHandler handler = BaublesApi.getBaublesHandler(e);
+			if (handler != null){
+				glassesStack = handler.getStackInSlot(4);
+				if(isGlassesStack(glassesStack)) 
+					return glassesStack;
+			}
+		}
+	
+		return null;
+	}
+	
 	@EventHandler
 	public void init(FMLInitializationEvent event)
 	{
 		NetworkRegistry.registerPacket(0, GlassesEventPacket.class, Side.SERVER);
 		NetworkRegistry.registerPacket(1, WidgetUpdatePacket.class, Side.CLIENT);
 		NetworkRegistry.registerPacket(2, TerminalStatusPacket.class, Side.CLIENT);
-
-
 	}
-
+	
+	
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event)
 	{
