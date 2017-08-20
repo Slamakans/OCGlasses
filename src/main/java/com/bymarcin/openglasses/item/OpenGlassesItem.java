@@ -2,6 +2,7 @@ package com.bymarcin.openglasses.item;
 
 import java.util.List;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -18,9 +19,8 @@ import com.bymarcin.openglasses.utils.Location;
 
 
 public class OpenGlassesItem extends ItemArmor {
-
 	public OpenGlassesItem() {
-		super(ArmorMaterial.CHAIN, 0, EntityEquipmentSlot.HEAD);
+		super(ArmorMaterial.IRON, 0, EntityEquipmentSlot.HEAD);
 		setMaxDamage(0);
 		setMaxStackSize(1);
 		setHasSubtypes(true);
@@ -44,14 +44,16 @@ public class OpenGlassesItem extends ItemArmor {
 	@SideOnly(Side.CLIENT)
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean par4) {
+		NBTTagCompound ogc = getItemTag(itemStack);
 		super.addInformation(itemStack, player, list, par4);
 		Location uuid = getUUID(itemStack);
-		if (uuid != null){
-			list.add("Link to:");
-			for(String s : uuid.toArrayString()){
-				list.add(s);
-			}
+		if(ogc.getLong("uniqueKey") > 0){
+			list.add("linked to: X: " + ogc.getInteger("X") + ", Y: " + ogc.getInteger("Y") + ", Z: "+ ogc.getInteger("Z") + " (DIM: " + ogc.getInteger("DIM") +")");			
+			list.add("terminal: " + ogc.getLong("uniqueKey"));			
+			list.add("user: " + ogc.getString("user"));
 		}
+		else
+			list.add("use at glassesterminal to link glasses");
 	}
 
 	public static NBTTagCompound getItemTag(ItemStack stack) {
@@ -67,5 +69,6 @@ public class OpenGlassesItem extends ItemArmor {
 		tag.setInteger("Z", uuid.z);
 		tag.setInteger("DIM", uuid.dimID);
 		tag.setLong("uniqueKey", uuid.uniqueKey);
+		tag.setString("user",  Minecraft.getMinecraft().thePlayer.getGameProfile().getId().toString());
 	}
 }
