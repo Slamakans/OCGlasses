@@ -77,7 +77,7 @@ public class ClientSurface {
 			GL11.glScaled(evt.getResolution().getScaledWidth_double()/512D, evt.getResolution().getScaledHeight_double()/512D*16D/9D, 0);
 
 			for(IRenderableWidget renderable : renderables.values()){
-				if(renderable.shouldWidgetBeRendered() && playerUUID.equals(renderable.getWidgetOwner())){
+				if(renderable.shouldWidgetBeRendered() && (renderable.getWidgetOwner() == null || playerUUID.equals(renderable.getWidgetOwner()))){
 					renderable.render(null, 0, 0, 0);
 				}
 			}
@@ -107,7 +107,7 @@ public class ClientSurface {
 		GL11.glDepthMask(false);
 		//Start Drawing In World		
 		for(IRenderableWidget renderable : renderablesWorld.values()){
-			if(renderable.shouldWidgetBeRendered() && playerUUID.equals(renderable.getWidgetOwner()))
+			if(renderable.shouldWidgetBeRendered() && (renderable.getWidgetOwner() == null || playerUUID.equals(renderable.getWidgetOwner())))
 				renderable.render(player, playerX - lastBind.x, playerY - lastBind.y, playerZ - lastBind.z);
 		}		
 		//Stop Drawing In World
