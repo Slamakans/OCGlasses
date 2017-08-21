@@ -47,6 +47,7 @@ public class Cube3D extends Widget implements I3DPositionable, IAlpha, IThroughV
 	
 	int distance = 100;
 	float alpha = 0.5f;
+	float alphaHUD = 0.5f;
 	
 	public Cube3D() {}
 	
@@ -56,6 +57,7 @@ public class Cube3D extends Widget implements I3DPositionable, IAlpha, IThroughV
 		buff.writeFloat(y);
 		buff.writeFloat(z);
 		buff.writeFloat(alpha);
+		buff.writeFloat(alphaHUD);
 		buff.writeFloat(r);
 		buff.writeFloat(g);
 		buff.writeFloat(b);
@@ -74,6 +76,7 @@ public class Cube3D extends Widget implements I3DPositionable, IAlpha, IThroughV
 		y = buff.readFloat();
 		z = buff.readFloat();
 		alpha = buff.readFloat();
+		alphaHUD = buff.readFloat();
 		r = buff.readFloat();
 		g = buff.readFloat();
 		b = buff.readFloat();
@@ -102,7 +105,7 @@ public class Cube3D extends Widget implements I3DPositionable, IAlpha, IThroughV
 		float tr = (1-scale)/2f;
 		
 		@Override
-		public void render(EntityPlayer player, double playerX, double playerY, double playerZ) {
+		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha) {
 			if(OGUtils.inRange(playerX, playerY, playerZ, x, y, z, distance)){
 				RayTraceResult pos = ClientSurface.getBlockCoordsLookingAt(player);
 				if(isLookingAtEnable && (pos == null || pos.getBlockPos().getX() != lookAtX || pos.getBlockPos().getY() != lookAtY || pos.getBlockPos().getZ() != lookAtZ) )
@@ -176,6 +179,14 @@ public class Cube3D extends Widget implements I3DPositionable, IAlpha, IThroughV
 		@Override
 		public UUID getWidgetOwner() {
 			return getOwnerUUID();
+		}
+		
+		@Override
+		public float getAlpha(boolean HUDactive){
+			if(HUDactive)
+				return alphaHUD;
+			else
+				return alpha;
 		}
 	}
 
@@ -297,4 +308,13 @@ public class Cube3D extends Widget implements I3DPositionable, IAlpha, IThroughV
 		return scale;
 	}
 
+	@Override
+	public float getAlphaHUD() {
+		return alphaHUD;
+	}
+
+	@Override
+	public void setAlphaHUD(double alphaHUD) {
+		this.alphaHUD = (float) alphaHUD;
+	}
 }

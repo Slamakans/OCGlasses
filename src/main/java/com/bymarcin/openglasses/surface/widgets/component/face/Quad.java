@@ -49,7 +49,7 @@ public class Quad extends TriangleWidget {
 	class RenderQuad implements IRenderableWidget{
 
 		@Override
-		public void render(EntityPlayer player, double playerX, double playerY, double playerZ) {
+		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha) {
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
 			GL11.glDisable(GL11.GL_ALPHA_TEST);
@@ -82,7 +82,14 @@ public class Quad extends TriangleWidget {
 		public UUID getWidgetOwner() {
 			return getOwnerUUID();
 		}
-		
+				
+		@Override
+		public float getAlpha(boolean HUDactive){
+			if(HUDactive)
+				return alphaHUD;
+			else
+				return alpha;
+		}
 	}
 	
 	@Override

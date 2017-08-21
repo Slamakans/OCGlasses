@@ -37,6 +37,7 @@ public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3
 	
 	float size = 0.2F;
 	float alpha = 0.5F;
+	float alphaHUD = 0.5F;
 	
 	public Dot3D() {}
 	
@@ -46,6 +47,7 @@ public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3
 		buff.writeFloat(y);
 		buff.writeFloat(z);
 		buff.writeFloat(alpha);
+		buff.writeFloat(alphaHUD);
 		buff.writeFloat(r);
 		buff.writeFloat(g);
 		buff.writeFloat(b);
@@ -60,6 +62,7 @@ public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3
 		y = buff.readFloat();
 		z = buff.readFloat();
 		alpha = buff.readFloat();
+		alphaHUD = buff.readFloat();
 		r = buff.readFloat();
 		g = buff.readFloat();
 		b = buff.readFloat();
@@ -83,7 +86,7 @@ public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3
 	class RenderDot3D implements IRenderableWidget{
 		final EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 		@Override
-		public void render(EntityPlayer player, double playerX, double playerY, double playerZ) {
+		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha) {
 			
 			if(!OGUtils.inRange(playerX, playerY, playerZ, x, y, z, distance)){
 				return;
@@ -129,6 +132,14 @@ public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3
 		@Override
 		public UUID getWidgetOwner() {
 			return getOwnerUUID();
+		}
+		
+		@Override
+		public float getAlpha(boolean HUDactive){
+			if(HUDactive)
+				return alphaHUD;
+			else
+				return alpha;
 		}
 	}
 
@@ -215,5 +226,15 @@ public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3
 	@Override
 	public void setDistanceView(int distance) {
 		this.distance = distance;	
+	}
+	
+	@Override
+	public float getAlphaHUD() {
+		return alphaHUD;
+	}
+
+	@Override
+	public void setAlphaHUD(double alphaHUD) {
+		this.alphaHUD = (float) alphaHUD;
 	}
 }

@@ -26,6 +26,7 @@ public class Line3D extends Widget implements IAlpha, IColorizable, I3DVertex, I
 	float y[];
 	float z[];
 	float alpha = 0.5F;
+	float alphaHUD = 0.5F;	
 	float size = 8.F;
 	float r;
 	float g;
@@ -47,6 +48,7 @@ public class Line3D extends Widget implements IAlpha, IColorizable, I3DVertex, I
 		buff.writeFloat(z[0]);
 		buff.writeFloat(z[1]);
 		buff.writeFloat(alpha);
+		buff.writeFloat(alphaHUD);
 		buff.writeFloat(r);
 		buff.writeFloat(g);
 		buff.writeFloat(b);
@@ -63,6 +65,7 @@ public class Line3D extends Widget implements IAlpha, IColorizable, I3DVertex, I
 		z[0] = buff.readFloat();
 		z[1] = buff.readFloat();
 		alpha = buff.readFloat();
+		alphaHUD = buff.readFloat();
 		r = buff.readFloat();
 		g = buff.readFloat();
 		b = buff.readFloat();
@@ -85,7 +88,7 @@ public class Line3D extends Widget implements IAlpha, IColorizable, I3DVertex, I
 	class RenderLine3D implements IRenderableWidget{
 
 		@Override
-		public void render(EntityPlayer player, double playerX, double playerY, double playerZ) {
+		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha) {
 			GL11.glPushMatrix();
 			if(isThroughVisibility){
 				GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -117,6 +120,14 @@ public class Line3D extends Widget implements IAlpha, IColorizable, I3DVertex, I
 		@Override
 		public UUID getWidgetOwner() {
 			return getOwnerUUID();
+		}
+		
+		@Override
+		public float getAlpha(boolean HUDactive){
+			if(HUDactive)
+				return alphaHUD;
+			else
+				return alpha;
 		}
 	}
 
@@ -183,4 +194,14 @@ public class Line3D extends Widget implements IAlpha, IColorizable, I3DVertex, I
 	public double getScale() {
 		return size;
 	}
+	
+	@Override
+	public float getAlphaHUD() {
+		return alphaHUD;
+	}
+
+	@Override
+	public void setAlphaHUD(double alphaHUD) {
+		this.alphaHUD = (float) alphaHUD;
+	}	
 }

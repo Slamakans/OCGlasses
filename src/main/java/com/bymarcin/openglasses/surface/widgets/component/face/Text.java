@@ -44,12 +44,11 @@ public class Text extends Dot implements ITextable, IPrivate{
 	}
 	
 	class RenderText implements IRenderableWidget{
-
 		@Override
-		public void render(EntityPlayer player, double playerX, double playerY, double playerZ) {
+		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha) {
 			GL11.glPushMatrix();
 			GL11.glScaled(size, size, 0);
-			GL11.glColor3f(r,g,b);
+			GL11.glColor4f(r,g,b,alpha);
 			Minecraft.getMinecraft().fontRendererObj.drawString(text, (int) x, (int) y, -1);
 			GL11.glPopMatrix();
 			
@@ -70,6 +69,13 @@ public class Text extends Dot implements ITextable, IPrivate{
 			return getOwnerUUID();
 		}
 		
+		@Override
+		public float getAlpha(boolean HUDactive){
+			if(HUDactive)
+				return alphaHUD;
+			else
+				return alpha;
+		}		
 	}
 
 	@Override

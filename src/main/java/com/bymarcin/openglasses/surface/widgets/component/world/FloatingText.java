@@ -45,6 +45,7 @@ public class FloatingText extends Widget implements IViewDistance, ILookable, I3
 	float g;
 	float b;
 	float alpha = 0.5f;
+	float alphaHUD = 0.5f;
 	
 	boolean isThroughVisibility = true;
 	float scale = 0.05f;
@@ -85,6 +86,7 @@ public class FloatingText extends Widget implements IViewDistance, ILookable, I3
 		buff.writeFloat(b);
 		buff.writeFloat(scale);
 		buff.writeFloat(alpha);
+		buff.writeFloat(alphaHUD);
 		buff.writeBoolean(isThroughVisibility);
 		buff.writeInt(lookingAtX);
 		buff.writeInt(lookingAtY);
@@ -104,6 +106,7 @@ public class FloatingText extends Widget implements IViewDistance, ILookable, I3
 		b = buff.readFloat();
 		scale = buff.readFloat();	
 		alpha = buff.readFloat();
+		alphaHUD = buff.readFloat();
 		isThroughVisibility = buff.readBoolean();
 		lookingAtX = buff.readInt();
 		lookingAtY = buff.readInt();
@@ -131,7 +134,7 @@ public class FloatingText extends Widget implements IViewDistance, ILookable, I3
 		int color = OGUtils.getIntFromColor(r, g, b, alpha);
 		
 		@Override
-		public void render(EntityPlayer player, double playerX, double playerY, double playerZ) {
+		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha) {
 			if(!OGUtils.inRange(playerX, playerY, playerZ, x, y, z, viewDistance)){
 				return;
 			}
@@ -178,6 +181,14 @@ public class FloatingText extends Widget implements IViewDistance, ILookable, I3
 		@Override
 		public UUID getWidgetOwner() {
 			return getOwnerUUID();
+		}
+		
+		@Override
+		public float getAlpha(boolean HUDactive){
+			if(HUDactive)
+				return alphaHUD;
+			else
+				return alpha;
 		}
 	}
 
@@ -284,4 +295,13 @@ public class FloatingText extends Widget implements IViewDistance, ILookable, I3
 		viewDistance = distance;
 	}
 	
+	@Override
+	public float getAlphaHUD() {
+		return alphaHUD;
+	}
+
+	@Override
+	public void setAlphaHUD(double alphaHUD) {
+		this.alphaHUD = (float) alphaHUD;
+	}	
 }

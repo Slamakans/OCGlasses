@@ -31,6 +31,7 @@ public class SquareWidget extends Widget implements IPositionable, IResizable, I
 	float width;
 	float height;
 	float alpha = 1;
+	float alphaHUD = 1;
 	float r;
 	float g;
 	float b;
@@ -48,6 +49,7 @@ public class SquareWidget extends Widget implements IPositionable, IResizable, I
 		buff.writeFloat(height);
 		buff.writeFloat(width);
 		buff.writeFloat(alpha);
+		buff.writeFloat(alphaHUD);
 	}
 
 	@Override
@@ -60,6 +62,7 @@ public class SquareWidget extends Widget implements IPositionable, IResizable, I
 		height = buff.readFloat();
 		width = buff.readFloat();
 		alpha = buff.readFloat();
+		alphaHUD = buff.readFloat();
 	}
 	
 	@Override
@@ -76,7 +79,7 @@ public class SquareWidget extends Widget implements IPositionable, IResizable, I
 	@SideOnly(Side.CLIENT)
 	public class RenderableSquareWidget implements IRenderableWidget{
 		@Override
-		public void render(EntityPlayer player, double playerX, double playerY, double playerZ) {
+		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha) {
 				GL11.glEnable(GL11.GL_BLEND);
 				GL11.glDisable(GL11.GL_TEXTURE_2D);
 
@@ -108,6 +111,14 @@ public class SquareWidget extends Widget implements IPositionable, IResizable, I
 		@Override
 		public UUID getWidgetOwner() {
 			return getOwnerUUID();
+		}
+		
+		@Override
+		public float getAlpha(boolean HUDactive){
+			if(HUDactive)
+				return alphaHUD;
+			else
+				return alpha;
 		}
 	}
 
@@ -174,5 +185,14 @@ public class SquareWidget extends Widget implements IPositionable, IResizable, I
 	public void setAlpha(double alpha) {
 		this.alpha = (float) alpha;
 	}
+	
+	@Override
+	public float getAlphaHUD() {
+		return alphaHUD;
+	}
 
+	@Override
+	public void setAlphaHUD(double alphaHUD) {
+		this.alphaHUD = (float) alphaHUD;
+	}	
 }

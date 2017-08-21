@@ -108,6 +108,7 @@ public class ClientEventHandler {
 	@SubscribeEvent
 	public void onKeyInput(InputEvent.KeyInputEvent event) {
 		if(interactGUIKey.isPressed()){
+			ClientSurface.instances.HUDactive = true;
 			Minecraft.getMinecraft().displayGuiScreen(new InteractGui());
 		}
 

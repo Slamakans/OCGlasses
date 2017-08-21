@@ -9,6 +9,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.bymarcin.openglasses.surface.widgets.component.face.Text;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
 import com.bymarcin.openglasses.utils.Location;
 
 import org.lwjgl.opengl.GL11;
@@ -32,6 +33,7 @@ public class ClientSurface {
 	public Map<Integer, IRenderableWidget> renderablesWorld = new ConcurrentHashMap<Integer, IRenderableWidget>();
 	boolean isPowered = false;
 	public boolean haveGlasses = false;
+	public boolean HUDactive = false;
 	public Location lastBind;
 	IRenderableWidget noPowerRender;
 	
@@ -71,14 +73,18 @@ public class ClientSurface {
 		UUID playerUUID = player.getGameProfile().getId();		
 		
 		if (evt.getType() == ElementType.HELMET && evt instanceof RenderGameOverlayEvent.Post) {
-			if(!isPowered || lastBind == null){ if(noPowerRender !=null)noPowerRender.render(null, 0, 0, 0); return;}
+			if(!isPowered || lastBind == null){ 
+				if(noPowerRender !=null)
+					noPowerRender.render(null, 0, 0, 0, noPowerRender.getAlpha(HUDactive)); 
+					return;}
+					
 			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 			GL11.glPushMatrix();
 			GL11.glScaled(evt.getResolution().getScaledWidth_double()/512D, evt.getResolution().getScaledHeight_double()/512D*16D/9D, 0);
 
 			for(IRenderableWidget renderable : renderables.values()){
 				if(renderable.shouldWidgetBeRendered() && (renderable.getWidgetOwner() == null || playerUUID.equals(renderable.getWidgetOwner()))){
-					renderable.render(null, 0, 0, 0);
+					renderable.render(null, 0, 0, 0, renderable.getAlpha(HUDactive));
 				}
 			}
 
@@ -86,7 +92,7 @@ public class ClientSurface {
 			GL11.glPopMatrix();
 			GL11.glPopAttrib();
 		}
-	}
+	}	
 	
 	@SubscribeEvent
 	public void renderWorldLastEvent(RenderWorldLastEvent event)	{	
@@ -107,8 +113,9 @@ public class ClientSurface {
 		GL11.glDepthMask(false);
 		//Start Drawing In World		
 		for(IRenderableWidget renderable : renderablesWorld.values()){
-			if(renderable.shouldWidgetBeRendered() && (renderable.getWidgetOwner() == null || playerUUID.equals(renderable.getWidgetOwner())))
-				renderable.render(player, playerX - lastBind.x, playerY - lastBind.y, playerZ - lastBind.z);
+			if(renderable.shouldWidgetBeRendered() && (renderable.getWidgetOwner() == null || playerUUID.equals(renderable.getWidgetOwner()))){
+				renderable.render(player, playerX - lastBind.x, playerY - lastBind.y, playerZ - lastBind.z, renderable.getAlpha(HUDactive));
+			}
 		}		
 		//Stop Drawing In World
 		GL11.glDepthMask(true);

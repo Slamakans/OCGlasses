@@ -32,6 +32,8 @@ public class AttributeRegistry {
 
 		addAtribute(IAlpha.class, GetAlpha.class);
 		addAtribute(IAlpha.class, SetAlpha.class);
+		addAtribute(IAlpha.class, GetAlphaHUD.class);
+		addAtribute(IAlpha.class, SetAlphaHUD.class);
 		
 		addAtribute(IColorizable.class, SetColor.class);
 		addAtribute(IColorizable.class, GetColor.class);

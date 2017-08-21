@@ -25,6 +25,7 @@ public class Triangle3D extends Widget implements IAlpha, IColorizable, IThrough
 	float y[];
 	float z[];
 	float alpha = 0.5f;
+	float alphaHUD = 0.5f;
 	float r;
 	float g;
 	float b;
@@ -48,6 +49,7 @@ public class Triangle3D extends Widget implements IAlpha, IColorizable, IThrough
 		buff.writeFloat(z[1]);
 		buff.writeFloat(z[2]);
 		buff.writeFloat(alpha);
+		buff.writeFloat(alphaHUD);
 		buff.writeFloat(r);
 		buff.writeFloat(g);
 		buff.writeFloat(b);
@@ -66,6 +68,7 @@ public class Triangle3D extends Widget implements IAlpha, IColorizable, IThrough
 		z[1] = buff.readFloat();
 		z[2] = buff.readFloat();
 		alpha = buff.readFloat();
+		alphaHUD = buff.readFloat();
 		r = buff.readFloat();
 		g = buff.readFloat();
 		b = buff.readFloat();
@@ -87,7 +90,7 @@ public class Triangle3D extends Widget implements IAlpha, IColorizable, IThrough
 	class RenderTriangle3D implements IRenderableWidget{
 
 		@Override
-		public void render(EntityPlayer player, double playerX, double playerY, double playerZ) {
+		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha) {
 			GL11.glPushMatrix();
 			if(isThroughVisibility){
 				GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -120,6 +123,14 @@ public class Triangle3D extends Widget implements IAlpha, IColorizable, IThrough
 		@Override
 		public UUID getWidgetOwner() {
 			return getOwnerUUID();
+		}
+		
+		@Override
+		public float getAlpha(boolean HUDactive){
+			if(HUDactive)
+				return alphaHUD;
+			else
+				return alpha;
 		}
 	}
 
@@ -176,4 +187,14 @@ public class Triangle3D extends Widget implements IAlpha, IColorizable, IThrough
 		this.y[n] = (float) y;
 		this.z[n] = (float) z;
 	}
+	
+	@Override
+	public float getAlphaHUD() {
+		return alphaHUD;
+	}
+
+	@Override
+	public void setAlphaHUD(double alphaHUD) {
+		this.alphaHUD = (float) alphaHUD;
+	}	
 }

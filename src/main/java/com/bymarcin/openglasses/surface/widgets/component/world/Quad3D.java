@@ -53,7 +53,7 @@ public class Quad3D extends Triangle3D{
 	class RenderQuad3D implements IRenderableWidget{
 
 		@Override
-		public void render(EntityPlayer player, double playerX, double playerY, double playerZ) {
+		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha) {
 			GL11.glPushMatrix();
 			
 			if(isThroughVisibility){
@@ -92,6 +92,14 @@ public class Quad3D extends Triangle3D{
 		@Override
 		public UUID getWidgetOwner() {
 			return getOwnerUUID();
+		}
+		
+		@Override
+		public float getAlpha(boolean HUDactive){
+			if(HUDactive)
+				return alphaHUD;
+			else
+				return alpha;
 		}
 	}
 

@@ -28,6 +28,7 @@ public class TriangleWidget extends Widget implements IColorizable, IAlpha, I2DV
 	float y[];
 	
 	float alpha = 1;
+	float alphaHUD = 1;
 	float r;
 	float g;
 	float b;
@@ -49,6 +50,7 @@ public class TriangleWidget extends Widget implements IColorizable, IAlpha, I2DV
 		buff.writeFloat(g);
 		buff.writeFloat(b);
 		buff.writeFloat(alpha);
+		buff.writeFloat(alphaHUD);
 	}
 
 	@Override
@@ -63,6 +65,7 @@ public class TriangleWidget extends Widget implements IColorizable, IAlpha, I2DV
 		g = buff.readFloat();
 		b = buff.readFloat();
 		alpha = buff.readFloat();
+		alphaHUD = buff.readFloat();
 	}
 	
 	@Override
@@ -79,7 +82,7 @@ public class TriangleWidget extends Widget implements IColorizable, IAlpha, I2DV
 	@SideOnly(Side.CLIENT)
 	public class RenderableSquareWidget implements IRenderableWidget{
 		@Override
-		public void render(EntityPlayer player, double playerX, double playerY, double playerZ) {
+		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha) {
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
 			GL11.glDisable(GL11.GL_ALPHA_TEST);
@@ -108,6 +111,14 @@ public class TriangleWidget extends Widget implements IColorizable, IAlpha, I2DV
 		@Override
 		public UUID getWidgetOwner() {
 			return getOwnerUUID();
+		}
+		
+		@Override
+		public float getAlpha(boolean HUDactive){
+			if(HUDactive)
+				return alphaHUD;
+			else
+				return alpha;
 		}
 	}
 
@@ -141,6 +152,16 @@ public class TriangleWidget extends Widget implements IColorizable, IAlpha, I2DV
 	@Override
 	public void setAlpha(double alpha) {
 		this.alpha = (float) alpha;
+	}
+
+	@Override
+	public float getAlphaHUD() {
+		return alphaHUD;
+	}
+
+	@Override
+	public void setAlphaHUD(double alphaHUD) {
+		this.alphaHUD = (float) alphaHUD;
 	}
 
 	@Override
