@@ -68,7 +68,7 @@ public class Dot extends Widget implements IPositionable, IColorizable, IAlpha, 
 	@SideOnly(Side.CLIENT)
 	@Override
 	public IRenderableWidget getRenderable() {
-		return this.new RenderableDot();
+		return new RenderableDot();
 	}
 	
 	@SideOnly(Side.CLIENT)
