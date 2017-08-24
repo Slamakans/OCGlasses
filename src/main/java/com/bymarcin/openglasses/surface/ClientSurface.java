@@ -66,36 +66,45 @@ public class ClientSurface {
 	
 	@SubscribeEvent
 	public void onRenderGameOverlay(RenderGameOverlayEvent evt) {
-		if(!haveGlasses) return;
+		if (evt.getType() != ElementType.HELMET) return;
+		if (!(evt instanceof RenderGameOverlayEvent.Post)) return;
+		if(!shouldRenderStart()) return;
 		
 		EntityPlayer player= Minecraft.getMinecraft().thePlayer;
 		UUID playerUUID = player.getGameProfile().getId();		
 		
-		if (evt.getType() == ElementType.HELMET && evt instanceof RenderGameOverlayEvent.Post) {
-			if(!isPowered || lastBind == null){ 
-				if(noPowerRender !=null)
-					noPowerRender.render(null, 0, 0, 0, noPowerRender.getAlpha(HUDactive)); 
-					return;}
-					
-			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-			GL11.glPushMatrix();
-			GL11.glScaled(evt.getResolution().getScaledWidth_double()/512D, evt.getResolution().getScaledHeight_double()/512D*16D/9D, 0);
+		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+		GL11.glPushMatrix();
+		GL11.glScaled(evt.getResolution().getScaledWidth_double()/512D, evt.getResolution().getScaledHeight_double()/512D*16D/9D, 0);
 
-			for(IRenderableWidget renderable : renderables.values()){
-				if(renderable.shouldWidgetBeRendered() && (renderable.getWidgetOwner() == null || playerUUID.equals(renderable.getWidgetOwner()))){
-					renderable.render(null, 0, 0, 0, renderable.getAlpha(HUDactive));
-				}
+		for(IRenderableWidget renderable : renderables.values()){
+			if(renderable.shouldWidgetBeRendered() && (renderable.getWidgetOwner() == null || playerUUID.equals(renderable.getWidgetOwner()))){
+				renderable.render(null, 0, 0, 0, renderable.getAlpha(HUDactive));
 			}
-
-			GL11.glColor3f(1.0f,1.0f,1.0f);
-			GL11.glPopMatrix();
-			GL11.glPopAttrib();
 		}
-	}	
+		GL11.glPopMatrix();
+		GL11.glPopAttrib();
+	}
+	
+	public boolean shouldRenderStart(){
+		if(!haveGlasses) 
+			return false;
+		
+		if(!isPowered && noPowerRender != null){
+			noPowerRender.render(null, 0, 0, 0, noPowerRender.getAlpha(HUDactive)); 
+			return false;
+		}
+		
+		if(lastBind == null) 
+			return false;
+				
+		return true;		
+	}
+		
 	
 	@SubscribeEvent
 	public void renderWorldLastEvent(RenderWorldLastEvent event)	{	
-		if(!isPowered || !haveGlasses || lastBind == null) return;
+		if(!shouldRenderStart()) return;
 		
 		EntityPlayer player= Minecraft.getMinecraft().thePlayer;
 		UUID playerUUID = player.getGameProfile().getId();		
@@ -118,9 +127,9 @@ public class ClientSurface {
 		}		
 		//Stop Drawing In World
 		GL11.glDepthMask(true);
+		GL11.glPopMatrix();
 		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glDisable(GL11.GL_BLEND);
-		GL11.glPopMatrix();
 		GL11.glPopAttrib();
 	}
 	

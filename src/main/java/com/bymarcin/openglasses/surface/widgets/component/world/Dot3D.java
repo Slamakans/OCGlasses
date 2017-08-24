@@ -10,47 +10,19 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.lwjgl.opengl.GL11;
 
-import java.util.UUID;
 import com.bymarcin.openglasses.surface.IRenderableWidget;
-import com.bymarcin.openglasses.surface.RenderType;
-import com.bymarcin.openglasses.surface.Widget;
+import com.bymarcin.openglasses.surface.WidgetGLWorld;
 import com.bymarcin.openglasses.surface.WidgetType;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DPositionable;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IPrivate;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IScalable;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibility;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IViewDistance;
 import com.bymarcin.openglasses.utils.OGUtils;
 
-public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3DPositionable, IPrivate, IThroughVisibility, IViewDistance {
-	float x;
-	float y;
-	float z;
-	
-	int distance = 100;
-	float r;
-	float g;
-	float b;
-	boolean isThroughVisibility = true;
-	
-	float size = 0.2F;
-	float alpha = 0.5F;
-	float alphaHUD = 0.5F;
-	
+public class Dot3D extends WidgetGLWorld  {
 	public Dot3D() {}
 	
 	@Override
 	public void writeData(ByteBuf buff) {
-		buff.writeFloat(x);
-		buff.writeFloat(y);
-		buff.writeFloat(z);
-		buff.writeFloat(alpha);
-		buff.writeFloat(alphaHUD);
-		buff.writeFloat(r);
-		buff.writeFloat(g);
-		buff.writeFloat(b);
+		writeDataVERTICES(buff);
+		writeDataRGBA(buff);
+		writeDataXYZ(buff);
 		buff.writeBoolean(isThroughVisibility);
 		buff.writeInt(distance);
 		buff.writeFloat(size);
@@ -58,14 +30,9 @@ public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3
 
 	@Override
 	public void readData(ByteBuf buff) {
-		x = buff.readFloat();
-		y = buff.readFloat();
-		z = buff.readFloat();
-		alpha = buff.readFloat();
-		alphaHUD = buff.readFloat();
-		r = buff.readFloat();
-		g = buff.readFloat();
-		b = buff.readFloat();
+		readDataVERTICES(buff);
+		readDataRGBA(buff);
+		readDataXYZ(buff);
 		isThroughVisibility = buff.readBoolean();
 		distance = buff.readInt();
 		size = buff.readFloat();
@@ -83,7 +50,7 @@ public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3
 	}
 	
 	@SideOnly(Side.CLIENT)
-	class RenderDot3D implements IRenderableWidget{
+	class RenderDot3D extends RenderableGLWidget{
 		final EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 		@Override
 		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha) {
@@ -99,7 +66,9 @@ public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3
 				GL11.glEnable(GL11.GL_DEPTH_TEST);
 			}
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
-			GL11.glTranslated(x, y, z);
+			GL11.glTranslated(-x, -y, -z);
+			GL11.glRotatef(-rotationX, -rotationY, -rotationZ, 1);
+
 			
 			GL11.glRotated(-player.rotationYaw,0,1,0);
 			GL11.glRotated(player.rotationPitch,1,0,0);
@@ -110,131 +79,14 @@ public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3
 			GL11.glVertex3f(size/2, size/2, 0);
 			GL11.glVertex3f(size/2, -size/2, 0);
 			GL11.glVertex3f(-size/2, -size/2, 0);
-			
 			GL11.glVertex3f(-size/2, size/2, 0);
-
+	
 			GL11.glEnd();
 			GL11.glPopMatrix();
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 			GL11.glEnable(GL11.GL_DEPTH_TEST);
+			
+
 		}
-
-		@Override
-		public RenderType getRenderType() {
-			return RenderType.WorldLocated;
-		}
-
-		@Override
-		public boolean shouldWidgetBeRendered() {
-			return isVisible();
-		}
-		
-		@Override
-		public UUID getWidgetOwner() {
-			return getOwnerUUID();
-		}
-		
-		@Override
-		public float getAlpha(boolean HUDactive){
-			if(HUDactive)
-				return alphaHUD;
-			else
-				return alpha;
-		}
-	}
-
-	@Override
-	public float getAlpha() {
-		return alpha;
-	}
-
-	@Override
-	public void setAlpha(double alpha) {
-		this.alpha = (float) alpha;
-	}
-
-	@Override
-	public void setScale(double scale) {
-		size = (float) scale;
-		
-	}
-
-	@Override
-	public double getScale() {
-		return size;
-	}
-
-	@Override
-	public void setColor(double d, double e, double f) {
-		r = (float) d;
-		g = (float) e;
-		b = (float) f;
-	}
-
-	@Override
-	public float getColorR() {
-		return r;
-	}
-
-	@Override
-	public float getColorG() {
-		return g;
-	}
-
-	@Override
-	public float getColorB() {
-		return b;
-	}
-
-	@Override
-	public double getPosX() {
-		return x;
-	}
-
-	@Override
-	public double getPosY() {
-		return y;
-	}
-
-	@Override
-	public double getPosZ() {
-		return z;
-	}
-
-	@Override
-	public void setPos(double x, double y, double z) {
-		this.x = (float) x;
-		this.y = (float) y;
-		this.z = (float) z;	
-	}
-
-	@Override
-	public boolean isVisibleThroughObjects() {
-		return isThroughVisibility;
-	}
-
-	@Override
-	public void setVisibleThroughObjects(boolean visible) {
-		isThroughVisibility = visible;
-	}
-
-	@Override
-	public int getDistanceView() {
-		return distance;
-	}
-
-	@Override
-	public void setDistanceView(int distance) {
-		this.distance = distance;	
-	}
-	
-	@Override
-	public float getAlphaHUD() {
-		return alphaHUD;
-	}
-
-	@Override
-	public void setAlphaHUD(double alphaHUD) {
-		this.alphaHUD = (float) alphaHUD;
 	}
 }

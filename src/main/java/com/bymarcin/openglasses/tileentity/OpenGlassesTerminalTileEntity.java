@@ -11,17 +11,8 @@ import com.bymarcin.openglasses.network.packet.WidgetUpdatePacket;
 import com.bymarcin.openglasses.surface.ServerSurface;
 import com.bymarcin.openglasses.surface.Widget;
 import com.bymarcin.openglasses.surface.WidgetType;
-import com.bymarcin.openglasses.surface.widgets.component.face.Dot;
-import com.bymarcin.openglasses.surface.widgets.component.face.Quad;
-import com.bymarcin.openglasses.surface.widgets.component.face.SquareWidget;
-import com.bymarcin.openglasses.surface.widgets.component.face.Text;
-import com.bymarcin.openglasses.surface.widgets.component.face.TriangleWidget;
-import com.bymarcin.openglasses.surface.widgets.component.world.Cube3D;
-import com.bymarcin.openglasses.surface.widgets.component.world.Dot3D;
-import com.bymarcin.openglasses.surface.widgets.component.world.FloatingText;
-import com.bymarcin.openglasses.surface.widgets.component.world.Line3D;
-import com.bymarcin.openglasses.surface.widgets.component.world.Quad3D;
-import com.bymarcin.openglasses.surface.widgets.component.world.Triangle3D;
+import com.bymarcin.openglasses.surface.widgets.component.face.*;
+import com.bymarcin.openglasses.surface.widgets.component.world.*;
 import com.bymarcin.openglasses.utils.Location;
 
 import li.cil.oc.api.API;
@@ -215,7 +206,14 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
 		Widget w = new Quad();
 		return addWidget(w);
 	}
-
+	
+	@Callback(direct = true)
+	@Optional.Method(modid = "OpenComputers")
+	public Object[] addItemIcon(Context context, Arguments args){
+		Widget w = new ItemIcon();
+		return addWidget(w);
+	}
+	
 	/* User interaction */
 	
 	/**

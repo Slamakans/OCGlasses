@@ -5,20 +5,7 @@ import java.util.LinkedList;
 
 import com.bymarcin.openglasses.lua.LuaFunction;
 import com.bymarcin.openglasses.lua.LuaReference;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.I2DVertex;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DPositionable;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IAttribute;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IViewDistance;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.ILookable;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IPrivate;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IPositionable;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IResizable;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IScalable;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.ITextable;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibility;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DVertex;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.*;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.*;
 
 public class AttributeRegistry {
@@ -50,8 +37,16 @@ public class AttributeRegistry {
 		addAtribute(ITextable.class, SetText.class);
 		addAtribute(ITextable.class, GetText.class);
 		
+		addAtribute(IItem.class, SetItem.class);
+		addAtribute(IItem.class, GetItem.class);
+		
 		addAtribute(IScalable.class, SetScale.class);
 		addAtribute(IScalable.class, GetScale.class);
+		
+		addAtribute(IRotateable.class, SetRotation.class);
+		addAtribute(IRotateable.class, GetRotationX.class);
+		addAtribute(IRotateable.class, GetRotationY.class);
+		addAtribute(IRotateable.class, GetRotationZ.class);
 		
 		addAtribute(IThroughVisibility.class, SetVisibleThroughObjects.class);
 		addAtribute(IThroughVisibility.class, IsVisibleThroughObjects.class);
@@ -104,3 +99,4 @@ public class AttributeRegistry {
 	}
 	
 }
+
