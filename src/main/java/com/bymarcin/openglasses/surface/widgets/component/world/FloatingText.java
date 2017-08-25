@@ -5,7 +5,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.math.RayTraceResult;
 
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
@@ -20,36 +19,31 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.ITextable;
 import com.bymarcin.openglasses.surface.WidgetType;
 import com.bymarcin.openglasses.utils.OGUtils;
 
+import net.minecraft.client.renderer.GlStateManager;
+
 public class FloatingText extends WidgetGLWorld implements ITextable{
 	String text ="";
 	
-	public FloatingText() {}
+	public FloatingText() {
+		scale = 0.1F;
+	}
 	
 	@Override
 	public void writeData(ByteBuf buff) {
 		writeDataXYZ(buff);
+		writeDataSCALE(buff);
 		writeDataRGBA(buff);
-		ByteBufUtils.writeUTF8String(buff, text);
-		
-		buff.writeBoolean(isThroughVisibility);
-		buff.writeInt(lookAtX);
-		buff.writeInt(lookAtY);
-		buff.writeInt(lookAtZ);
-		buff.writeBoolean(isLookingAtEnable);
-		buff.writeInt(viewDistance);
+		writeDataWORLD(buff);
+		ByteBufUtils.writeUTF8String(buff, text);		
 	}
 
 	@Override
 	public void readData(ByteBuf buff) {
 		readDataXYZ(buff);
+		readDataSCALE(buff);
 		readDataRGBA(buff);
+		readDataWORLD(buff);
 		text = ByteBufUtils.readUTF8String(buff);
-		isThroughVisibility = buff.readBoolean();
-		lookAtX = buff.readInt();
-		lookAtY = buff.readInt();
-		lookAtZ = buff.readInt();
-		isLookingAtEnable = buff.readBoolean();
-		viewDistance = buff.readInt();
 	}
 	
 	@Override
@@ -65,44 +59,42 @@ public class FloatingText extends WidgetGLWorld implements ITextable{
 	
 	@SideOnly(Side.CLIENT)
 	class RenderableFloatingText extends RenderableGLWidget{
-		FontRenderer fontRender = Minecraft.getMinecraft().fontRendererObj;
-		double offsetX = fontRender.getStringWidth(text)/2D;
-		double offsetY = fontRender.FONT_HEIGHT/2D;
-		int color = OGUtils.getIntFromColor(r, g, b, alpha);
 		
 		@Override
 		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha) {
-			if(!OGUtils.inRange(playerX, playerY, playerZ, x, y, z, viewDistance)){
+			if(!OGUtils.inRange(playerX, playerY, playerZ, x, y, z, viewDistance))
 				return;
+			
+			if(isLookingAtEnable && !OGUtils.isLookingAt(ClientSurface.getBlockCoordsLookingAt(player), new float[]{lookAtX, lookAtY, lookAtZ})){
+				return;				
 			}
-			if(isLookingAtEnable){
-				RayTraceResult pos = ClientSurface.getBlockCoordsLookingAt(player);
-				if(pos == null || pos.getBlockPos().getX() != lookAtX || pos.getBlockPos().getY() != lookAtY || pos.getBlockPos().getZ() != lookAtZ)
-					return;
-			}
-			GL11.glPushMatrix();
-			if(isThroughVisibility){
+			
+			if(text.length() < 1) return;
+			
+			FontRenderer fontRender = Minecraft.getMinecraft().fontRendererObj;			
+		
+			double offsetX = fontRender.getStringWidth(text)/2D;
+			double offsetY = fontRender.FONT_HEIGHT/2D;
+			
+			if(isThroughVisibility)
 				GL11.glDisable(GL11.GL_DEPTH_TEST);
-			}else{
+			else
 				GL11.glEnable(GL11.GL_DEPTH_TEST);
-			}
-			GL11.glTranslated(x, y, z);
-			GL11.glRotated(rotationX, rotationY, rotationZ, 0);
-			GL11.glScaled(scale, scale, scale);
-			GL11.glTranslated(offsetX, offsetY, 0);
-			GL11.glPushMatrix();
-			GL11.glRotated(180, 0, 0, 1);
 			
-			GL11.glTranslated(offsetX, offsetY , 0);
+			GL11.glTranslatef(x, y, z);
+			GL11.glTranslatef(0.5F, 0.5F, 0.5F);
+			GL11.glScalef(scale, scale, scale);			
 			
-			GL11.glRotated(player.rotationYaw,0,1,0);
-			GL11.glRotated(-player.rotationPitch,1,0,0);
-
-			GL11.glTranslated(-offsetX, -fontRender.FONT_HEIGHT/2D , 0);
+			//align and rotate text facing the player
+			GL11.glTranslated(offsetX, offsetY, 0.0D);
+			GL11.glRotated(180.0D, 0.0D, 0.0D, 1.0D);
+			GL11.glTranslated(offsetX, offsetY, 0.0D);
+			GL11.glRotated(player.rotationYaw,0.0D,1.0D,0.0D);
+			GL11.glRotated(-player.rotationPitch,1.0D,0.0D,0.0D);
+			GL11.glTranslated(-offsetX, -offsetY, 0.0D);
 			
-			fontRender.drawString(text, 0, 0, color);
-			GL11.glPopMatrix();
-			GL11.glEnable(GL11.GL_DEPTH_TEST);
+			fontRender.drawString(text, 0, 0, OGUtils.getIntFromColor(r, g, b, alpha));
+			GlStateManager.disableAlpha();
 		}
 	}
 

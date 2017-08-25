@@ -15,24 +15,26 @@ import com.bymarcin.openglasses.surface.WidgetGLWorld;
 import com.bymarcin.openglasses.surface.WidgetType;
 
 public class Line3D extends WidgetGLWorld{	
+	float size;
+	
 	public Line3D() {
 		size = 8.F;
 	}
 	
 	@Override
 	public void writeData(ByteBuf buff) {
-		writeDataVERTICES(buff);
 		writeDataRGBA(buff);
-		buff.writeBoolean(isThroughVisibility);
-		buff.writeFloat(size);
+		writeDataSCALE(buff);
+		writeDataSIZE(buff);
+		writeDataWORLD(buff);
 	}
 
 	@Override
 	public void readData(ByteBuf buff) {
-		readDataVERTICES(buff);
 		readDataRGBA(buff);
-		isThroughVisibility = buff.readBoolean();
-		size = buff.readFloat();
+		readDataSCALE(buff);
+		readDataSIZE(buff);
+		readDataWORLD(buff);
 	}
 
 	@Override
@@ -51,26 +53,21 @@ public class Line3D extends WidgetGLWorld{
 
 		@Override
 		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha) {
-			GL11.glPushMatrix();
 			GL11.glTranslated(x, y, z);
 			GL11.glRotatef(rotationX, rotationY, rotationZ, 1);
 			
-			if(isThroughVisibility){
+			if(isThroughVisibility)
 				GL11.glDisable(GL11.GL_DEPTH_TEST);
-			}else{
+			else
 				GL11.glEnable(GL11.GL_DEPTH_TEST);
-			}
+			
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
 			GL11.glLineWidth(size);
-			GL11.glBegin(GL11.GL_LINES);
 			GL11.glColor4f(r,g,b,alpha);
-			GL11.glVertex3f(vertices[0][0], vertices[0][1], vertices[0][2]);
-			GL11.glVertex3f(vertices[1][0], vertices[1][1], vertices[1][2]);
-			GL11.glEnd();
-			GL11.glPopMatrix();
-			GL11.glEnable(GL11.GL_TEXTURE_2D);
-			GL11.glEnable(GL11.GL_DEPTH_TEST);
-			
+			GL11.glBegin(GL11.GL_LINES);
+			GL11.glVertex3f(x, y, z);
+			GL11.glVertex3f(x+width, y+height, z);
+			GL11.glEnd();			
 		}
 	}
 }

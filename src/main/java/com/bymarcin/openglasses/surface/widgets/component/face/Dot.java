@@ -21,7 +21,7 @@ public class Dot extends WidgetGLOverlay {
 		writeDataROTATION(buff);
 		writeDataXYZ(buff);
 		writeDataRGBA(buff);
-		writeDataSIZE(buff);	
+		writeDataSCALE(buff);	
 	}
 
 	@Override
@@ -29,7 +29,7 @@ public class Dot extends WidgetGLOverlay {
 		readDataROTATION(buff);
 		readDataXYZ(buff);
 		readDataRGBA(buff);
-		readDataSIZE(buff);	
+		readDataSCALE(buff);
 	}
 	
 	@Override
@@ -53,16 +53,13 @@ public class Dot extends WidgetGLOverlay {
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			GL11.glTranslated(x, y, z);
 			GL11.glRotatef(rotationX, rotationY, rotationZ, 1);
-			GL11.glBegin(GL11.GL_QUADS);
 			GL11.glColor4f(r, g, b, alpha);
+			GL11.glBegin(GL11.GL_QUADS);
 			GL11.glVertex3f(x, y, 0);
-			GL11.glVertex3f(x, y+size, 0);
-			GL11.glVertex3f(x+size, y+size, 0);
-			GL11.glVertex3f(x+size, y, 0);
+			GL11.glVertex3f(x, y+1, 0);
+			GL11.glVertex3f(x+1, y+1, 0);
+			GL11.glVertex3f(x+1, y, 0);
 			GL11.glEnd();
-			GL11.glDisable(GL11.GL_BLEND);
-			GL11.glEnable(GL11.GL_TEXTURE_2D);
-			GL11.glEnable(GL11.GL_ALPHA_TEST);
 		}
 	}	
 }

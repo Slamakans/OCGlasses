@@ -11,16 +11,37 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibilit
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IViewDistance;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.ILookable;
 
+import io.netty.buffer.ByteBuf;
+
 public abstract class WidgetGLWorld extends WidgetGLOverlay implements I3DPositionable, IThroughVisibility, IViewDistance, ILookable{
 	public boolean isThroughVisibility = false;
 	public boolean isLookingAtEnable = false;
 	
 	public int lookAtX=0, lookAtY=0, lookAtZ=0;
 	
-	public int distance = 100, viewDistance=0;
+	public int distance=64, viewDistance=32;
 		
 	public WidgetGLWorld(){
-		this.rendertype = RenderType.WorldLocated; }	
+		this.rendertype = RenderType.WorldLocated; 
+	}	
+	
+	public void writeDataWORLD(ByteBuf buff){
+		buff.writeBoolean(isThroughVisibility);
+		buff.writeInt(distance);
+		buff.writeInt(lookAtX);
+		buff.writeInt(lookAtY);
+		buff.writeInt(lookAtZ);
+		buff.writeBoolean(isLookingAtEnable);
+	}
+	
+	public void readDataWORLD(ByteBuf buff){
+		isThroughVisibility = buff.readBoolean();
+		distance = buff.readInt();
+		lookAtX = buff.readInt();
+		lookAtY = buff.readInt();
+		lookAtZ = buff.readInt();
+		isLookingAtEnable = buff.readBoolean();
+	}
 	
 	public boolean isVisibleThroughObjects() {
 		return isThroughVisibility; }

@@ -44,6 +44,7 @@ public class AttributeRegistry {
 		addAtribute(IScalable.class, GetScale.class);
 		
 		addAtribute(IRotateable.class, SetRotation.class);
+		addAtribute(IRotateable.class, GetRotation.class);
 		addAtribute(IRotateable.class, GetRotationX.class);
 		addAtribute(IRotateable.class, GetRotationY.class);
 		addAtribute(IRotateable.class, GetRotationZ.class);

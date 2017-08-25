@@ -1,5 +1,5 @@
 package com.bymarcin.openglasses.utils;
-
+import net.minecraft.util.math.RayTraceResult;
 
 public class OGUtils {
 	
@@ -17,5 +17,14 @@ public class OGUtils {
 	
 	public static boolean inRange(double x, double y, double z, double sx, double sy, double sz, double r){
 		return (((x-sx)*(x-sx)) + ((y-sy)*(y-sy)) + ((z-sz)*(z-sz))) <= (r*r);
+	}
+	
+	public static boolean isLookingAt(RayTraceResult pos, float[] target){
+		if(pos == null) return false;
+		if(pos.getBlockPos().getX() != target[0]) return false;
+		if(pos.getBlockPos().getY() != target[1]) return false;
+		if(pos.getBlockPos().getZ() != target[2]) return false;
+					
+		return true;
 	}
 }

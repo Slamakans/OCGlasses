@@ -33,10 +33,8 @@ public class ItemIcon extends Text implements IItem{
 	ItemStack itmStack = null;
 			
 	public ItemIcon() {
-		size = 30;
-		r = 1;
-		g = 1;
-		b = 1;
+		rotationX = 180;
+		rotationY = 180;
 	}	
 	
 	@Override
@@ -85,10 +83,9 @@ public class ItemIcon extends Text implements IItem{
 			tm.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 			tm.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);       
 			
-			GL11.glPushMatrix();
 			GL11.glTranslated((int) x, (int) y, (int) z);
 			GL11.glRotatef(rotationX, rotationY, rotationZ, 1);
-			GL11.glScaled(size, size, size);
+			GL11.glScaled(scale, scale, scale);
 			
 			
 			Tessellator tessellator = Tessellator.getInstance();
@@ -105,8 +102,6 @@ public class ItemIcon extends Text implements IItem{
 			
 			renderQuads(vertexbuffer, ibakedmodel.getQuads(null, null, 0L), alphaColor, itmStack);
 			tessellator.draw();
-			
-			GL11.glPopMatrix();
 			
 		}
 

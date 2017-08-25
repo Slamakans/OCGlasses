@@ -4,6 +4,7 @@ import com.bymarcin.openglasses.surface.WidgetGLOverlay;
 import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.WidgetType;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.ITextable;
+import com.bymarcin.openglasses.utils.OGUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,6 +12,8 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
+
+import net.minecraft.client.renderer.GlStateManager;
 
 public class Text extends Dot implements ITextable{
 	String text="";
@@ -43,13 +46,11 @@ public class Text extends Dot implements ITextable{
 	class RenderText extends RenderableGLWidget{
 		@Override
 		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha) {
-			GL11.glPushMatrix();
-			GL11.glTranslated(x, y, z);
-			GL11.glRotated(rotationX, rotationY, rotationZ, 1);
-			GL11.glScaled(size, size, 0);
-			GL11.glColor4f(r,g,b,alpha);
-			Minecraft.getMinecraft().fontRendererObj.drawString(text, (int) x, (int) y, -1);
-			GL11.glPopMatrix();
+			GL11.glTranslatef(x, y, z);
+			GL11.glRotatef(rotationX, rotationY, rotationZ, 1);
+			GL11.glScalef(scale, scale, 0);
+			Minecraft.getMinecraft().fontRendererObj.drawString(text, 0, 0, OGUtils.getIntFromColor(r, g, b, alpha));
+			GlStateManager.disableAlpha();
 		}
 	}
 

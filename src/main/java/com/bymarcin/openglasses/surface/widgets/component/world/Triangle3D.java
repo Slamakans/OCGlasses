@@ -19,17 +19,15 @@ public class Triangle3D extends WidgetGLWorld {
 	@Override
 	public void writeData(ByteBuf buff) {
 		writeDataXYZ(buff);
-		writeDataVERTICES(buff);
 		writeDataRGBA(buff);
-		buff.writeBoolean(isThroughVisibility);
+		writeDataWORLD(buff);
 	}
 
 	@Override
 	public void readData(ByteBuf buff) {
 		readDataXYZ(buff);
-		readDataVERTICES(buff);
 		readDataRGBA(buff);
-		isThroughVisibility = buff.readBoolean();
+		readDataWORLD(buff);
 	}
 
 	@Override
@@ -47,25 +45,20 @@ public class Triangle3D extends WidgetGLWorld {
 	class RenderTriangle3D extends RenderableGLWidget{
 		@Override
 		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha) {
-			GL11.glPushMatrix();
-			if(isThroughVisibility){
+			if(isThroughVisibility)
 				GL11.glDisable(GL11.GL_DEPTH_TEST);
-			}else{
+			else
 				GL11.glEnable(GL11.GL_DEPTH_TEST);
-			}
+			
 			GL11.glTranslated(x, y, z);
 			GL11.glRotatef(rotationX, rotationY, rotationZ, 1);
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
-			GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 			GL11.glColor4f(r, g, b, alpha);
-			GL11.glVertex3f(vertices[0][0], vertices[0][1], vertices[0][2]);
-			GL11.glVertex3f(vertices[1][0], vertices[1][1], vertices[1][2]);
-			GL11.glVertex3f(vertices[2][0], vertices[2][1], vertices[2][2]);
-			GL11.glVertex3f(vertices[0][0], vertices[0][1], vertices[0][2]);
+			GL11.glBegin(GL11.GL_TRIANGLES);
+			GL11.glVertex3f(x, y, z);
+			GL11.glVertex3f(x+width, y, z);
+			GL11.glVertex3f(x, y+height, z);
 			GL11.glEnd();
-			GL11.glPopMatrix();
-			GL11.glEnable(GL11.GL_DEPTH_TEST);
-			GL11.glEnable(GL11.GL_TEXTURE_2D);
 		}	
 	}
 }

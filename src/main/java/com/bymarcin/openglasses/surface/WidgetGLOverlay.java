@@ -13,19 +13,16 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.IScalable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IResizable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IPrivate;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IRotateable;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.I2DVertex;
 
 import net.minecraft.entity.player.EntityPlayer;
 import io.netty.buffer.ByteBuf;
 import java.util.UUID;
 
-public abstract class WidgetGLOverlay extends Widget implements IPositionable, IColorizable, IAlpha, IScalable, IResizable, IPrivate, IRotateable, I2DVertex{
+public abstract class WidgetGLOverlay extends Widget implements IPositionable, IColorizable, IAlpha, IScalable, IResizable, IPrivate, IRotateable {
 	RenderType rendertype;
 	
-	public float size = 2, scale = 1;
+	public float scale = 1;
 	public float x = 0, y = 0, z = 0;
-	
-	public float vertices[][];	
 	
 	public float r = 1, g = 1, b = 1, alpha = 1, alphaHUD = 1;	
 	public float width = 0, height = 0;
@@ -33,40 +30,6 @@ public abstract class WidgetGLOverlay extends Widget implements IPositionable, I
 	
 	public WidgetGLOverlay(){
 		this.rendertype = RenderType.GameOverlayLocated;		
-	}
-	
-	public int getVertexCount() {
-		return vertices.length;
-	}
-
-	public void setVertex(int n, double x, double y, double z) {
-		this.vertices[n][0] = (float) x;
-		this.vertices[n][1] = (float) y;
-		this.vertices[n][2] = (float) z;
-	}
-	
-	public void setVertex(int n, double x, double y) {
-		this.vertices[n][0] = (float) x;
-		this.vertices[n][1] = (float) y;	
-	}
-	
-	public void writeDataVERTICES(ByteBuf buff) {
-		int cnt = vertices.length;
-		buff.writeInt(cnt);
-		for(int i=0; i < cnt; i++){
-			buff.writeFloat(vertices[i][0]);
-			buff.writeFloat(vertices[i][1]);
-			buff.writeFloat(vertices[i][2]);
-		}
-	}
-	
-	public void readDataVERTICES(ByteBuf buff) {
-		int cnt = buff.readInt();
-		for(int i=0; i < cnt; i++){
-			vertices[i][0] = buff.readFloat();
-			vertices[i][1] = buff.readFloat();
-			vertices[i][2] = buff.readFloat();			
-		}
 	}
 	
 	public void writeDataXYZ(ByteBuf buff) {
@@ -112,13 +75,11 @@ public abstract class WidgetGLOverlay extends Widget implements IPositionable, I
 	public void writeDataSIZE(ByteBuf buff) {
 		buff.writeFloat(this.width);
 		buff.writeFloat(this.height);
-		buff.writeFloat(this.size);
 	}
 	
 	public void readDataSIZE(ByteBuf buff) {
 		this.width = buff.readFloat();
 		this.height = buff.readFloat();
-		this.size = buff.readFloat();
 	}
 	
 	public void writeDataSCALE(ByteBuf buff) {
@@ -188,10 +149,10 @@ public abstract class WidgetGLOverlay extends Widget implements IPositionable, I
 		this.alphaHUD = (float) alphaHUD; }
 
 	public void setScale(double scale) {
-		size = (float) scale; }
+		this.scale = (float) scale; }
 
 	public double getScale() {
-		return this.size; }
+		return this.scale; }
 	
 	public float getRotationX(){
 		return this.rotationX; }
