@@ -14,7 +14,6 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.ILookable;
 import io.netty.buffer.ByteBuf;
 
 public abstract class WidgetGLWorld extends WidgetGLOverlay implements I3DPositionable, IThroughVisibility, IViewDistance, ILookable{
-	public boolean isThroughVisibility = false;
 	public boolean isLookingAtEnable = false;
 	
 	public int lookAtX=0, lookAtY=0, lookAtZ=0;

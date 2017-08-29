@@ -84,7 +84,7 @@ public class ItemIcon extends Text implements IItem{
 			tm.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);       
 			
 			GL11.glTranslated((int) x, (int) y, (int) z);
-			GL11.glRotatef(rotationX, rotationY, rotationZ, 1);
+			this.applyRotation();
 			GL11.glScaled(scale, scale, scale);
 			
 			

@@ -65,15 +65,11 @@ public class Cube3D extends WidgetGLWorld {
 			boolean depthtest = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
 			boolean texture2d = GL11.glIsEnabled(GL11.GL_TEXTURE_2D);
 			
-			if(isThroughVisibility)
-				GL11.glDisable(GL11.GL_DEPTH_TEST);
-			else
-				GL11.glEnable(GL11.GL_DEPTH_TEST);
-			
+			this.setupDepthTest();
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
 			
 			GL11.glTranslatef(x, y, z);
-			GL11.glRotatef(rotationX, rotationY, rotationZ, 0f);			 
+			this.applyRotation();		 
 			
 			GL11.glScalef(scale, scale, scale);									 
 			GL11.glColor4f(r, g, b, alpha);

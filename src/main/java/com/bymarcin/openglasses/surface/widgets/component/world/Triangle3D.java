@@ -45,13 +45,9 @@ public class Triangle3D extends WidgetGLWorld {
 	class RenderTriangle3D extends RenderableGLWidget{
 		@Override
 		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha) {
-			if(isThroughVisibility)
-				GL11.glDisable(GL11.GL_DEPTH_TEST);
-			else
-				GL11.glEnable(GL11.GL_DEPTH_TEST);
-			
+			this.setupDepthTest();
 			GL11.glTranslated(x, y, z);
-			GL11.glRotatef(rotationX, rotationY, rotationZ, 1);
+			this.applyRotation();
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
 			GL11.glColor4f(r, g, b, alpha);
 			GL11.glBegin(GL11.GL_TRIANGLES);

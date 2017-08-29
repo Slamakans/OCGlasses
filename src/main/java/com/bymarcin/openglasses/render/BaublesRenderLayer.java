@@ -29,8 +29,8 @@ public class BaublesRenderLayer implements IRenderBauble, LayerRenderer<EntityLi
 	
 	public BaublesRenderLayer(){
 		Minecraft mc = Minecraft.getMinecraft();
-		model = ForgeHooksClient.getArmorModel(mc.thePlayer, new ItemStack(new OpenGlassesItem()), EntityEquipmentSlot.HEAD, new ModelBiped());
-		texture = new ResourceLocation("openglasses:textures/models/glasses.png");
+		this.model = ForgeHooksClient.getArmorModel(mc.thePlayer, new ItemStack(new OpenGlassesItem()), EntityEquipmentSlot.HEAD, new ModelBiped());
+		this.texture = new ResourceLocation("openglasses:textures/models/glasses.png");
 	}
 	
 	@Override
@@ -61,7 +61,7 @@ public class BaublesRenderLayer implements IRenderBauble, LayerRenderer<EntityLi
 		
 		Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
 		
-		this.model.bipedHead.render(scale * 1.01F); 
+		this.model.bipedHead.render(scale * 1.001F); 
 		GlStateManager.popMatrix();
 		
 		if(sneaky) this.model.bipedHead.offsetY-=0.2F;		

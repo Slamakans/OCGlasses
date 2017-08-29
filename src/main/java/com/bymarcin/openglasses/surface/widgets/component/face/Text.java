@@ -47,7 +47,7 @@ public class Text extends Dot implements ITextable{
 		@Override
 		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha) {
 			GL11.glTranslatef(x, y, z);
-			GL11.glRotatef(rotationX, rotationY, rotationZ, 1);
+			this.applyRotation();
 			GL11.glScalef(scale, scale, 0);
 			Minecraft.getMinecraft().fontRendererObj.drawString(text, 0, 0, OGUtils.getIntFromColor(r, g, b, alpha));
 			GlStateManager.disableAlpha();

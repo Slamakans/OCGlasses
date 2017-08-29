@@ -14,6 +14,8 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.IResizable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IPrivate;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IRotateable;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.entity.player.EntityPlayer;
 import io.netty.buffer.ByteBuf;
 import java.util.UUID;
@@ -27,6 +29,8 @@ public abstract class WidgetGLOverlay extends Widget implements IPositionable, I
 	public float r = 1, g = 1, b = 1, alpha = 1, alphaHUD = 1;	
 	public float width = 0, height = 0;
 	public float rotationX = 0, rotationY = 0, rotationZ = 0;
+	
+	public boolean isThroughVisibility = false;
 	
 	public WidgetGLOverlay(){
 		this.rendertype = RenderType.GameOverlayLocated;		
@@ -173,6 +177,19 @@ public abstract class WidgetGLOverlay extends Widget implements IPositionable, I
 	public class RenderableGLWidget implements IRenderableWidget {		
 		@Override
 		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha) {}
+		
+		public void applyRotation(){ //for now fixed XYZ
+			GL11.glRotatef(rotationX, 1, 0, 0);
+			GL11.glRotatef(rotationY, 0, 1, 0);
+			GL11.glRotatef(rotationZ, 0, 0, 1);
+		}
+		
+		public void setupDepthTest(){
+			if(isThroughVisibility)
+				GL11.glDisable(GL11.GL_DEPTH_TEST);
+			else
+				GL11.glEnable(GL11.GL_DEPTH_TEST);
+		}	
 		
 		@Override
 		public boolean shouldWidgetBeRendered() {

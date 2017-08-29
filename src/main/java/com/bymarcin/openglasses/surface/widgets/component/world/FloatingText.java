@@ -76,10 +76,7 @@ public class FloatingText extends WidgetGLWorld implements ITextable{
 			double offsetX = fontRender.getStringWidth(text)/2D;
 			double offsetY = fontRender.FONT_HEIGHT/2D;
 			
-			if(isThroughVisibility)
-				GL11.glDisable(GL11.GL_DEPTH_TEST);
-			else
-				GL11.glEnable(GL11.GL_DEPTH_TEST);
+			this.setupDepthTest();
 			
 			GL11.glTranslatef(x, y, z);
 			GL11.glTranslatef(0.5F, 0.5F, 0.5F);
