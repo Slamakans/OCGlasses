@@ -119,17 +119,22 @@ public class OpenGlasses
 		if(isGlassesStack(glassesStack)) 
 			return glassesStack;
 				
-		//get baubles slot if glasses arent found in armor slot
-		if(Loader.isModLoaded("Baubles")){
-			IBaublesItemHandler handler = BaublesApi.getBaublesHandler(e);
-			if (handler != null){
-				glassesStack = handler.getStackInSlot(4);
-				if(isGlassesStack(glassesStack)) 
-					return glassesStack;
-			}
-		}
+		return getGlassesStackBaubles(e);
+	}
 	
-		return null;
+	public static ItemStack getGlassesStackBaubles(EntityPlayer e){
+		//get baubles slot if glasses arent found in armor slot
+		if(!Loader.isModLoaded("Baubles")) return null;
+		
+		IBaublesItemHandler handler = BaublesApi.getBaublesHandler(e);
+		
+		if (handler == null) return null;
+		
+		ItemStack glassesStack = handler.getStackInSlot(4);
+			if(isGlassesStack(glassesStack)) 
+				return glassesStack;
+		
+		return null;		
 	}
 	
 	@EventHandler
@@ -155,5 +160,7 @@ public class OpenGlasses
 		GameRegistry.addRecipe(new ItemStack(openTerminal),"R  ","S  ","M  ", 'S', server, 'R', ram, 'M', cpu);
 		
 		config.save();
+		
+		proxy.postInit();			
 	}
 }
