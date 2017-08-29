@@ -47,7 +47,6 @@ public class Dot3D extends WidgetGLWorld  {
 	
 	@SideOnly(Side.CLIENT)
 	class RenderDot3D extends RenderableGLWidget{
-		final EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 		@Override
 		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha) {
 			if(!OGUtils.inRange(playerX, playerY, playerZ, x, y, z, distance)) return;
