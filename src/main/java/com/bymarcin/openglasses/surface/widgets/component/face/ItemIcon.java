@@ -31,16 +31,10 @@ import java.awt.Color;
 
 public class ItemIcon extends Text implements IItem{
 	ItemStack itmStack = null;
-			
-	public ItemIcon() {
-		rotationX = 180;
-		rotationY = 180;
-	}	
 	
 	@Override
 	public void writeData(ByteBuf buff) {
 		super.writeData(buff);
-		writeDataROTATION(buff);
 		
 		int itemid = 0;
 		if(itmStack != null)
@@ -52,7 +46,7 @@ public class ItemIcon extends Text implements IItem{
 	@Override
 	public void readData(ByteBuf buff) {
 		super.readData(buff);
-		readDataROTATION(buff);
+
 		int itemid = buff.readInt();
 		if(itemid > 0)
 			setItem(new ItemStack(new Item().getItemById(itemid)));
@@ -71,7 +65,7 @@ public class ItemIcon extends Text implements IItem{
 	
 	class RenderableItemIcon extends RenderableGLWidget{
 		@Override
-		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha) {
+		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, boolean overlayActive) {
 			if(itmStack == null) return;
 			IBakedModel ibakedmodel = null;
 			
@@ -83,25 +77,19 @@ public class ItemIcon extends Text implements IItem{
 			tm.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 			tm.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);       
 			
-			GL11.glTranslated((int) x, (int) y, (int) z);
-			this.applyRotation();
-			GL11.glScaled(scale, scale, scale);
-			
+			int alphaColor = this.applyModifiers(player, overlayActive);			
 			
 			Tessellator tessellator = Tessellator.getInstance();
 			VertexBuffer vertexbuffer = tessellator.getBuffer();
 			vertexbuffer.begin(7, DefaultVertexFormats.ITEM);
 			EnumFacing[] var6 = EnumFacing.values();			
 			
-			int alphaColor = Long.valueOf(((long)clamp(Math.round(alpha * 255F), 0, 255) << 24L) + 
-										  ((long)clamp(Math.round(r * 255F), 0, 255) << 16L) + 
-										  ((long)clamp(Math.round(g * 255F), 0, 255) << 8L) + 
-										  (long)clamp(Math.round(b * 255F), 0, 255)).intValue();
 			for (int var8 = 0, var7 = var6.length; var8 < var7; ++var8) 
 				renderQuads(vertexbuffer, ibakedmodel.getQuads(null, var6[var8], 0L), alphaColor, itmStack);
 			
 			renderQuads(vertexbuffer, ibakedmodel.getQuads(null, null, 0L), alphaColor, itmStack);
 			tessellator.draw();
+			this.revokeModifiers();
 			
 		}
 

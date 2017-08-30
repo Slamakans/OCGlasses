@@ -36,7 +36,7 @@ public class InteractGui extends GuiScreen {
     public void updateScreen() {
         super.updateScreen();
         if(!Keyboard.isKeyDown(ClientEventHandler.interactGUIKey.getKeyCode())){
-			ClientSurface.instances.HUDactive = false;
+			ClientSurface.instances.OverlayActive = false;
             mc.displayGuiScreen(null);
         }
     }

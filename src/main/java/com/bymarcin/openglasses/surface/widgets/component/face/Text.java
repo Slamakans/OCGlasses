@@ -12,8 +12,11 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.renderer.GlStateManager;
+
+import org.lwjgl.BufferUtils;
+import java.nio.FloatBuffer;
+import com.bymarcin.openglasses.utils.OGUtils;
 
 public class Text extends Dot implements ITextable{
 	String text="";
@@ -23,13 +26,13 @@ public class Text extends Dot implements ITextable{
 	@Override
 	public void writeData(ByteBuf buff) {
 		super.writeData(buff);
-		ByteBufUtils.writeUTF8String(buff, text);
+		ByteBufUtils.writeUTF8String(buff, this.text);
 	}
 
 	@Override
 	public void readData(ByteBuf buff) {
 		super.readData(buff);
-		text = ByteBufUtils.readUTF8String(buff);
+		this.text = ByteBufUtils.readUTF8String(buff);
 	}
 
 	@Override
@@ -45,12 +48,11 @@ public class Text extends Dot implements ITextable{
 	
 	class RenderText extends RenderableGLWidget{
 		@Override
-		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha) {
-			GL11.glTranslatef(x, y, z);
-			this.applyRotation();
-			GL11.glScalef(scale, scale, 0);
-			Minecraft.getMinecraft().fontRendererObj.drawString(text, 0, 0, OGUtils.getIntFromColor(r, g, b, alpha));
+		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, boolean overlayActive) {
+			int currentColor = this.applyModifiers(player, overlayActive);
+			Minecraft.getMinecraft().fontRendererObj.drawString(text, 0, 0, currentColor);
 			GlStateManager.disableAlpha();
+			this.revokeModifiers();
 		}
 	}
 
@@ -61,6 +63,6 @@ public class Text extends Dot implements ITextable{
 
 	@Override
 	public String getText() {
-		return text;
+		return this.text;
 	}
 }

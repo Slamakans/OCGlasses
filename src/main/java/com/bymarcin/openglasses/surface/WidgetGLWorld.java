@@ -5,15 +5,13 @@ import com.bymarcin.openglasses.surface.WidgetGLOverlay;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DPositionable;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DVertex;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibility;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IViewDistance;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.ILookable;
 
 import io.netty.buffer.ByteBuf;
 
-public abstract class WidgetGLWorld extends WidgetGLOverlay implements I3DPositionable, IThroughVisibility, IViewDistance, ILookable{
+public abstract class WidgetGLWorld extends WidgetGLOverlay implements IThroughVisibility, IViewDistance, ILookable{
 	public boolean isLookingAtEnable = false;
 	
 	public int lookAtX=0, lookAtY=0, lookAtZ=0;

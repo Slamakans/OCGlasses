@@ -13,8 +13,8 @@ public class SetColor extends LuaFunction{
 	public Object[] call(Context context, Arguments arguments) {
 		super.call(context, arguments);
 		Widget widget = getSelf().getWidget(); 
-		if(widget instanceof IColorizable){
-			((IColorizable) widget).setColor(arguments.checkDouble(0), arguments.checkDouble(1), arguments.checkDouble(2));
+		if(widget != null){
+			widget.WidgetModifierList.addColor((float) arguments.checkDouble(0), (float) arguments.checkDouble(1), (float) arguments.checkDouble(2), 1F);
 			getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());	
 			return null;
 		}

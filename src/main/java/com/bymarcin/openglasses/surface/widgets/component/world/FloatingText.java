@@ -11,7 +11,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.lwjgl.opengl.GL11;
-
 import com.bymarcin.openglasses.surface.ClientSurface;
 import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.WidgetGLWorld;
@@ -21,27 +20,25 @@ import com.bymarcin.openglasses.utils.OGUtils;
 
 import net.minecraft.client.renderer.GlStateManager;
 
+import org.lwjgl.BufferUtils;
+import java.nio.FloatBuffer;
+import com.bymarcin.openglasses.utils.OGUtils;
+
 public class FloatingText extends WidgetGLWorld implements ITextable{
 	String text ="";
 	
-	public FloatingText() {
-		scale = 0.1F;
-	}
+	public FloatingText() {}
 	
 	@Override
 	public void writeData(ByteBuf buff) {
-		writeDataXYZ(buff);
-		writeDataSCALE(buff);
-		writeDataRGBA(buff);
+		super.writeData(buff);
 		writeDataWORLD(buff);
 		ByteBufUtils.writeUTF8String(buff, text);		
 	}
 
 	@Override
 	public void readData(ByteBuf buff) {
-		readDataXYZ(buff);
-		readDataSCALE(buff);
-		readDataRGBA(buff);
+		super.readData(buff);
 		readDataWORLD(buff);
 		text = ByteBufUtils.readUTF8String(buff);
 	}
@@ -59,28 +56,30 @@ public class FloatingText extends WidgetGLWorld implements ITextable{
 	
 	@SideOnly(Side.CLIENT)
 	class RenderableFloatingText extends RenderableGLWidget{
+		double offsetX, offsetY;
 		
 		@Override
-		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha) {
+		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, boolean overlayActive) {
+			if(text.length() < 1) return;
+			/*
 			if(!OGUtils.inRange(playerX, playerY, playerZ, x, y, z, viewDistance))
 				return;
+			*/
 			
 			if(isLookingAtEnable && !OGUtils.isLookingAt(ClientSurface.getBlockCoordsLookingAt(player), new float[]{lookAtX, lookAtY, lookAtZ})){
-				return;				
+				return;
 			}
 			
-			if(text.length() < 1) return;
-			
 			FontRenderer fontRender = Minecraft.getMinecraft().fontRendererObj;			
-		
-			double offsetX = fontRender.getStringWidth(text)/2D;
-			double offsetY = fontRender.FONT_HEIGHT/2D;
+			offsetY = fontRender.FONT_HEIGHT/2D;
+			offsetX = fontRender.getStringWidth(text)/2D;
+						
+			int currentColor = this.applyModifiers(player, overlayActive);			
 			
-			this.setupDepthTest();
+			// center text on current block position
+			GL11.glTranslatef(0.5F, 0.5F, 0.5F); 
 			
-			GL11.glTranslatef(x, y, z);
-			GL11.glTranslatef(0.5F, 0.5F, 0.5F);
-			GL11.glScalef(scale, scale, scale);			
+			GL11.glScalef(0.1F, 0.1F, 0.1F);
 			
 			//align and rotate text facing the player
 			GL11.glTranslated(offsetX, offsetY, 0.0D);
@@ -90,8 +89,9 @@ public class FloatingText extends WidgetGLWorld implements ITextable{
 			GL11.glRotated(-player.rotationPitch,1.0D,0.0D,0.0D);
 			GL11.glTranslated(-offsetX, -offsetY, 0.0D);
 			
-			fontRender.drawString(text, 0, 0, OGUtils.getIntFromColor(r, g, b, alpha));
+			fontRender.drawString(text, 0, 0, currentColor);
 			GlStateManager.disableAlpha();
+			this.revokeModifiers();
 		}
 	}
 

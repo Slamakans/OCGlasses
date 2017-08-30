@@ -22,19 +22,13 @@ public class Cube3D extends WidgetGLWorld {
 	
 	@Override
 	public void writeData(ByteBuf buff) {
-		writeDataXYZ(buff);
-		writeDataROTATION(buff);
-		writeDataRGBA(buff);
-		writeDataSCALE(buff);
+		super.writeData(buff);
 		writeDataWORLD(buff);		
 	}
 
 	@Override
 	public void readData(ByteBuf buff) {
-		readDataXYZ(buff);
-		readDataROTATION(buff);
-		readDataRGBA(buff);		
-		readDataSCALE(buff);
+		super.readData(buff);
 		readDataWORLD(buff);		
 	}
 
@@ -52,28 +46,15 @@ public class Cube3D extends WidgetGLWorld {
 	@SideOnly(Side.CLIENT)
 	class RenderCube3D extends RenderableGLWidget{
 		@Override
-		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha) {
-			if(OGUtils.inRange(playerX, playerY, playerZ, x, y, z, distance)){
-				RayTraceResult pos = ClientSurface.getBlockCoordsLookingAt(player);
-				if(isLookingAtEnable && (pos == null || pos.getBlockPos().getX() != lookAtX || pos.getBlockPos().getY() != lookAtY || pos.getBlockPos().getZ() != lookAtZ) )
-						return;
-				drawCube3D(alpha);				
-			}
-		}
-		
-		public void drawCube3D(float alpha){ 				
-			boolean depthtest = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
-			boolean texture2d = GL11.glIsEnabled(GL11.GL_TEXTURE_2D);
+		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, boolean overlayActive) {
+			//if(!OGUtils.inRange(playerX, playerY, playerZ, x, y, z, distance)) return;
 			
-			this.setupDepthTest();
-			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			RayTraceResult pos = ClientSurface.getBlockCoordsLookingAt(player);
+			if(isLookingAtEnable && (pos == null || pos.getBlockPos().getX() != lookAtX || pos.getBlockPos().getY() != lookAtY || pos.getBlockPos().getZ() != lookAtZ) )
+				return;
 			
-			GL11.glTranslatef(x, y, z);
-			this.applyRotation();		 
-			
-			GL11.glScalef(scale, scale, scale);									 
-			GL11.glColor4f(r, g, b, alpha);
-			
+			this.applyModifiers(player, overlayActive);
+						
 			GL11.glBegin(GL11.GL_QUADS);    // Draw The Cube Using quads			    
 			GL11.glVertex3f(1.0f,1.0f,0.0f);    // Top Right Of The Quad (Top)
 			GL11.glVertex3f(0.0f,1.0f,0.0f);    // Top Left Of The Quad (Top)
@@ -106,15 +87,7 @@ public class Cube3D extends WidgetGLWorld {
 			GL11.glVertex3f(1.0f,0.0f,0.0f);    // Bottom Right Of The Quad (Right)		
 			GL11.glEnd();            // End Drawing The Cube
 						
-		    if(depthtest) 
-				GL11.glEnable(GL11.GL_DEPTH_TEST);
-			else
-				GL11.glDisable(GL11.GL_DEPTH_TEST);
-				
-			if(texture2d) 
-				GL11.glEnable(GL11.GL_TEXTURE_2D);
-			else
-				GL11.glDisable(GL11.GL_TEXTURE_2D);
+		    this.revokeModifiers();
 		}
 	}
 }

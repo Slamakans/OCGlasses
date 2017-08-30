@@ -16,23 +16,18 @@ public class AttributeRegistry {
 		addAtribute(IAttribute.class, IsVisible.class);
 		addAtribute(IAttribute.class, SetVisible.class);
 		addAtribute(IAttribute.class, SetVisibleCompat.class);
+		
+		addAtribute(IAttribute.class, AddColor.class);
+		addAtribute(IAttribute.class, AddTranslation.class);
+		addAtribute(IAttribute.class, AddRotation.class);
+		addAtribute(IAttribute.class, AddScale.class);
+		addAtribute(IAttribute.class, AddTexture.class);
+		addAtribute(IAttribute.class, GetModifiers.class);
+		addAtribute(IAttribute.class, RemoveModifier.class);
+		
 
-		addAtribute(IAlpha.class, GetAlpha.class);
-		addAtribute(IAlpha.class, SetAlpha.class);
-		addAtribute(IAlpha.class, GetAlphaHUD.class);
-		addAtribute(IAlpha.class, SetAlphaHUD.class);
-		
-		addAtribute(IColorizable.class, SetColor.class);
-		addAtribute(IColorizable.class, GetColor.class);
-		
-		addAtribute(IPositionable.class, SetPosition.class);
-		addAtribute(IPositionable.class, GetPosition.class);
-		
 		addAtribute(IResizable.class, GetSize.class);
 		addAtribute(IResizable.class, SetSize.class);
-		
-		addAtribute(I3DPositionable.class, SetPosition3D.class);
-		addAtribute(I3DPositionable.class, GetPosition3D.class);
 		
 		addAtribute(ITextable.class, SetText.class);
 		addAtribute(ITextable.class, GetText.class);
@@ -40,24 +35,12 @@ public class AttributeRegistry {
 		addAtribute(IItem.class, SetItem.class);
 		addAtribute(IItem.class, GetItem.class);
 		
-		addAtribute(IScalable.class, SetScale.class);
-		addAtribute(IScalable.class, GetScale.class);
-		
-		addAtribute(IRotateable.class, SetRotation.class);
-		addAtribute(IRotateable.class, GetRotation.class);
-		addAtribute(IRotateable.class, GetRotationX.class);
-		addAtribute(IRotateable.class, GetRotationY.class);
-		addAtribute(IRotateable.class, GetRotationZ.class);
-		
 		addAtribute(IThroughVisibility.class, SetVisibleThroughObjects.class);
 		addAtribute(IThroughVisibility.class, IsVisibleThroughObjects.class);
 		
 		addAtribute(I3DVertex.class, SetVertex.class);
 		addAtribute(I3DVertex.class, GetVertexCount.class);
-		
-		addAtribute(I2DVertex.class, SetVertex.class);
-		addAtribute(I2DVertex.class, GetVertexCount.class);
-		
+				
 		addAtribute(IViewDistance.class, SetViewDistance.class);
 		addAtribute(IViewDistance.class, GetViewDistance.class);
 		

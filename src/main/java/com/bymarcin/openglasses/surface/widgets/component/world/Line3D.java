@@ -23,17 +23,13 @@ public class Line3D extends WidgetGLWorld{
 	
 	@Override
 	public void writeData(ByteBuf buff) {
-		writeDataRGBA(buff);
-		writeDataSCALE(buff);
-		writeDataSIZE(buff);
+		super.writeData(buff);
 		writeDataWORLD(buff);
 	}
 
 	@Override
 	public void readData(ByteBuf buff) {
-		readDataRGBA(buff);
-		readDataSCALE(buff);
-		readDataSIZE(buff);
+		super.readData(buff);
 		readDataWORLD(buff);
 	}
 
@@ -52,17 +48,14 @@ public class Line3D extends WidgetGLWorld{
 	class RenderLine3D extends RenderableGLWidget{
 
 		@Override
-		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha) {
-			this.setupDepthTest();
-			GL11.glTranslated(x, y, z);
-			this.applyRotation();
-			GL11.glDisable(GL11.GL_TEXTURE_2D);
+		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, boolean overlayActive) {
+			this.applyModifiers(player, overlayActive);
 			GL11.glLineWidth(size);
-			GL11.glColor4f(r,g,b,alpha);
 			GL11.glBegin(GL11.GL_LINES);
-			GL11.glVertex3f(x, y, z);
-			GL11.glVertex3f(x+width, y+height, z);
-			GL11.glEnd();			
+			GL11.glVertex3f(0, 0, 0);
+			GL11.glVertex3f(width, height, 0);
+			GL11.glEnd();
+			this.revokeModifiers();
 		}
 	}
 }

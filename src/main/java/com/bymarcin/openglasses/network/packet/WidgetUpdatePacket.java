@@ -118,7 +118,7 @@ public class WidgetUpdatePacket extends Packet<WidgetUpdatePacket, IMessage>{
 	@Override
 	protected IMessage executeOnClient() {
 		switch(type){
-		case AddWigets: ClientSurface.instances.updateWigets(widgetList.entrySet());
+		case AddWigets: ClientSurface.instances.updateWidgets(widgetList.entrySet());
 			break;
 		case RemoveWidgets: ClientSurface.instances.removeWidgets(ids);
 			break;

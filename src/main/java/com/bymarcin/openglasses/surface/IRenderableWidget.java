@@ -9,9 +9,8 @@ import java.util.UUID;
 
 @SideOnly(Side.CLIENT)
 public interface IRenderableWidget {
-	public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha);
+	public void render(EntityPlayer player, double playerX, double playerY, double playerZ, boolean overlayActive);
 	public RenderType getRenderType();
 	public boolean shouldWidgetBeRendered();
 	public UUID getWidgetOwner();
-	public float getAlpha(boolean HUDactive);
 }

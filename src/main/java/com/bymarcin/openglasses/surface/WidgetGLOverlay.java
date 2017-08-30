@@ -1,34 +1,36 @@
 package com.bymarcin.openglasses.surface;
 
 import com.bymarcin.openglasses.surface.IRenderableWidget;
+import com.bymarcin.openglasses.surface.WidgetModifier;
+
 import com.bymarcin.openglasses.surface.RenderType;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IPositionable;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IScalable;
+import com.bymarcin.openglasses.surface.widgets.component.world.FloatingText;
+import com.bymarcin.openglasses.surface.widgets.component.face.Text;
+import com.bymarcin.openglasses.surface.widgets.component.face.ItemIcon;
+
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IResizable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IPrivate;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IRotateable;
 
+import com.bymarcin.openglasses.surface.WidgetType;
+
+import com.bymarcin.openglasses.surface.WidgetModifierType;
+import com.bymarcin.openglasses.surface.WidgetModifiers;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.entity.player.EntityPlayer;
 import io.netty.buffer.ByteBuf;
 import java.util.UUID;
+import java.util.List;
+import java.util.ArrayList;
 
-public abstract class WidgetGLOverlay extends Widget implements IPositionable, IColorizable, IAlpha, IScalable, IResizable, IPrivate, IRotateable {
+public abstract class WidgetGLOverlay extends Widget implements IResizable, IPrivate {
 	RenderType rendertype;
 	
-	public float scale = 1;
-	public float x = 0, y = 0, z = 0;
-	
-	public float r = 1, g = 1, b = 1, alpha = 1, alphaHUD = 1;	
 	public float width = 0, height = 0;
-	public float rotationX = 0, rotationY = 0, rotationZ = 0;
 	
 	public boolean isThroughVisibility = false;
 	
@@ -36,44 +38,12 @@ public abstract class WidgetGLOverlay extends Widget implements IPositionable, I
 		this.rendertype = RenderType.GameOverlayLocated;		
 	}
 	
-	public void writeDataXYZ(ByteBuf buff) {
-		buff.writeFloat(this.x);
-		buff.writeFloat(this.y);
-		buff.writeFloat(this.z);
+	public void writeData(ByteBuf buff) {
+		WidgetModifierList.writeData(buff);
 	}
 	
-	public void readDataXYZ(ByteBuf buff) {
-		this.x = buff.readFloat();
-		this.y = buff.readFloat();
-		this.z = buff.readFloat();
-	}
-	
-	public void writeDataROTATION(ByteBuf buff) {
-		buff.writeFloat(this.rotationX);
-		buff.writeFloat(this.rotationY);
-		buff.writeFloat(this.rotationZ);
-	}
-	
-	public void readDataROTATION(ByteBuf buff) {
-		this.rotationX = buff.readFloat();
-		this.rotationY = buff.readFloat();
-		this.rotationZ = buff.readFloat();
-	}
-	
-	public void writeDataRGBA(ByteBuf buff) {
-		buff.writeFloat(this.alpha);
-		buff.writeFloat(this.alphaHUD);
-		buff.writeFloat(this.r);
-		buff.writeFloat(this.g);
-		buff.writeFloat(this.b);		
-	}
-
-	public void readDataRGBA(ByteBuf buff) {
-		this.alpha = buff.readFloat();
-		this.alphaHUD = buff.readFloat();
-		this.r = buff.readFloat();
-		this.g = buff.readFloat();
-		this.b = buff.readFloat();
+	public void readData(ByteBuf buff) {
+		WidgetModifierList.readData(buff);
 	}
 
 	public void writeDataSIZE(ByteBuf buff) {
@@ -86,86 +56,10 @@ public abstract class WidgetGLOverlay extends Widget implements IPositionable, I
 		this.height = buff.readFloat();
 	}
 	
-	public void writeDataSCALE(ByteBuf buff) {
-		buff.writeFloat(this.scale);
-	}
-	
-	public void readDataSCALE(ByteBuf buff) {
-		this.scale = buff.readFloat();
-	}
-	
-	public void setPos(double x, double y) {
-		this.x = (float) x;
-		this.y = (float) y;
-	}
-	
-	public void setPos(double x, double y, double z) {
-		this.x = (float) x;
-		this.y = (float) y;
-		this.z = (float) z;
-	}	
-	
 	public void setSize(double w, double h) {
 		this.width = (float) w;
 		this.height = (float) h;
-	}
-	
-	public void setColor(double r, double g, double b) {
-		this.r = (float) r;
-		this.g = (float) g;
-		this.b = (float) b;
-	}
-	
-	public void setRotation(float rx, float ry, float rz){
-		rotationX = rx;
-		rotationY = ry;
-		rotationZ = rz;
-	}
-	
-	public double getPosX() {
-		return x; }
-
-	public double getPosY() {
-		return y; }
-		
-	public double getPosZ() {
-		return z; }
-
-	public float getColorR() {
-		return r; }
-
-	public float getColorG() {
-		return g; }
-
-	public float getColorB() {
-		return b; }
-
-	public float getAlpha() {
-		return alpha; }
-
-	public void setAlpha(double alpha) {
-		this.alpha = (float) alpha;	}
-
-	public float getAlphaHUD() {
-		return this.alphaHUD; }
-
-	public void setAlphaHUD(double alphaHUD) {
-		this.alphaHUD = (float) alphaHUD; }
-
-	public void setScale(double scale) {
-		this.scale = (float) scale; }
-
-	public double getScale() {
-		return this.scale; }
-	
-	public float getRotationX(){
-		return this.rotationX; }
-	
-	public float getRotationY(){
-		return this.rotationY; }
-	
-	public float getRotationZ(){
-		return this.rotationZ; }
+	}	
 	
 	public double getWidth() {
 		return this.width; }
@@ -175,22 +69,81 @@ public abstract class WidgetGLOverlay extends Widget implements IPositionable, I
 		
 	@SideOnly(Side.CLIENT)	
 	public class RenderableGLWidget implements IRenderableWidget {		
+		
+		boolean depthtest, texture2d, blending;
+		boolean doBlending, doTexture;
 		@Override
-		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha) {}
+		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, boolean overlayActive) {}
 		
-		public void applyRotation(){ //for now fixed XYZ
-			GL11.glRotatef(rotationX, 1, 0, 0);
-			GL11.glRotatef(rotationY, 0, 1, 0);
-			GL11.glRotatef(rotationZ, 0, 0, 1);
-		}
-		
-		public void setupDepthTest(){
+		public int applyModifiers(EntityPlayer player, boolean overlayActive){ 
+			depthtest = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
+			texture2d = GL11.glIsEnabled(GL11.GL_TEXTURE_2D);
+			blending = GL11.glIsEnabled(GL11.GL_BLEND);
+			
+			doBlending = false;
+			doTexture = false;
+			
 			if(isThroughVisibility)
 				GL11.glDisable(GL11.GL_DEPTH_TEST);
 			else
 				GL11.glEnable(GL11.GL_DEPTH_TEST);
-		}	
+			
+			GL11.glDisable(GL11.GL_LIGHTING);
 		
+			for(int i=0, count = WidgetModifierList.modifiers.size(); i < count; i++){
+				switch(WidgetModifierList.modifiers.get(i).getType()){
+					case WidgetModifierType.COLOR: if(WidgetModifierList.modifiers.get(i).getValues()[3] < 1) doBlending = true; break;
+					case WidgetModifierType.TEXTURE: doTexture = true; break;
+					default: break;
+				}
+			}
+			
+			WidgetType type = getType();	
+				
+			if(type == WidgetType.FLOATINGTEXT || type == WidgetType.TEXT){
+				doTexture = true;				
+			}
+			else if(type == WidgetType.ITEMICON){
+				doBlending = true;
+				doTexture = true;
+			}
+						
+			if(doTexture)
+				GL11.glEnable(GL11.GL_TEXTURE_2D);
+			else
+				GL11.glDisable(GL11.GL_TEXTURE_2D);
+				
+			if(doBlending){
+				GL11.glEnable(GL11.GL_BLEND);		//vertex based alpha
+				GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);							
+			}
+			else {
+				GL11.glDisable(GL11.GL_BLEND);				
+			}
+			
+			WidgetModifierList.apply(player, overlayActive);
+			
+			return WidgetModifierList.getCurrentColor();
+		}
+		 
+		
+		public void revokeModifiers(){ 
+			if(depthtest) 
+				GL11.glEnable(GL11.GL_DEPTH_TEST);
+			else
+				GL11.glDisable(GL11.GL_DEPTH_TEST);
+				
+			if(blending) 
+				GL11.glEnable(GL11.GL_BLEND);
+			else
+				GL11.glDisable(GL11.GL_BLEND);
+				
+			if(texture2d) 
+				GL11.glEnable(GL11.GL_TEXTURE_2D);
+			else
+				GL11.glDisable(GL11.GL_TEXTURE_2D);
+		}
+				
 		@Override
 		public boolean shouldWidgetBeRendered() {
 			return isVisible();
@@ -199,13 +152,6 @@ public abstract class WidgetGLOverlay extends Widget implements IPositionable, I
 		@Override
 		public UUID getWidgetOwner() {
 			return getOwnerUUID();
-		}
-		
-		@Override
-		public float getAlpha(boolean HUDactive){
-			if(HUDactive)
-				return alphaHUD;
-			return alpha;
 		}
 		
 		@Override

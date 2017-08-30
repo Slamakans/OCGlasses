@@ -19,9 +19,13 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.UsernameCache;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
+import com.bymarcin.openglasses.surface.WidgetModifiers;
+
 public abstract class Widget implements IAttribute{
 	boolean isVisible = true;
 	UUID widgetOwner = null;
+	
+	public WidgetModifiers WidgetModifierList = new WidgetModifiers();	
 	
 	public abstract void writeData(ByteBuf buff);
 

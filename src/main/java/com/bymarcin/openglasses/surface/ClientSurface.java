@@ -34,7 +34,7 @@ public class ClientSurface {
 	public Map<Integer, IRenderableWidget> renderablesWorld = new ConcurrentHashMap<Integer, IRenderableWidget>();
 	boolean isPowered = false;
 	public boolean haveGlasses = false;
-	public boolean HUDactive = false;
+	public boolean OverlayActive = false;
 	public Location lastBind;
 	IRenderableWidget noPowerRender;
 	
@@ -43,7 +43,7 @@ public class ClientSurface {
 	}	
 	
 	//gets the current widges and puts them to the correct hashmap
-	public void updateWigets(Set<Entry<Integer, Widget>> widgets){
+	public void updateWidgets(Set<Entry<Integer, Widget>> widgets){
 		for(Entry<Integer, Widget> widget : widgets){
 			IRenderableWidget r = widget.getValue().getRenderable();
 			switch(r.getRenderType()){
@@ -86,7 +86,7 @@ public class ClientSurface {
 		for(IRenderableWidget renderable : renderables.values()){
 			if(renderable.shouldWidgetBeRendered() && (renderable.getWidgetOwner() == null || playerUUID.equals(renderable.getWidgetOwner()))){
 				GL11.glPushMatrix();
-				renderable.render(null, 0, 0, 0, renderable.getAlpha(HUDactive));
+				renderable.render(null, 0, 0, 0, this.OverlayActive);
 				GL11.glPopMatrix();
 			}			
 		}
@@ -99,7 +99,7 @@ public class ClientSurface {
 			return false;
 		
 		if(!isPowered && noPowerRender != null){
-			noPowerRender.render(null, 0, 0, 0, noPowerRender.getAlpha(HUDactive)); 
+			noPowerRender.render(null, 0, 0, 0, this.OverlayActive); 
 			return false;
 		}
 		
@@ -110,6 +110,14 @@ public class ClientSurface {
 	}
 		
 	
+	public double[] getEntityPlayerLocation(EntityPlayer e, float partialTicks){
+		double x = (double) e.prevPosX + (e.posX - e.prevPosX) * partialTicks; 
+		double y = (double) e.prevPosY + (e.posY - e.prevPosY) * partialTicks;
+		double z = (double) e.prevPosZ + (e.posZ - e.prevPosZ) * partialTicks;
+		return new double[]{x, y, z};
+	}	 
+	
+	
 	@SubscribeEvent
 	public void renderWorldLastEvent(RenderWorldLastEvent event)	{	
 		if(!shouldRenderStart()) return;
@@ -118,38 +126,26 @@ public class ClientSurface {
 		EntityPlayer player= Minecraft.getMinecraft().thePlayer;
 		UUID playerUUID = player.getGameProfile().getId();		
 		
-		double playerX = player.prevPosX + (player.posX - player.prevPosX) * event.getPartialTicks(); 
-		double playerY = player.prevPosY + (player.posY - player.prevPosY) * event.getPartialTicks();
-		double playerZ = player.prevPosZ + (player.posZ - player.prevPosZ) * event.getPartialTicks();
-		
-		boolean glBlend = GL11.glIsEnabled(GL11.GL_BLEND);
-		
+		double[] playerLocation = getEntityPlayerLocation(player, event.getPartialTicks());
+						
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glPushMatrix();
 		
-		GL11.glTranslated(-playerX, -playerY, -playerZ);
+		GL11.glTranslated(-playerLocation[0], -playerLocation[1], -playerLocation[2]);
 		GL11.glTranslated(lastBind.x, lastBind.y, lastBind.z);
 		
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glDisable(GL11.GL_LIGHTING);
-		GL11.glDepthMask(false);		
-		
+		GL11.glDepthMask(false);
 		//Start Drawing In World		
 		for(IRenderableWidget renderable : renderablesWorld.values()){
 			if(renderable.shouldWidgetBeRendered() && (renderable.getWidgetOwner() == null || playerUUID.equals(renderable.getWidgetOwner()))){
 				GL11.glPushMatrix();
-				renderable.render(player, playerX - lastBind.x, playerY - lastBind.y, playerZ - lastBind.z, renderable.getAlpha(HUDactive));
+				renderable.render(player, playerLocation[0] - lastBind.x, playerLocation[1] - lastBind.y, playerLocation[2] - lastBind.z, this.OverlayActive);
 				GL11.glPopMatrix();	
 			}
 		}		
 		//Stop Drawing In World
 		GL11.glPopMatrix();		
 		GL11.glPopAttrib();
-					
-		if(glBlend)
-			GL11.glEnable(GL11.GL_BLEND);
-		else
-			GL11.glDisable(GL11.GL_BLEND);
 	}
 	
 	public static RayTraceResult getBlockCoordsLookingAt(EntityPlayer player){
@@ -169,9 +165,7 @@ public class ClientSurface {
 	private IRenderableWidget getNoPowerRender(){
 		Text t = new Text();
 		t.setText("NO POWER");
-		t.setAlpha(0.5);
-		t.setScale(1);
-		t.setColor(1, 0, 0);
+		t.WidgetModifierList.addColor(1F, 0F, 0F, 0.5F);		
 		return t.getRenderable();
 	}
 	

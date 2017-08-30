@@ -13,6 +13,7 @@ import org.lwjgl.opengl.GL11;
 import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.WidgetGLWorld;
 import com.bymarcin.openglasses.surface.WidgetType;
+
 import com.bymarcin.openglasses.utils.OGUtils;
 
 public class Dot3D extends WidgetGLWorld  {
@@ -20,17 +21,13 @@ public class Dot3D extends WidgetGLWorld  {
 	
 	@Override
 	public void writeData(ByteBuf buff) {
-		writeDataRGBA(buff);
-		writeDataXYZ(buff);
-		writeDataSCALE(buff);
+		super.writeData(buff);
 		writeDataWORLD(buff);
 	}
 
 	@Override
 	public void readData(ByteBuf buff) {
-		readDataRGBA(buff);
-		readDataXYZ(buff);
-		readDataSCALE(buff);
+		super.readData(buff);
 		readDataWORLD(buff);			
 	}
 
@@ -48,23 +45,19 @@ public class Dot3D extends WidgetGLWorld  {
 	@SideOnly(Side.CLIENT)
 	class RenderDot3D extends RenderableGLWidget{
 		@Override
-		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, float alpha) {
-			if(!OGUtils.inRange(playerX, playerY, playerZ, x, y, z, distance)) return;
-			
-			this.setupDepthTest();			
-			GL11.glDisable(GL11.GL_TEXTURE_2D);
-			GL11.glTranslated(-x, -y, -z);
-			this.applyRotation();
+		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, boolean overlayActive) {
+			//if(!OGUtils.inRange(playerX, playerY, playerZ, x, y, z, distance)) return;
+
+			this.applyModifiers(player, overlayActive);
 			GL11.glRotated(-player.rotationYaw,0,1,0);
 			GL11.glRotated(player.rotationPitch,1,0,0);
-			GL11.glScalef(scale, scale, scale);
-			GL11.glColor4f(r,g,b,alpha);		
 			GL11.glBegin(GL11.GL_QUADS);	
 			GL11.glVertex3f(1/2, 1/2, 0);
 			GL11.glVertex3f(1/2, -1/2, 0);
 			GL11.glVertex3f(-1/2, -1/2, 0);
 			GL11.glVertex3f(-1/2, 1/2, 0);
 			GL11.glEnd();
+			this.revokeModifiers();
 		}
 	}
 }
