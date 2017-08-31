@@ -3,9 +3,13 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.util.math.BlockPos;
 
-//import net.minecraft.world.World; 
-import net.minecraft.world.IBlockAccess; 
 import net.minecraft.entity.player.EntityPlayer;
+
+import net.minecraft.block.material.Material;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 public class OGUtils {
 	
@@ -39,7 +43,10 @@ public class OGUtils {
     }
     
     public static boolean isPlayerSwimming(EntityPlayer e){
-		//if (this.status != EntityBoat.Status.UNDER_WATER && this.status != EntityBoat.Status.UNDER_FLOWING_WATER)		
+		if(e.world.getBlockState(new BlockPos(e.posX, e.posY, e.posZ)).getMaterial().isLiquid()
+			|| e.world.getBlockState(new BlockPos(e.posX, e.posY+1, e.posZ)).getMaterial().isLiquid())
+			return true;
+			
 		return false;
 	}
     
@@ -52,19 +59,4 @@ public class OGUtils {
 		//return e.world.getBiomeGenForCoords(e.getPosition()).getFloatTemperature();
 		return 0;
 	}
-			
-	public static void setBit(byte[] data, int pos, int val) {
-      short posBit = (short) (pos%8);
-      byte oldByte = data[pos/8];
-      oldByte = (byte) (((0xFF7F>>posBit) & oldByte) & 0x00FF);
-      byte newByte = (byte) ((val<<(8-(posBit+1))) | oldByte);
-      data[pos/8] = newByte;
-   }
-   
-   public static boolean getBit(byte[] data, int pos) {
-      if((data[pos/8]>>(8-((pos%8)+1)) & 0x0001) == 0)  
-		return true;
-	  
-	  return false;
-   }    
 }

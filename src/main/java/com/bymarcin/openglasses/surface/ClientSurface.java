@@ -76,7 +76,7 @@ public class ClientSurface {
 		if(!shouldRenderStart()) return;
 		if(renderables.size() < 1) return;
 		
-		EntityPlayer player= Minecraft.getMinecraft().player;
+		EntityPlayer player = Minecraft.getMinecraft().player;
 		UUID playerUUID = player.getGameProfile().getId();		
 		
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
@@ -86,7 +86,7 @@ public class ClientSurface {
 		for(IRenderableWidget renderable : renderables.values()){
 			if(renderable.shouldWidgetBeRendered() && (renderable.getWidgetOwner() == null || playerUUID.equals(renderable.getWidgetOwner()))){
 				GL11.glPushMatrix();
-				renderable.render(null, 0, 0, 0, this.OverlayActive);
+				renderable.render(player, player.posX, player.posY, player.posZ, this.OverlayActive);
 				GL11.glPopMatrix();
 			}			
 		}
@@ -99,7 +99,8 @@ public class ClientSurface {
 			return false;
 		
 		if(!isPowered && noPowerRender != null){
-			noPowerRender.render(null, 0, 0, 0, this.OverlayActive); 
+			EntityPlayer player = Minecraft.getMinecraft().player;		
+			noPowerRender.render(player, player.posX, player.posY, player.posZ, this.OverlayActive); 
 			return false;
 		}
 		

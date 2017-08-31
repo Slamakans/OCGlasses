@@ -24,7 +24,6 @@ public abstract class WidgetModifier{
 			if(overlayActive != false) return false;
 		}
 		
-		
 		// do timeintense calls after this, so they didnt get called to often
 		pollIntervalCounter++;
 		if(pollIntervalCounter % 30 != 0) 
@@ -39,10 +38,18 @@ public abstract class WidgetModifier{
 		if(((conditions >>> WidgetModifierConditionType.IS_LIGHTLEVEL_MAX) & 1) != 0) {		
 			if(OGUtils.getLightLevelPlayer(player) > condition_lightlevel_max) return false;
 		}
-		if(((conditions >>> WidgetModifierConditionType.IS_WEATHER_RAIN) & 1) != 0) {}
-		if(((conditions >>> WidgetModifierConditionType.IS_WEATHER_CLEAR) & 1) != 0) {}
-		if(((conditions >>> WidgetModifierConditionType.IS_SWIMMING) & 1) != 0) {}
-		if(((conditions >>> WidgetModifierConditionType.IS_NOT_SWIMMING) & 1) != 0) {}
+		if(((conditions >>> WidgetModifierConditionType.IS_WEATHER_RAIN) & 1) != 0) {
+			if(player.world.isRaining() == false) return false;
+		}
+		if(((conditions >>> WidgetModifierConditionType.IS_WEATHER_CLEAR) & 1) != 0) {
+			if(player.world.isRaining() == true) return false;
+		}
+		if(((conditions >>> WidgetModifierConditionType.IS_SWIMMING) & 1) != 0) {
+			if(OGUtils.isPlayerSwimming(player) == false) return false;
+		}
+		if(((conditions >>> WidgetModifierConditionType.IS_NOT_SWIMMING) & 1) != 0) {
+			if(OGUtils.isPlayerSwimming(player) == true) return false;
+		}
 		if(((conditions >>> WidgetModifierConditionType.IS_SNEAKING) & 1) != 0) {
 			if(player.isSneaking() == false) return false;
 		}
