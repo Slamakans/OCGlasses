@@ -28,8 +28,7 @@ public class BaublesRenderLayer implements IRenderBauble, LayerRenderer<EntityLi
 	static ResourceLocation texture;
 	
 	public BaublesRenderLayer(){
-		Minecraft mc = Minecraft.getMinecraft();
-		this.model = ForgeHooksClient.getArmorModel(mc.thePlayer, new ItemStack(new OpenGlassesItem()), EntityEquipmentSlot.HEAD, new ModelBiped());
+		this.model = ForgeHooksClient.getArmorModel(Minecraft.getMinecraft().player, new ItemStack(new OpenGlassesItem()), EntityEquipmentSlot.HEAD, new ModelBiped());
 		this.texture = new ResourceLocation("openglasses:textures/models/glasses.png");
 	}
 	

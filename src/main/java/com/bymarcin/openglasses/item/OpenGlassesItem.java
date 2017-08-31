@@ -69,6 +69,6 @@ public class OpenGlassesItem extends ItemArmor {
 		tag.setInteger("Z", uuid.z);
 		tag.setInteger("DIM", uuid.dimID);
 		tag.setLong("uniqueKey", uuid.uniqueKey);
-		tag.setString("user",  Minecraft.getMinecraft().thePlayer.getGameProfile().getId().toString());
+		tag.setString("user",  Minecraft.getMinecraft().player.getGameProfile().getId().toString());
 	}
 }

@@ -60,7 +60,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
 		if(loc!=null){
 			return loc;
 		}
-		return loc = new Location(getPos(), worldObj.provider.getDimension(), UUID.randomUUID().getMostSignificantBits());
+		return loc = new Location(getPos(), world.provider.getDimension(), UUID.randomUUID().getMostSignificantBits());
 	}
 	
 	public void onGlassesPutOn(String user){
@@ -325,7 +325,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
             Network.joinOrCreateNetwork(this);
         }
         
-		if(worldObj.isRemote) return;
+		if(world.isRemote) return;
 		boolean lastStatus = isPowered;
 		if((node()!=null) && ((Connector)node()).tryChangeBuffer(-widgetList.size()/10f*OpenGlasses.energyMultiplier) ){
 			isPowered = true;

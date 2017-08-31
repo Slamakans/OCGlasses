@@ -1,5 +1,11 @@
 package com.bymarcin.openglasses.utils;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.EnumSkyBlock;
+import net.minecraft.util.math.BlockPos;
+
+//import net.minecraft.world.World; 
+import net.minecraft.world.IBlockAccess; 
+import net.minecraft.entity.player.EntityPlayer;
 
 public class OGUtils {
 	
@@ -27,4 +33,26 @@ public class OGUtils {
 					
 		return true;
 	}
+	
+	public static int getLightLevelPlayer(EntityPlayer e){		
+		return (int) e.world.getLightFor(EnumSkyBlock.SKY, new BlockPos(e.posX, e.posY + 1, e.posZ));
+    }
+    
+    public static boolean isPlayerSwimming(EntityPlayer e){
+		//if (this.status != EntityBoat.Status.UNDER_WATER && this.status != EntityBoat.Status.UNDER_FLOWING_WATER)		
+		return false;
+	}
+    
+    public static String getPlayerBiomeName(EntityPlayer e){		
+		//return e.world.getBiomeGenForCoords(e.getPosition()).biomeName;
+		return "";
+	}
+	
+	public static float getPlayerBiomeTemp(EntityPlayer e){		
+		//return e.world.getBiomeGenForCoords(e.getPosition()).getFloatTemperature();
+		return 0;
+	}
+			
+		
+    
 }

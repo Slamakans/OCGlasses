@@ -38,7 +38,7 @@ public class ClientEventHandler {
 
 	@SubscribeEvent
 	public void onPlayerTick(PlayerTickEvent e){
-		if(e.player != Minecraft.getMinecraft().thePlayer) return;
+		if(e.player != Minecraft.getMinecraft().player) return;
 		tick++;
 		if(tick%20 != 0) return;
 		
@@ -68,7 +68,7 @@ public class ClientEventHandler {
 	
 	@SubscribeEvent
 	public void onJoin(EntityJoinWorldEvent e){
-		if ((e.getEntity() == Minecraft.getMinecraft().thePlayer) && (e.getWorld().isRemote)){
+		if ((e.getEntity() == Minecraft.getMinecraft().player) && (e.getWorld().isRemote)){
 			ClientSurface.instances.removeAllWidgets();
 			ClientSurface.instances.haveGlasses = false;
 		}

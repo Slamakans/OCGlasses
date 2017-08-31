@@ -9,9 +9,11 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import java.util.List;
 import java.util.ArrayList;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.bymarcin.openglasses.utils.OGUtils;
+
 
 public class WidgetModifiers {
 	public ArrayList<WidgetModifier> modifiers = new ArrayList<WidgetModifier>();
@@ -49,8 +51,13 @@ public class WidgetModifiers {
 		}
 		return OGUtils.getIntFromColor(1, 1, 1, 1);
 	}
-		
+	
+			
+	
 	public void apply(EntityPlayer player, boolean overlayActive){
+		
+		//int foo = OGUtils.getLightLevelPlayer(player)
+		
 		for(int i=0, count = this.modifiers.size(); i < count; i++) 
 			this.modifiers.get(i).apply(player, overlayActive);
 	}

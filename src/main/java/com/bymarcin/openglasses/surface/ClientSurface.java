@@ -76,7 +76,7 @@ public class ClientSurface {
 		if(!shouldRenderStart()) return;
 		if(renderables.size() < 1) return;
 		
-		EntityPlayer player= Minecraft.getMinecraft().thePlayer;
+		EntityPlayer player= Minecraft.getMinecraft().player;
 		UUID playerUUID = player.getGameProfile().getId();		
 		
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
@@ -123,7 +123,7 @@ public class ClientSurface {
 		if(!shouldRenderStart()) return;
 		if(renderablesWorld.size() < 1) return;
 		
-		EntityPlayer player= Minecraft.getMinecraft().thePlayer;
+		EntityPlayer player= Minecraft.getMinecraft().player;
 		UUID playerUUID = player.getGameProfile().getId();		
 		
 		double[] playerLocation = getEntityPlayerLocation(player, event.getPartialTicks());
