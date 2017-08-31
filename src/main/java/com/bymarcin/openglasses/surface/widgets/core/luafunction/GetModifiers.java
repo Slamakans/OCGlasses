@@ -15,13 +15,16 @@ public class GetModifiers extends LuaFunction{
 		super.call(context, arguments);
 		Widget widget = getSelf().getWidget(); 
 		
-		Object[] foo;
+		Object[] foo = new Object[widget.WidgetModifierList.modifiers.size()];
 		
-		for(WidgetModifier mod : widget.WidgetModifierList.modifiers){
-			switch(mod.getType()){
-				default:
-				return null;
-			}			
+		if(widget != null){
+			int i=0;
+			for(WidgetModifier mod : widget.WidgetModifierList.modifiers){
+				foo[i] = new Object[]{ WidgetModifierType.getName(mod.getType()), mod.getValues() };
+				i++;				
+			}
+			
+			return foo;
 		}
 		
 		throw new RuntimeException("Component does not exists!");
