@@ -101,7 +101,8 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 			WidgetType type = getType();	
 				
 			if(type == WidgetType.FLOATINGTEXT || type == WidgetType.TEXT){
-				doTexture = true;				
+				doTexture = true;
+				GL11.glDisable(GL11.GL_ALPHA_TEST);
 			}
 			else if(type == WidgetType.ITEMICON){
 				doBlending = true;
@@ -123,7 +124,7 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 			
 			WidgetModifierList.apply(player, overlayActive);
 			
-			return WidgetModifierList.getCurrentColor();
+			return WidgetModifierList.getCurrentColor(player, overlayActive);
 		}
 		 
 		

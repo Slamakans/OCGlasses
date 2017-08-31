@@ -13,7 +13,8 @@ public class RemoveModifier extends LuaFunction{
 		super.call(context, arguments);
 		Widget widget = getSelf().getWidget();
 		if(widget != null){
-			widget.WidgetModifierList.remove(arguments.checkInteger(0));
+			int index = arguments.checkInteger(0) - 1;
+			widget.WidgetModifierList.remove(index);
 			getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());
 			return null;
 		}

@@ -6,7 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import org.lwjgl.opengl.GL11;
 import io.netty.buffer.ByteBuf;
 
-public class WidgetModifierColor implements WidgetModifier {
+public class WidgetModifierColor extends WidgetModifier {
 	float r, g, b, alpha;
 	
 	public WidgetModifierColor(float r, float g, float b, float alpha){
@@ -14,6 +14,8 @@ public class WidgetModifierColor implements WidgetModifier {
 	}
 		
 	public void apply(EntityPlayer player, boolean overlayActive){	
+		if(!shouldApplyModifier(player, overlayActive)) return;
+		
 		if(this.alpha < 1)
 			GL11.glColor4f(this.r, this.g, this.b, this.alpha);
 		else
@@ -21,6 +23,7 @@ public class WidgetModifierColor implements WidgetModifier {
 	}
 	
 	public void writeData(ByteBuf buff) {
+		super.writeData(buff);
 		buff.writeFloat(this.r);
 		buff.writeFloat(this.g);
 		buff.writeFloat(this.b);
@@ -28,6 +31,7 @@ public class WidgetModifierColor implements WidgetModifier {
 	}
 	
 	public void readData(ByteBuf buff) {
+		super.readData(buff);
 		this.setColor(buff.readFloat(), buff.readFloat(), buff.readFloat(), buff.readFloat());
 	}
 	

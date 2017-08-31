@@ -24,6 +24,7 @@ public class AttributeRegistry {
 		addAtribute(IAttribute.class, AddTexture.class);
 		addAtribute(IAttribute.class, GetModifiers.class);
 		addAtribute(IAttribute.class, RemoveModifier.class);
+		addAtribute(IAttribute.class, SetCondition.class);
 		
 
 		addAtribute(IResizable.class, GetSize.class);
@@ -48,7 +49,7 @@ public class AttributeRegistry {
 		addAtribute(ILookable.class, GetLookingAt.class);
 		
 		addAtribute(IPrivate.class, SetOwner.class);
-		addAtribute(IPrivate.class, GetOwner.class);		
+		addAtribute(IPrivate.class, GetOwner.class);
 		addAtribute(IPrivate.class, GetOwnerUUID.class);		
 	}
 	

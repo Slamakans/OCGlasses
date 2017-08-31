@@ -20,7 +20,7 @@ public class GetModifiers extends LuaFunction{
 		if(widget != null){
 			int i=0;
 			for(WidgetModifier mod : widget.WidgetModifierList.modifiers){
-				foo[i] = new Object[]{ WidgetModifierType.getName(mod.getType()), mod.getValues() };
+				foo[i] = new Object[]{ (i+1), WidgetModifierType.getName(mod.getType()), mod.getValues(), mod.getConditions() };
 				i++;				
 			}
 			

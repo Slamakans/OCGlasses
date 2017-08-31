@@ -6,7 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import org.lwjgl.opengl.GL11;
 import io.netty.buffer.ByteBuf;
 
-public class WidgetModifierRotate implements WidgetModifier {
+public class WidgetModifierRotate extends WidgetModifier {
 	float deg, x, y, z;
 		
 	public WidgetModifierRotate(float deg, float x, float y, float z){
@@ -17,10 +17,12 @@ public class WidgetModifierRotate implements WidgetModifier {
 	}
 		
 	public void apply(EntityPlayer player, boolean overlayActive){	
+		if(!shouldApplyModifier(player, overlayActive)) return;
 		GL11.glRotatef(this.deg, this.x, this.y, this.z);
 	}
 	
 	public void writeData(ByteBuf buff) {
+		super.writeData(buff);
 		buff.writeFloat(this.deg);
 		buff.writeFloat(this.x);
 		buff.writeFloat(this.y);
@@ -28,6 +30,7 @@ public class WidgetModifierRotate implements WidgetModifier {
 	}
 	
 	public void readData(ByteBuf buff) {
+		super.readData(buff);
 		this.deg = buff.readFloat();
 		this.x = buff.readFloat();
 		this.y = buff.readFloat();

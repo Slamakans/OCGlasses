@@ -7,7 +7,6 @@ import com.bymarcin.openglasses.surface.widgets.core.modifiers.*;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.entity.player.EntityPlayer;
-import java.util.List;
 import java.util.ArrayList;
 
 import org.apache.logging.log4j.LogManager;
@@ -17,6 +16,19 @@ import com.bymarcin.openglasses.utils.OGUtils;
 
 public class WidgetModifiers {
 	public ArrayList<WidgetModifier> modifiers = new ArrayList<WidgetModifier>();
+	
+	
+	public void setCondition(int modifierIndex, short conditionIndex, boolean state, short lightLevel){
+		switch(conditionIndex){
+		  case 1: this.modifiers.get(modifierIndex).condition_lightlevel_min = lightLevel; break;
+		  case 2: this.modifiers.get(modifierIndex).condition_lightlevel_max = lightLevel; break;
+		}
+		this.modifiers.get(modifierIndex).configureCondition(conditionIndex, state);
+	}
+	
+	public void setCondition(int modifierIndex, short conditionIndex, boolean state){
+		this.modifiers.get(modifierIndex).configureCondition(conditionIndex, state);
+	}
 	
 	public void addTranslate(float x, float y, float z){
 		this.modifiers.add(new WidgetModifierTranslate(x, y, z));		
@@ -42,22 +54,18 @@ public class WidgetModifiers {
 		return this.modifiers.get(element).getType();	
 	}
 	
-	public int getCurrentColor(){
-		for(int i=0, count = this.modifiers.size(); i < count; i++){
-			if(this.modifiers.get(i).getType() == WidgetModifierType.COLOR){
+	public int getCurrentColor(EntityPlayer player, boolean overlayActive){
+		for(int i=this.modifiers.size() - 1; i >= 0; i--){
+			if(this.modifiers.get(i).getType() == WidgetModifierType.COLOR &&
+				this.modifiers.get(i).shouldApplyModifier(player, overlayActive) == true){
 				float[] color = this.modifiers.get(i).getValues();
 				return OGUtils.getIntFromColor(color[0], color[1], color[2], color[3]);
 			}
 		}
 		return OGUtils.getIntFromColor(1, 1, 1, 1);
-	}
-	
-			
+	}	
 	
 	public void apply(EntityPlayer player, boolean overlayActive){
-		
-		//int foo = OGUtils.getLightLevelPlayer(player)
-		
 		for(int i=0, count = this.modifiers.size(); i < count; i++) 
 			this.modifiers.get(i).apply(player, overlayActive);
 	}

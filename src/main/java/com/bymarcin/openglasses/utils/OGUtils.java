@@ -53,6 +53,18 @@ public class OGUtils {
 		return 0;
 	}
 			
-		
-    
+	public static void setBit(byte[] data, int pos, int val) {
+      short posBit = (short) (pos%8);
+      byte oldByte = data[pos/8];
+      oldByte = (byte) (((0xFF7F>>posBit) & oldByte) & 0x00FF);
+      byte newByte = (byte) ((val<<(8-(posBit+1))) | oldByte);
+      data[pos/8] = newByte;
+   }
+   
+   public static boolean getBit(byte[] data, int pos) {
+      if((data[pos/8]>>(8-((pos%8)+1)) & 0x0001) == 0)  
+		return true;
+	  
+	  return false;
+   }    
 }
