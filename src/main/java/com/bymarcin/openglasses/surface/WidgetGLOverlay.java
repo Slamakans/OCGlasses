@@ -92,7 +92,7 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 		
 			for(int i=0, count = WidgetModifierList.modifiers.size(); i < count; i++){
 				switch(WidgetModifierList.modifiers.get(i).getType()){
-					case WidgetModifierType.COLOR: if(WidgetModifierList.modifiers.get(i).getValues()[3] < 1) doBlending = true; break;
+					case WidgetModifierType.COLOR: if((float) WidgetModifierList.modifiers.get(i).getValues()[3] < 1) doBlending = true; break;
 					case WidgetModifierType.TEXTURE: doTexture = true; break;
 					default: break;
 				}
@@ -104,7 +104,7 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 				doTexture = true;
 				GL11.glDisable(GL11.GL_ALPHA_TEST);
 			}
-			else if(type == WidgetType.ITEMICON){
+			else if(type == WidgetType.ITEMICON || type == WidgetType.ITEM3D){
 				doBlending = true;
 				doTexture = true;
 			}

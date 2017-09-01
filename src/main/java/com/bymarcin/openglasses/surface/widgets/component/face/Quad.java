@@ -34,6 +34,17 @@ public class Quad extends TriangleWidget {
 			GL11.glVertex3f(width, height, 0);
 			GL11.glVertex3f(width, 0, 0);		
 			GL11.glEnd();
+			/*Tessellator tessellator = Tessellator.getInstance();
+			tessellator.startDrawingQuads();
+			//int lightValue = block.getMixedBrightnessForBlock(world, x, y, z);
+			tessellator.setBrightness(0.5);
+			tessellator.setColorOpaque_F(1.0F, 1.0F, 1.0F);
+			this.applyModifiers(player, overlayActive);
+			
+			tessellator.putTiledTextureQuads(vertexBuffer, x, y, width, height, depth, sprite)
+			
+			tessellator.draw();
+			*/
 			this.revokeModifiers();
 		}
 	}

@@ -41,7 +41,7 @@ public class WidgetModifierRotate extends WidgetModifier {
 		return WidgetModifierType.ROTATE;
 	}	
 	
-	public float[] getValues(){
-		return new float[]{ this.deg, this.x, this.y, this.z };
+	public Object[] getValues(){
+		return new Object[]{ this.deg, this.x, this.y, this.z };
 	}
 }

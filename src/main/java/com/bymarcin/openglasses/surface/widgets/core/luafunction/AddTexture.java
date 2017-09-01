@@ -13,8 +13,7 @@ public class AddTexture extends LuaFunction{
 		super.call(context, arguments);
 		Widget widget = getSelf().getWidget();
 		if(widget != null){
-			//arguments.checkDouble(0)
-			//widget.WidgetModifierList.addTexture();
+			widget.WidgetModifierList.addTexture(arguments.checkString(0));
 			getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());
 			return null;
 		}

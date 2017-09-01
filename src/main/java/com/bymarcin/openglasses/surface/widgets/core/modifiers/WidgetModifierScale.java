@@ -38,7 +38,7 @@ public class WidgetModifierScale extends WidgetModifier {
 		return WidgetModifierType.SCALE;
 	}
 	
-	public float[] getValues(){
-		return new float[]{ this.x, this.y, this.z };
+	public Object[] getValues(){
+		return new Object[]{ this.x, this.y, this.z };
 	}
 }

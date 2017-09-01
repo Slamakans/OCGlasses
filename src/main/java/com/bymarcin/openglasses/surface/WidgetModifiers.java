@@ -13,6 +13,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.bymarcin.openglasses.utils.OGUtils;
 
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 public class WidgetModifiers {
 	public ArrayList<WidgetModifier> modifiers = new ArrayList<WidgetModifier>();
@@ -46,6 +48,10 @@ public class WidgetModifiers {
 		this.modifiers.add(new WidgetModifierColor(r, g, b, alpha));	
 	}
 	
+	public void addTexture(String texloc) {
+		this.modifiers.add(new WidgetModifierTexture(texloc));
+	}
+	
 	public void remove(int element){
 		this.modifiers.remove(element);		
 	}
@@ -58,8 +64,8 @@ public class WidgetModifiers {
 		for(int i=this.modifiers.size() - 1; i >= 0; i--){
 			if(this.modifiers.get(i).getType() == WidgetModifierType.COLOR &&
 				this.modifiers.get(i).shouldApplyModifier(player, overlayActive) == true){
-				float[] color = this.modifiers.get(i).getValues();
-				return OGUtils.getIntFromColor(color[0], color[1], color[2], color[3]);
+				Object[] color = this.modifiers.get(i).getValues();
+				return OGUtils.getIntFromColor((float) color[0], (float) color[1], (float) color[2], (float) color[3]);
 			}
 		}
 		return OGUtils.getIntFromColor(1, 1, 1, 1);
@@ -87,7 +93,7 @@ public class WidgetModifiers {
 				case WidgetModifierType.COLOR: this.addColor(0F, 0F, 0F, 0F); break;
 				case WidgetModifierType.SCALE: this.addScale(0F, 0F, 0F); break;
 				case WidgetModifierType.ROTATE: this.addRotate(0F, 0F, 0F, 0F); break;
-				//case WidgetModifierType.TEXTURE: addTexture(); break;
+				case WidgetModifierType.TEXTURE: this.addTexture(null); break;
 				default: this.remove(i); return; //remove modifier if we get bs
 			}
 			this.modifiers.get(i).readData(buff);

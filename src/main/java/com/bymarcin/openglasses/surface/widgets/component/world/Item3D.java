@@ -1,7 +1,7 @@
 package com.bymarcin.openglasses.surface.widgets.component.face;
 
 import com.bymarcin.openglasses.surface.IRenderableWidget;
-import com.bymarcin.openglasses.surface.WidgetGLOverlay;
+import com.bymarcin.openglasses.surface.WidgetGLWorld;
 import com.bymarcin.openglasses.surface.WidgetType;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IItem;
 
@@ -29,7 +29,7 @@ import net.minecraft.util.EnumFacing;
 import java.util.List;
 import java.awt.Color;
 
-public class ItemIcon extends Dot implements IItem{
+public class Item3D extends WidgetGLWorld implements IItem{
 	ItemStack itmStack = null;
 	
 	@Override
@@ -54,16 +54,15 @@ public class ItemIcon extends Dot implements IItem{
 
 	@Override
 	public WidgetType getType() {
-		return WidgetType.ITEMICON;
+		return WidgetType.ITEM3D;
 	}
 
 	@SideOnly(Side.CLIENT)
-	@Override
 	public IRenderableWidget getRenderable() {
-		return new RenderableItemIcon();
+		return new RenderableItem3D();
 	}
 	
-	class RenderableItemIcon extends RenderableGLWidget{
+	class RenderableItem3D extends RenderableGLWidget{
 		@Override
 		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, boolean overlayActive) {
 			if(itmStack == null) return;

@@ -46,7 +46,7 @@ public class WidgetModifierColor extends WidgetModifier {
 		return WidgetModifierType.COLOR;
 	}
 	
-	public float[] getValues(){
-		return new float[]{ this.r, this.g, this.b, this.alpha };
+	public Object[] getValues(){
+		return new Object[]{ this.r, this.g, this.b, this.alpha };
 	}
 }

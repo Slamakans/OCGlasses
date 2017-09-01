@@ -79,6 +79,7 @@ public abstract class WidgetModifier{
 		return foo;
 	}
 	
+	
 	public void writeData(ByteBuf buff){
 		//sync conditions
 		buff.writeInt(conditions);
@@ -103,5 +104,5 @@ public abstract class WidgetModifier{
 	//this stuff should be overwritten by childs
 	public void apply(EntityPlayer player, boolean overlayActive){};	
 	public short getType(){ return 0; };
-	public float[] getValues(){ return null; };
+	public Object[] getValues(){ return null; };
 }
