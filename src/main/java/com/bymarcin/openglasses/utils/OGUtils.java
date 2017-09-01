@@ -51,12 +51,11 @@ public class OGUtils {
 	}
     
     public static String getPlayerBiomeName(EntityPlayer e){		
-		//return e.world.getBiomeGenForCoords(e.getPosition()).biomeName;
-		return "";
+		return e.world.getBiome(e.getPosition()).getBiomeName();
 	}
 	
-	public static float getPlayerBiomeTemp(EntityPlayer e){		
-		//return e.world.getBiomeGenForCoords(e.getPosition()).getFloatTemperature();
-		return 0;
+	public static float getPlayerBiomeTemp(EntityPlayer e){	
+		BlockPos pos = e.getPosition();	
+		return e.world.getBiome(pos).getFloatTemperature(pos);
 	}
 }
