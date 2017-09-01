@@ -43,14 +43,14 @@ public class SquareWidget extends WidgetGLOverlay {
 	public class RenderableSquareWidget extends RenderableGLWidget{
 		@Override
 		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, boolean overlayActive) {
-				this.applyModifiers(player, overlayActive);
-				GL11.glBegin(GL11.GL_QUADS);
-				GL11.glVertex3f(0, 0, 0);
-				GL11.glVertex3f(width, 0, 0);
-				GL11.glVertex3f(0, height, 0);
-				GL11.glVertex3f(width, height, 0);
-				GL11.glEnd();
-				this.revokeModifiers();
+			this.applyModifiers(player, overlayActive);
+			GL11.glBegin(GL11.GL_QUADS);
+			GL11.glVertex3f(0, 0, 0);
+			GL11.glVertex3f(0, height, 0);
+			GL11.glVertex3f(width, height, 0);
+			GL11.glVertex3f(width, 0, 0);			
+			GL11.glEnd();
+			this.revokeModifiers();
 		}
 	}
 }

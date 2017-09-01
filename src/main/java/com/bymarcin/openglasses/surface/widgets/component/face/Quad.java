@@ -30,9 +30,9 @@ public class Quad extends TriangleWidget {
 			this.applyModifiers(player, overlayActive);
 			GL11.glBegin(GL11.GL_QUADS);
 			GL11.glVertex3f(0, 0, 0);
-			GL11.glVertex3f(width, 0, 0);
 			GL11.glVertex3f(0, height, 0);
 			GL11.glVertex3f(width, height, 0);
+			GL11.glVertex3f(width, 0, 0);		
 			GL11.glEnd();
 			this.revokeModifiers();
 		}
