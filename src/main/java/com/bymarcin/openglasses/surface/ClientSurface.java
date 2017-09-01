@@ -73,7 +73,7 @@ public class ClientSurface {
 	public void onRenderGameOverlay(RenderGameOverlayEvent evt) {
 		if (evt.getType() != ElementType.HELMET) return;
 		if (!(evt instanceof RenderGameOverlayEvent.Post)) return;
-		if(!shouldRenderStart()) return;
+		if(!shouldRenderStart(evt)) return;
 		if(renderables.size() < 1) return;
 		
 		EntityPlayer player = Minecraft.getMinecraft().player;
@@ -94,13 +94,24 @@ public class ClientSurface {
 		GL11.glPopAttrib();
 	}
 	
-	public boolean shouldRenderStart(){
+	
+	 
+	
+	
+	public boolean shouldRenderStart(RenderGameOverlayEvent evt){
 		if(!haveGlasses) 
 			return false;
 		
 		if(!isPowered && noPowerRender != null){
-			EntityPlayer player = Minecraft.getMinecraft().player;		
-			noPowerRender.render(player, player.posX, player.posY, player.posZ, this.OverlayActive); 
+			if(evt != null){
+				EntityPlayer player = Minecraft.getMinecraft().player;
+				GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+				GL11.glPushMatrix();
+				GL11.glScaled(evt.getResolution().getScaledWidth_double()/512D, evt.getResolution().getScaledHeight_double()/512D*16D/9D, 0);
+				noPowerRender.render(player, player.posX, player.posY, player.posZ, this.OverlayActive); 
+				GL11.glPopMatrix();
+				GL11.glPopAttrib();
+			}
 			return false;
 		}
 		
@@ -108,20 +119,18 @@ public class ClientSurface {
 			return false;
 				
 		return true;		
-	}
-		
+	}		
 	
 	public double[] getEntityPlayerLocation(EntityPlayer e, float partialTicks){
 		double x = (double) e.prevPosX + (e.posX - e.prevPosX) * partialTicks; 
 		double y = (double) e.prevPosY + (e.posY - e.prevPosY) * partialTicks;
 		double z = (double) e.prevPosZ + (e.posZ - e.prevPosZ) * partialTicks;
 		return new double[]{x, y, z};
-	}	 
-	
+	}	 	
 	
 	@SubscribeEvent
 	public void renderWorldLastEvent(RenderWorldLastEvent event)	{	
-		if(!shouldRenderStart()) return;
+		if(!shouldRenderStart(null)) return;
 		if(renderablesWorld.size() < 1) return;
 		
 		EntityPlayer player= Minecraft.getMinecraft().player;
@@ -148,6 +157,10 @@ public class ClientSurface {
 		GL11.glPopMatrix();		
 		GL11.glPopAttrib();
 	}
+	
+	
+	
+	
 	
 	public static RayTraceResult getBlockCoordsLookingAt(EntityPlayer player){
 		RayTraceResult objectMouseOver;
