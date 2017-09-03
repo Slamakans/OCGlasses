@@ -107,7 +107,7 @@ public class ClientEventHandler {
 
 	@SubscribeEvent
 	public void onKeyInput(InputEvent.KeyInputEvent event) {
-		if(interactGUIKey.isPressed()){
+		if(ClientSurface.instances.haveGlasses == true && interactGUIKey.isPressed()){
 			ClientSurface.instances.OverlayActive = true;
 			Minecraft.getMinecraft().displayGuiScreen(new InteractGui());
 		}
