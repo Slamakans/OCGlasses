@@ -14,7 +14,10 @@ import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.WidgetType;
 
 public class Quad3D extends Triangle3D{
-	public Quad3D() {}
+	public Quad3D() {
+		width = 1;
+		height = 1;
+	}
 
 	@Override
 	public WidgetType getType() {
@@ -35,9 +38,9 @@ public class Quad3D extends Triangle3D{
 			this.applyModifiers(player, overlayActive);
 			GL11.glBegin(GL11.GL_QUADS);			
 			GL11.glVertex3f(0, 0, 0);
-			GL11.glVertex3f(width, 0, 0);
 			GL11.glVertex3f(0, height, 0);
 			GL11.glVertex3f(width, height, 0);
+			GL11.glVertex3f(width, 0, 0);
 			GL11.glEnd();
 			this.revokeModifiers();
 		}

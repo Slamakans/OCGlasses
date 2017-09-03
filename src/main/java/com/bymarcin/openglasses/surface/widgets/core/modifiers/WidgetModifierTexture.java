@@ -40,10 +40,13 @@ public class WidgetModifierTexture extends WidgetModifier {
 		
 	public void apply(EntityPlayer player, boolean overlayActive){	
 		if(!shouldApplyModifier(player, overlayActive)) return;
-		//Minecraft mc = Minecraft.getMinecraft();
-		//TextureAtlasSprite tex = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry("minecraft:blocks/stone");		
+		
+		//GL11.glBindTexture(GL11.GL_TEXTURE_2D, mc.renderEngine.getTexture(imgFile));
+		
+		Minecraft mc = Minecraft.getMinecraft();
+		TextureAtlasSprite tex = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry("minecraft:blocks/stone");		
 		//Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(tex.getIconName()));
-		//mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 		//mc.getTextureManager().bindTexture(textureLocation);		
 	}
 	

@@ -70,8 +70,8 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 	@SideOnly(Side.CLIENT)	
 	public class RenderableGLWidget implements IRenderableWidget {		
 		
-		boolean depthtest, texture2d, blending;
-		boolean doBlending, doTexture;
+		boolean depthtest, texture2d, blending, smoothshading, alpha;
+		boolean doBlending, doTexture, doSmoothShade, doAlpha;
 		@Override
 		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, boolean overlayActive) {}
 		
@@ -79,9 +79,17 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 			depthtest = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
 			texture2d = GL11.glIsEnabled(GL11.GL_TEXTURE_2D);
 			blending = GL11.glIsEnabled(GL11.GL_BLEND);
+			//alpha = GL11.glIsEnabled(GL11.GL_ALPHA);
 			
+			smoothshading = false;
 			doBlending = false;
 			doTexture = false;
+			doSmoothShade = false;
+			
+			 
+			if(GL11.glGetInteger(GL11.GL_SHADE_MODEL) == GL11.GL_SMOOTH) 
+				smoothshading = true;
+			
 			
 			if(isThroughVisibility)
 				GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -99,8 +107,14 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 			}
 			
 			WidgetType type = getType();	
-				
-			if(type == WidgetType.FLOATINGTEXT || type == WidgetType.TEXT){
+			if(type == WidgetType.BOX2D){
+				doSmoothShade = true;
+				doBlending = true;
+				doAlpha = true;
+				//GL11.glEnable(GL11.GL_ALPHA);
+				//doTexture = false;
+			}
+			else if(type == WidgetType.FLOATINGTEXT || type == WidgetType.TEXT){
 				doTexture = true;
 				GL11.glDisable(GL11.GL_ALPHA_TEST);
 			}
@@ -108,6 +122,11 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 				doBlending = true;
 				doTexture = true;
 			}
+			
+			/*if(doAlpha)
+				GL11.glEnable(GL11.GL_ALPHA);
+			else
+				GL11.glDisable(GL11.GL_ALPHA);*/
 						
 			if(doTexture)
 				GL11.glEnable(GL11.GL_TEXTURE_2D);
@@ -116,15 +135,23 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 				
 			if(doBlending){
 				GL11.glEnable(GL11.GL_BLEND);		//vertex based alpha
-				GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);							
+				GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			}
 			else {
 				GL11.glDisable(GL11.GL_BLEND);				
 			}
+			if(doSmoothShade)
+				GL11.glShadeModel(GL11.GL_SMOOTH);
+			else 
+				GL11.glShadeModel(GL11.GL_FLAT);
 			
 			WidgetModifierList.apply(player, overlayActive);
 			
-			return WidgetModifierList.getCurrentColor(player, overlayActive);
+			return WidgetModifierList.getCurrentColor(player, overlayActive, 0);
+		}
+		
+		public float[] getCurrentColorFloat(EntityPlayer player, boolean overlayActive, int index){
+			return WidgetModifierList.getCurrentColorFloat(player, overlayActive, index);
 		}
 		 
 		
@@ -133,7 +160,6 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 				GL11.glEnable(GL11.GL_DEPTH_TEST);
 			else
 				GL11.glDisable(GL11.GL_DEPTH_TEST);
-				
 			if(blending) 
 				GL11.glEnable(GL11.GL_BLEND);
 			else
@@ -143,6 +169,16 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 				GL11.glEnable(GL11.GL_TEXTURE_2D);
 			else
 				GL11.glDisable(GL11.GL_TEXTURE_2D);
+				
+			if(smoothshading)
+				GL11.glShadeModel(GL11.GL_SMOOTH);
+			else 
+				GL11.glShadeModel(GL11.GL_FLAT);
+			
+			/*if(alpha)
+				GL11.glEnable(GL11.GL_ALPHA);
+			else
+				GL11.glDisable(GL11.GL_ALPHA);*/
 		}
 				
 		@Override

@@ -16,7 +16,8 @@ public enum WidgetType {
 	LINE3D(Line3D.class),
 	QUAD(Quad.class),
 	ITEMICON(ItemIcon.class),
-	ITEM3D(Item3D.class)
+	ITEM3D(Item3D.class),
+	BOX2D(Box2D.class)
 	;
 	
 	Class<? extends Widget> clazz;

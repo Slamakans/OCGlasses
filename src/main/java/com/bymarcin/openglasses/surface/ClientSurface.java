@@ -82,7 +82,8 @@ public class ClientSurface {
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glPushMatrix();
 		GL11.glScaled(evt.getResolution().getScaledWidth_double()/512D, evt.getResolution().getScaledHeight_double()/512D*16D/9D, 0);
-				
+		
+		GL11.glDepthMask(false);		
 		for(IRenderableWidget renderable : renderables.values()){
 			if(renderable.shouldWidgetBeRendered() && (renderable.getWidgetOwner() == null || playerUUID.equals(renderable.getWidgetOwner()))){
 				GL11.glPushMatrix();
@@ -93,10 +94,6 @@ public class ClientSurface {
 		GL11.glPopMatrix();
 		GL11.glPopAttrib();
 	}
-	
-	
-	 
-	
 	
 	public boolean shouldRenderStart(RenderGameOverlayEvent evt){
 		if(!haveGlasses) 
@@ -157,10 +154,6 @@ public class ClientSurface {
 		GL11.glPopMatrix();		
 		GL11.glPopAttrib();
 	}
-	
-	
-	
-	
 	
 	public static RayTraceResult getBlockCoordsLookingAt(EntityPlayer player){
 		RayTraceResult objectMouseOver;

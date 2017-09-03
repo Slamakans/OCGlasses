@@ -19,18 +19,22 @@ public class Line3D extends WidgetGLWorld{
 	
 	public Line3D() {
 		size = 8.F;
+		width = 1;
+		height = 1;
 	}
 	
 	@Override
 	public void writeData(ByteBuf buff) {
 		super.writeData(buff);
 		writeDataWORLD(buff);
+		writeDataSIZE(buff);
 	}
 
 	@Override
 	public void readData(ByteBuf buff) {
 		super.readData(buff);
 		readDataWORLD(buff);
+		readDataSIZE(buff);
 	}
 
 	@Override

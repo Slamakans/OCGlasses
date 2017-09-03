@@ -60,15 +60,25 @@ public class WidgetModifiers {
 		return this.modifiers.get(element).getType();	
 	}
 	
-	public int getCurrentColor(EntityPlayer player, boolean overlayActive){
+	public int getCurrentColor(EntityPlayer player, boolean overlayActive, int index){
+		float[] col = getCurrentColorFloat(player, overlayActive, index);
+		return OGUtils.getIntFromColor(col[0], col[1], col[2], col[3]);
+	}
+	
+	public float[] getCurrentColorFloat(EntityPlayer player, boolean overlayActive, int index){
 		for(int i=this.modifiers.size() - 1; i >= 0; i--){
 			if(this.modifiers.get(i).getType() == WidgetModifierType.COLOR &&
-				this.modifiers.get(i).shouldApplyModifier(player, overlayActive) == true){
-				Object[] color = this.modifiers.get(i).getValues();
-				return OGUtils.getIntFromColor((float) color[0], (float) color[1], (float) color[2], (float) color[3]);
+				this.modifiers.get(i).shouldApplyModifier(player, overlayActive) == true){					
+				if(index > 0){
+					index--;
+				}
+				else {
+					Object[] color = this.modifiers.get(i).getValues();
+					return new float[]{ (float) color[0], (float) color[1], (float) color[2], (float) color[3] };
+				}
 			}
 		}
-		return OGUtils.getIntFromColor(1, 1, 1, 1);
+		return new float[]{ 1, 1, 1, 1 };
 	}	
 	
 	public void apply(EntityPlayer player, boolean overlayActive){
@@ -86,17 +96,19 @@ public class WidgetModifiers {
 	}
 		
 	public void readData(ByteBuf buff){
-		this.modifiers.clear();
+		ArrayList<WidgetModifier> modifiersNew = new ArrayList<WidgetModifier>();
 		for(int i = 0, modifierCount = buff.readInt(); i < modifierCount; i++){
 			switch(buff.readShort()){
-				case WidgetModifierType.TRANSLATE: this.addTranslate(0F, 0F, 0F); break;
-				case WidgetModifierType.COLOR: this.addColor(0F, 0F, 0F, 0F); break;
-				case WidgetModifierType.SCALE: this.addScale(0F, 0F, 0F); break;
-				case WidgetModifierType.ROTATE: this.addRotate(0F, 0F, 0F, 0F); break;
-				case WidgetModifierType.TEXTURE: this.addTexture(null); break;
-				default: this.remove(i); return; //remove modifier if we get bs
+				case WidgetModifierType.TRANSLATE: modifiersNew.add(new WidgetModifierTranslate(0F, 0F, 0F)); break;
+				case WidgetModifierType.COLOR: modifiersNew.add(new WidgetModifierColor(0F, 0F, 0F, 0F)); break;
+				case WidgetModifierType.SCALE: modifiersNew.add(new WidgetModifierScale(0F, 0F, 0F)); break;
+				case WidgetModifierType.ROTATE: modifiersNew.add(new WidgetModifierRotate(0F, 0F, 0F, 0F)); break;
+				case WidgetModifierType.TEXTURE: modifiersNew.add(new WidgetModifierTexture(null)); break;
+				default: modifiersNew.remove(i); return; //remove modifier if we get bs
 			}
-			this.modifiers.get(i).readData(buff);
+			modifiersNew.get(i).readData(buff);
 		}
+		
+		this.modifiers = modifiersNew;
 	}		
 }

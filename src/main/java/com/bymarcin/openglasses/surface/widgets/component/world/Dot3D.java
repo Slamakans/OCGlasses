@@ -17,18 +17,23 @@ import com.bymarcin.openglasses.surface.WidgetType;
 import com.bymarcin.openglasses.utils.OGUtils;
 
 public class Dot3D extends WidgetGLWorld  {
-	public Dot3D() {}
+	public Dot3D() {
+		width = 1;
+		height = 1;
+	}
 	
 	@Override
 	public void writeData(ByteBuf buff) {
 		super.writeData(buff);
 		writeDataWORLD(buff);
+		writeDataSIZE(buff);
 	}
 
 	@Override
 	public void readData(ByteBuf buff) {
 		super.readData(buff);
 		readDataWORLD(buff);			
+		readDataSIZE(buff);
 	}
 
 	@Override
@@ -52,10 +57,10 @@ public class Dot3D extends WidgetGLWorld  {
 			GL11.glRotated(-player.rotationYaw,0,1,0);
 			GL11.glRotated(player.rotationPitch,1,0,0);
 			GL11.glBegin(GL11.GL_QUADS);	
-			GL11.glVertex3f(1/2, 1/2, 0);
-			GL11.glVertex3f(1/2, -1/2, 0);
-			GL11.glVertex3f(-1/2, -1/2, 0);
-			GL11.glVertex3f(-1/2, 1/2, 0);
+			GL11.glVertex3f(0, 0, 0);
+			GL11.glVertex3f(0, height, 0);
+			GL11.glVertex3f(width, height, 0);
+			GL11.glVertex3f(width, 0, 0);
 			GL11.glEnd();
 			this.revokeModifiers();
 		}
