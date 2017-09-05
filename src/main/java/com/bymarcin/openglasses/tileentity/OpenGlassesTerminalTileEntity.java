@@ -93,11 +93,10 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
 		return new Object[]{widgetList.size()};
 	}
 	
-	//this function uses lua indexing starting at 1
 	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] removeObject(Context context, Arguments args){
-		int id = args.checkInteger(0) - 1;
+		int id = args.checkInteger(0);
 		return new Object[]{removeWidget(id)};
 	}
 	
