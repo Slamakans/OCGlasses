@@ -24,6 +24,7 @@ public class AttributeRegistry {
 		addAtribute(IAttribute.class, AddTexture.class);
 		addAtribute(IAttribute.class, GetModifiers.class);
 		addAtribute(IAttribute.class, RemoveModifier.class);
+		addAtribute(IAttribute.class, RemoveWidget.class);
 		addAtribute(IAttribute.class, SetCondition.class);
 		
 
