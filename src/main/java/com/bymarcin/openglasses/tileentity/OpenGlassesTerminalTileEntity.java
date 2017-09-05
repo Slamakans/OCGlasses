@@ -86,13 +86,6 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
 	public Object[] getBindPlayers(Context context, Arguments args) {
 		return ServerSurface.instance.getActivePlayers(getTerminalUUID());
 	}
-//	
-//	@Callback
-//	@Optional.Method(modid = "OpenComputers")
-//	public Object[] getObjectLimit(Context context, Arguments args){
-//		
-//		return new Object[]{};
-//	}
 	
 	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
@@ -100,10 +93,11 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
 		return new Object[]{widgetList.size()};
 	}
 	
+	//this function uses lua indexing starting at 1
 	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] removeObject(Context context, Arguments args){
-		int id = args.checkInteger(0);
+		int id = args.checkInteger(0) - 1;
 		return new Object[]{removeWidget(id)};
 	}
 	
@@ -328,12 +322,9 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
 		}
 	}
 	
-	
-	
-	
 	@Override
 	public void update() {
-        if (!addedToNetwork) {
+        if(!addedToNetwork) {
             addedToNetwork = true;
             Network.joinOrCreateNetwork(this);
         }
@@ -348,13 +339,10 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
 		
 		if(lastStatus != isPowered){
 			ServerSurface.instance.sendPowerInfo(getTerminalUUID(), isPowered?TerminalStatus.HavePower:TerminalStatus.NoPower);
-		}
-		
+		}		
 	}
 
-	
 	public boolean isPowered() {
 		return isPowered;
 	}
-
 }
