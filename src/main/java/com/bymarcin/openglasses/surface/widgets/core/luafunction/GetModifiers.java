@@ -24,7 +24,7 @@ public class GetModifiers extends LuaFunction{
 				i++;				
 			}
 			
-			return foo;
+			return new Object[]{ foo };
 		}
 		
 		throw new RuntimeException("Component does not exists!");
