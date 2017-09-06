@@ -12,7 +12,7 @@ import org.lwjgl.opengl.GL11;
 import com.bymarcin.openglasses.surface.WidgetGLWorld;
 import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.WidgetType;
-
+import com.bymarcin.openglasses.utils.Location;
 public class Quad3D extends Triangle3D{
 	public Quad3D() {
 		width = 1;
@@ -34,8 +34,8 @@ public class Quad3D extends Triangle3D{
 	class RenderQuad3D extends RenderableGLWidget{
 
 		@Override
-		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, boolean overlayActive) {
-			this.applyModifiers(player, overlayActive);
+		public void render(EntityPlayer player, Location glassesTerminalLocation, boolean overlayActive) {
+			this.applyModifiers(player, glassesTerminalLocation, overlayActive);
 			GL11.glBegin(GL11.GL_QUADS);			
 			GL11.glVertex3f(0, 0, 0);
 			GL11.glVertex3f(0, height, 0);

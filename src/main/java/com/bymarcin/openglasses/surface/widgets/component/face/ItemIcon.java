@@ -4,7 +4,7 @@ import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.WidgetGLOverlay;
 import com.bymarcin.openglasses.surface.WidgetType;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IItem;
-
+import com.bymarcin.openglasses.utils.Location;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -65,7 +65,7 @@ public class ItemIcon extends Dot implements IItem{
 	
 	class RenderableItemIcon extends RenderableGLWidget{
 		@Override
-		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, boolean overlayActive) {
+		public void render(EntityPlayer player, Location glassesTerminalLocation, boolean overlayActive) {
 			if(itmStack == null) return;
 			IBakedModel ibakedmodel = null;
 			
@@ -77,7 +77,7 @@ public class ItemIcon extends Dot implements IItem{
 			tm.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 			tm.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);       
 			
-			int alphaColor = this.applyModifiers(player, overlayActive);			
+			int alphaColor = this.applyModifiers(player, glassesTerminalLocation, overlayActive);	
 			
 			Tessellator tessellator = Tessellator.getInstance();
 			VertexBuffer vertexbuffer = tessellator.getBuffer();

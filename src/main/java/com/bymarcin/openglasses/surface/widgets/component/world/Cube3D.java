@@ -3,7 +3,6 @@ package com.bymarcin.openglasses.surface.widgets.component.world;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.math.RayTraceResult;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -14,8 +13,7 @@ import com.bymarcin.openglasses.surface.ClientSurface;
 import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.WidgetGLWorld;
 import com.bymarcin.openglasses.surface.WidgetType;
-import com.bymarcin.openglasses.utils.OGUtils;
-
+import com.bymarcin.openglasses.utils.Location;
 
 public class Cube3D extends WidgetGLWorld {
 	public Cube3D() {}
@@ -46,14 +44,9 @@ public class Cube3D extends WidgetGLWorld {
 	@SideOnly(Side.CLIENT)
 	class RenderCube3D extends RenderableGLWidget{
 		@Override
-		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, boolean overlayActive) {
-			//if(!OGUtils.inRange(playerX, playerY, playerZ, x, y, z, distance)) return;
+		public void render(EntityPlayer player, Location glassesTerminalLocation, boolean overlayActive) {
 			
-			RayTraceResult pos = ClientSurface.getBlockCoordsLookingAt(player);
-			if(isLookingAtEnable && (pos == null || pos.getBlockPos().getX() != lookAtX || pos.getBlockPos().getY() != lookAtY || pos.getBlockPos().getZ() != lookAtZ) )
-				return;
-			
-			this.applyModifiers(player, overlayActive);
+			this.applyModifiers(player, glassesTerminalLocation, overlayActive);
 						
 			GL11.glBegin(GL11.GL_QUADS);    // Draw The Cube Using quads			    
 			GL11.glVertex3f(1.0f,1.0f,0.0f);    // Top Right Of The Quad (Top)

@@ -12,7 +12,7 @@ import org.lwjgl.opengl.GL11;
 import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.WidgetGLOverlay;
 import com.bymarcin.openglasses.surface.WidgetType;
-
+import com.bymarcin.openglasses.utils.Location;
 public class Dot extends WidgetGLOverlay {
 	public Dot() {}
 	
@@ -30,8 +30,8 @@ public class Dot extends WidgetGLOverlay {
 	@SideOnly(Side.CLIENT)
 	public class RenderableDot extends RenderableGLWidget{
 		@Override
-		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, boolean overlayActive) {
-			this.applyModifiers(player, overlayActive);
+		public void render(EntityPlayer player, Location glassesTerminalLocation, boolean overlayActive) {
+			this.applyModifiers(player, glassesTerminalLocation, overlayActive);
 			GL11.glBegin(GL11.GL_QUADS);
 			GL11.glVertex3f(0, 0, 0);
 			GL11.glVertex3f(0, 1, 0);

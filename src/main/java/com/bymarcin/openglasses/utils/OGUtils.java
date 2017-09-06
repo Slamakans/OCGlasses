@@ -29,6 +29,10 @@ public class OGUtils {
 		return (((x-sx)*(x-sx)) + ((y-sy)*(y-sy)) + ((z-sz)*(z-sz))) <= (r*r);
 	}
 	
+	public static boolean inRange(EntityPlayer player, double sx, double sy, double sz, double r){
+		return inRange(player.posX, player.posY, player.posZ, sx, sy, sz, r);
+	}
+	
 	public static boolean isLookingAt(RayTraceResult pos, float[] target){
 		if(pos == null) return false;
 		if(pos.getBlockPos().getX() != target[0]) return false;

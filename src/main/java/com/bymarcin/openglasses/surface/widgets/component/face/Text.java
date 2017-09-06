@@ -17,7 +17,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.BufferUtils;
 import java.nio.FloatBuffer;
 import com.bymarcin.openglasses.utils.OGUtils;
-
+import com.bymarcin.openglasses.utils.Location;
 public class Text extends Dot implements ITextable{
 	String text="";
 
@@ -48,8 +48,8 @@ public class Text extends Dot implements ITextable{
 	
 	class RenderText extends RenderableGLWidget{
 		@Override
-		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, boolean overlayActive) {
-			int currentColor = this.applyModifiers(player, overlayActive);
+		public void render(EntityPlayer player, Location glassesTerminalLocation, boolean overlayActive) {
+			int currentColor = this.applyModifiers(player, glassesTerminalLocation, overlayActive);
 			Minecraft.getMinecraft().fontRendererObj.drawString(text, 0, 0, currentColor);
 			GlStateManager.disableAlpha();
 			this.revokeModifiers();

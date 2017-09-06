@@ -15,14 +15,9 @@ import com.bymarcin.openglasses.surface.ClientSurface;
 import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.WidgetGLWorld;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.ITextable;
-import com.bymarcin.openglasses.surface.WidgetType;
-import com.bymarcin.openglasses.utils.OGUtils;
-
+import com.bymarcin.openglasses.surface.WidgetType; 
+import com.bymarcin.openglasses.utils.Location;
 import net.minecraft.client.renderer.GlStateManager;
-
-import org.lwjgl.BufferUtils;
-import java.nio.FloatBuffer;
-import com.bymarcin.openglasses.utils.OGUtils;
 
 public class FloatingText extends WidgetGLWorld implements ITextable{
 	String text ="";
@@ -59,22 +54,14 @@ public class FloatingText extends WidgetGLWorld implements ITextable{
 		double offsetX, offsetY;
 		
 		@Override
-		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, boolean overlayActive) {
+		public void render(EntityPlayer player, Location glassesTerminalLocation, boolean overlayActive) {
 			if(text.length() < 1) return;
-			/*
-			if(!OGUtils.inRange(playerX, playerY, playerZ, x, y, z, viewDistance))
-				return;
-			*/
-			
-			if(isLookingAtEnable && !OGUtils.isLookingAt(ClientSurface.getBlockCoordsLookingAt(player), new float[]{lookAtX, lookAtY, lookAtZ})){
-				return;
-			}
 			
 			FontRenderer fontRender = Minecraft.getMinecraft().fontRendererObj;			
 			offsetY = fontRender.FONT_HEIGHT/2D;
 			offsetX = fontRender.getStringWidth(text)/2D;
 						
-			int currentColor = this.applyModifiers(player, overlayActive);			
+			int currentColor = this.applyModifiers(player, glassesTerminalLocation, overlayActive);		
 			
 			// center text on current block position
 			GL11.glTranslatef(0.5F, 0.5F, 0.5F); 

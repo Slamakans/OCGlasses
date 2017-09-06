@@ -12,32 +12,19 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.ILookable;
 import io.netty.buffer.ByteBuf;
 
 public abstract class WidgetGLWorld extends WidgetGLOverlay implements IThroughVisibility, IViewDistance, ILookable{
-	public boolean isLookingAtEnable = false;
 	
-	public int lookAtX=0, lookAtY=0, lookAtZ=0;
+	int viewDistance=32;
 	
-	public int distance=64, viewDistance=32;
-		
 	public WidgetGLWorld(){
 		this.rendertype = RenderType.WorldLocated; 
 	}	
 	
 	public void writeDataWORLD(ByteBuf buff){
-		buff.writeBoolean(isThroughVisibility);
-		buff.writeInt(distance);
-		buff.writeInt(lookAtX);
-		buff.writeInt(lookAtY);
-		buff.writeInt(lookAtZ);
-		buff.writeBoolean(isLookingAtEnable);
+		buff.writeBoolean(isThroughVisibility);	
 	}
 	
 	public void readDataWORLD(ByteBuf buff){
-		isThroughVisibility = buff.readBoolean();
-		distance = buff.readInt();
-		lookAtX = buff.readInt();
-		lookAtY = buff.readInt();
-		lookAtZ = buff.readInt();
-		isLookingAtEnable = buff.readBoolean();
+		isThroughVisibility = buff.readBoolean();		
 	}
 	
 	public boolean isVisibleThroughObjects() {
@@ -45,31 +32,4 @@ public abstract class WidgetGLWorld extends WidgetGLOverlay implements IThroughV
 
 	public void setVisibleThroughObjects(boolean visible) {
 		isThroughVisibility = visible; }
-
-	public int getDistanceView() {
-		return distance; }
-
-	public void setDistanceView(int distance) {
-		this.distance = distance; }
-
-	public void setLookingAt(int x, int y, int z) {
-		lookAtX = x;
-		lookAtY = y;
-		lookAtZ = z; 
-	}
-
-	public boolean isLookingAtEnable() {
-		return isLookingAtEnable; }
-
-	public void setLookingAtEnable(boolean enable) {
-		isLookingAtEnable = enable; }
-
-	public int getLookingAtX() {
-		return lookAtX; }
-
-	public int getLookingAtY() {
-		return lookAtY; }
-
-	public int getLookingAtZ() {
-		return lookAtZ;	}
 }

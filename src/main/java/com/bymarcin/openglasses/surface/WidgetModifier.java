@@ -13,7 +13,6 @@ public abstract class WidgetModifier{
 	public short condition_lightlevel_min = 0;
 	public short condition_lightlevel_max = 0;
 	
-	int pollIntervalCounter = 0;
 	boolean cachedApplyCheck = false;
 	
 	public boolean shouldApplyModifier(EntityPlayer player, boolean overlayActive){
@@ -25,11 +24,9 @@ public abstract class WidgetModifier{
 		}
 		
 		// do timeintense calls after this, so they didnt get called to often
-		pollIntervalCounter++;
-		if(pollIntervalCounter % 30 != 0) 
+		if(player.world.getWorldTime() % 20 != 0) 
 			return cachedApplyCheck;
 			
-		pollIntervalCounter = 0;		
 		this.cachedApplyCheck = false;
 		
 		if(((conditions >>> WidgetModifierConditionType.IS_LIGHTLEVEL_MIN) & 1) != 0) {		

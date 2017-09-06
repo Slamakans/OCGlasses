@@ -13,9 +13,7 @@ import org.lwjgl.opengl.GL11;
 import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.WidgetGLWorld;
 import com.bymarcin.openglasses.surface.WidgetType;
-
-import com.bymarcin.openglasses.utils.OGUtils;
-
+import com.bymarcin.openglasses.utils.Location;
 public class Dot3D extends WidgetGLWorld  {
 	public Dot3D() {
 		width = 1;
@@ -50,10 +48,8 @@ public class Dot3D extends WidgetGLWorld  {
 	@SideOnly(Side.CLIENT)
 	class RenderDot3D extends RenderableGLWidget{
 		@Override
-		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, boolean overlayActive) {
-			//if(!OGUtils.inRange(playerX, playerY, playerZ, x, y, z, distance)) return;
-
-			this.applyModifiers(player, overlayActive);
+		public void render(EntityPlayer player, Location glassesTerminalLocation, boolean overlayActive) {
+			this.applyModifiers(player, glassesTerminalLocation, overlayActive);
 			GL11.glRotated(-player.rotationYaw,0,1,0);
 			GL11.glRotated(player.rotationPitch,1,0,0);
 			GL11.glBegin(GL11.GL_QUADS);	

@@ -73,11 +73,12 @@ public class ClientSurface {
 	public void onRenderGameOverlay(RenderGameOverlayEvent evt) {
 		if (evt.getType() != ElementType.HELMET) return;
 		if (!(evt instanceof RenderGameOverlayEvent.Post)) return;
-		if(!shouldRenderStart(evt)) return;
-		if(renderables.size() < 1) return;
 		
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		UUID playerUUID = player.getGameProfile().getId();		
+		
+		if(!shouldRenderStart(evt, player)) return;
+		if(renderables.size() < 1) return;		
 		
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glPushMatrix();
@@ -85,9 +86,9 @@ public class ClientSurface {
 		
 		GL11.glDepthMask(false);		
 		for(IRenderableWidget renderable : renderables.values()){
-			if(renderable.shouldWidgetBeRendered() && (renderable.getWidgetOwner() == null || playerUUID.equals(renderable.getWidgetOwner()))){
+			if(renderable.shouldWidgetBeRendered(player) && (renderable.getWidgetOwner() == null || playerUUID.equals(renderable.getWidgetOwner()))){
 				GL11.glPushMatrix();
-				renderable.render(player, player.posX, player.posY, player.posZ, this.OverlayActive);
+				renderable.render(player, lastBind, this.OverlayActive);
 				GL11.glPopMatrix();
 			}			
 		}
@@ -95,17 +96,16 @@ public class ClientSurface {
 		GL11.glPopAttrib();
 	}
 	
-	public boolean shouldRenderStart(RenderGameOverlayEvent evt){
+	public boolean shouldRenderStart(RenderGameOverlayEvent evt, EntityPlayer player){
 		if(!haveGlasses) 
 			return false;
 		
 		if(!isPowered && noPowerRender != null){
 			if(evt != null){
-				EntityPlayer player = Minecraft.getMinecraft().player;
 				GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 				GL11.glPushMatrix();
 				GL11.glScaled(evt.getResolution().getScaledWidth_double()/512D, evt.getResolution().getScaledHeight_double()/512D*16D/9D, 0);
-				noPowerRender.render(player, player.posX, player.posY, player.posZ, this.OverlayActive); 
+				noPowerRender.render(player, lastBind, this.OverlayActive); 
 				GL11.glPopMatrix();
 				GL11.glPopAttrib();
 			}
@@ -114,7 +114,7 @@ public class ClientSurface {
 		
 		if(lastBind == null) 
 			return false;
-				
+		
 		return true;		
 	}		
 	
@@ -127,10 +127,11 @@ public class ClientSurface {
 	
 	@SubscribeEvent
 	public void renderWorldLastEvent(RenderWorldLastEvent event)	{	
-		if(!shouldRenderStart(null)) return;
-		if(renderablesWorld.size() < 1) return;
+		if(renderablesWorld.size() < 1) return;		
+		EntityPlayer player = Minecraft.getMinecraft().player;
 		
-		EntityPlayer player= Minecraft.getMinecraft().player;
+		if(!shouldRenderStart(null, player)) return;
+		
 		UUID playerUUID = player.getGameProfile().getId();		
 		
 		double[] playerLocation = getEntityPlayerLocation(player, event.getPartialTicks());
@@ -144,12 +145,11 @@ public class ClientSurface {
 		GL11.glDepthMask(false);
 		//Start Drawing In World		
 		for(IRenderableWidget renderable : renderablesWorld.values()){
-			if(renderable.shouldWidgetBeRendered() && (renderable.getWidgetOwner() == null || playerUUID.equals(renderable.getWidgetOwner()))){
+			if(renderable.shouldWidgetBeRendered(player) && (renderable.getWidgetOwner() == null || playerUUID.equals(renderable.getWidgetOwner()))){
 				GL11.glPushMatrix();
-				renderable.render(player, playerLocation[0] - lastBind.x, playerLocation[1] - lastBind.y, playerLocation[2] - lastBind.z, this.OverlayActive);
+				renderable.render(player, lastBind, this.OverlayActive);
 				GL11.glPopMatrix();	
-			}
-		}		
+		} }		
 		//Stop Drawing In World
 		GL11.glPopMatrix();		
 		GL11.glPopAttrib();

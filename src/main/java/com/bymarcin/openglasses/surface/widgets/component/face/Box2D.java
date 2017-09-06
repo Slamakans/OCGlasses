@@ -13,7 +13,7 @@ import org.lwjgl.opengl.GL11;
 import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.WidgetGLOverlay;
 import com.bymarcin.openglasses.surface.WidgetType;
-
+import com.bymarcin.openglasses.utils.Location;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
@@ -48,8 +48,8 @@ public class Box2D extends WidgetGLOverlay {
 	@SideOnly(Side.CLIENT)
 	public class RenderableBox2DWidget extends RenderableGLWidget{
 		@Override
-		public void render(EntityPlayer player, double playerX, double playerY, double playerZ, boolean overlayActive) {
-			this.applyModifiers(player, overlayActive);
+		public void render(EntityPlayer player, Location glassesTerminalLocation, boolean overlayActive) {
+			this.applyModifiers(player, glassesTerminalLocation, overlayActive);
 			
 			float[] col1 = this.getCurrentColorFloat(player, overlayActive, 1);
 			float[] col2 = this.getCurrentColorFloat(player, overlayActive, 0);

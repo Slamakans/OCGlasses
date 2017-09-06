@@ -16,6 +16,10 @@ import com.bymarcin.openglasses.utils.OGUtils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
+import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
+
 public class WidgetModifiers {
 	public ArrayList<WidgetModifier> modifiers = new ArrayList<WidgetModifier>();
 	
@@ -85,6 +89,29 @@ public class WidgetModifiers {
 		for(int i=0, count = this.modifiers.size(); i < count; i++) 
 			this.modifiers.get(i).apply(player, overlayActive);
 	}
+	
+	public Vector4f calcPosition(EntityPlayer player, boolean overlayActive){
+		Matrix4f m = new Matrix4f();
+		Object[] b;
+		for(int i=0, count = this.modifiers.size(); i < count; i++)
+			if(this.modifiers.get(i).shouldApplyModifier(player, overlayActive)) switch(this.modifiers.get(i).getType()){
+				case WidgetModifierType.TRANSLATE: 
+					b = this.modifiers.get(i).getValues();
+					m.translate(new Vector3f((float) b[0], (float) b[1], (float) b[2])); 
+					break;
+				case WidgetModifierType.SCALE: 
+					b = this.modifiers.get(i).getValues();
+					m.scale(new Vector3f((float) b[0], (float) b[1], (float) b[2])); 
+					break;
+				case WidgetModifierType.ROTATE: 
+					b = this.modifiers.get(i).getValues();
+					m.rotate((float) b[0], new Vector3f((float) b[1], (float) b[2], (float) b[3])); 					
+					break;
+		}
+		
+		return m.transform(m, new Vector4f(0F, 0F, 0F, 1F), null);
+	}
+	
 		
 	public void writeData(ByteBuf buff){
 		int modifierCount = this.modifiers.size();
