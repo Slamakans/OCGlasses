@@ -48,8 +48,8 @@ public class Dot3D extends WidgetGLWorld  {
 	@SideOnly(Side.CLIENT)
 	class RenderDot3D extends RenderableGLWidget{
 		@Override
-		public void render(EntityPlayer player, Location glassesTerminalLocation, boolean overlayActive) {
-			this.applyModifiers(player, glassesTerminalLocation, overlayActive);
+		public void render(EntityPlayer player, Location glassesTerminalLocation, long conditionStates) {
+			this.applyModifiers(player, glassesTerminalLocation, conditionStates);
 			GL11.glRotated(-player.rotationYaw,0,1,0);
 			GL11.glRotated(player.rotationPitch,1,0,0);
 			GL11.glBegin(GL11.GL_QUADS);	

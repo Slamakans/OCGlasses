@@ -65,7 +65,7 @@ public class ItemIcon extends Dot implements IItem{
 	
 	class RenderableItemIcon extends RenderableGLWidget{
 		@Override
-		public void render(EntityPlayer player, Location glassesTerminalLocation, boolean overlayActive) {
+		public void render(EntityPlayer player, Location glassesTerminalLocation, long conditionStates) {
 			if(itmStack == null) return;
 			IBakedModel ibakedmodel = null;
 			
@@ -77,7 +77,7 @@ public class ItemIcon extends Dot implements IItem{
 			tm.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 			tm.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);       
 			
-			int alphaColor = this.applyModifiers(player, glassesTerminalLocation, overlayActive);	
+			int alphaColor = this.applyModifiers(player, glassesTerminalLocation, conditionStates);	
 			
 			Tessellator tessellator = Tessellator.getInstance();
 			VertexBuffer vertexbuffer = tessellator.getBuffer();

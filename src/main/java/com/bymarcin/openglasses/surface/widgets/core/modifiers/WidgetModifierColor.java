@@ -13,8 +13,8 @@ public class WidgetModifierColor extends WidgetModifier {
 		this.setColor(r, g, b, alpha);
 	}
 		
-	public void apply(EntityPlayer player, boolean overlayActive){	
-		if(!shouldApplyModifier(player, overlayActive)) return;
+	public void apply(long conditionStates){	
+		if(!shouldApplyModifier(conditionStates)) return;
 		
 		if(this.alpha < 1)
 			GL11.glColor4f(this.r, this.g, this.b, this.alpha);

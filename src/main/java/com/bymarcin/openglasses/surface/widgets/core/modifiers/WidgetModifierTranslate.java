@@ -15,8 +15,8 @@ public class WidgetModifierTranslate extends WidgetModifier {
 		this.z = z;
 	}
 		
-	public void apply(EntityPlayer player, boolean overlayActive){	
-		if(!shouldApplyModifier(player, overlayActive)) return;
+	public void apply(long conditionStates){	
+		if(!shouldApplyModifier(conditionStates)) return;
 		GL11.glTranslatef(this.x, this.y, this.z);
 	}
 	

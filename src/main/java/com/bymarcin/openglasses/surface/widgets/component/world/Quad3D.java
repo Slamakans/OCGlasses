@@ -34,8 +34,8 @@ public class Quad3D extends Triangle3D{
 	class RenderQuad3D extends RenderableGLWidget{
 
 		@Override
-		public void render(EntityPlayer player, Location glassesTerminalLocation, boolean overlayActive) {
-			this.applyModifiers(player, glassesTerminalLocation, overlayActive);
+		public void render(EntityPlayer player, Location glassesTerminalLocation, long conditionStates) {
+			this.applyModifiers(player, glassesTerminalLocation, conditionStates);
 			GL11.glBegin(GL11.GL_QUADS);			
 			GL11.glVertex3f(0, 0, 0);
 			GL11.glVertex3f(0, height, 0);

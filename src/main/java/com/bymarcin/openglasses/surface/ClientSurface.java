@@ -26,6 +26,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.minecraft.client.renderer.GlStateManager;
 
+import com.bymarcin.openglasses.utils.OGUtils;
 
 @SideOnly(Side.CLIENT)
 public class ClientSurface {
@@ -37,6 +38,8 @@ public class ClientSurface {
 	public boolean OverlayActive = false;
 	public Location lastBind;
 	IRenderableWidget noPowerRender;
+	
+	public long conditionStates = 0;
 	
 	private ClientSurface() {
 		noPowerRender = getNoPowerRender();
@@ -69,6 +72,57 @@ public class ClientSurface {
 		renderablesWorld.clear();
 	}
 	
+	public long getConditionStates(EntityPlayer player){
+		long curConditionStates = 0;
+		
+		long checkConditions = ~0;
+		
+		
+		if(OverlayActive == true) 
+			curConditionStates |= ((long) 1 << WidgetModifierConditionType.OVERLAY_ACTIVE); 
+		else 
+			curConditionStates |= ((long) 1 << WidgetModifierConditionType.OVERLAY_INACTIVE); 
+		
+		
+		if(player.world.getWorldTime() % 20 == 0)
+			return this.conditionStates;
+				
+		if(((checkConditions >>> WidgetModifierConditionType.IS_SNEAKING) & 1) != 0 || ((checkConditions >>> WidgetModifierConditionType.IS_NOT_SNEAKING) & 1) != 0){
+			if(player.isSneaking() == true)  
+				curConditionStates |= ((long) 1 << WidgetModifierConditionType.IS_SNEAKING); 
+			else 
+				curConditionStates |= ((long) 1 << WidgetModifierConditionType.IS_NOT_SNEAKING);				
+		}
+		
+		if(((checkConditions >>> WidgetModifierConditionType.IS_WEATHER_RAIN) & 1) != 0 || ((checkConditions >>> WidgetModifierConditionType.IS_WEATHER_CLEAR) & 1) != 0){
+			if(player.world.isRaining() == true)  
+				curConditionStates |= ((long) 1 << WidgetModifierConditionType.IS_WEATHER_RAIN); 
+			else 
+				curConditionStates |= ((long) 1 << WidgetModifierConditionType.IS_WEATHER_CLEAR); 
+		}
+		
+		if(((checkConditions >>> WidgetModifierConditionType.IS_SWIMMING) & 1) != 0 || ((checkConditions >>> WidgetModifierConditionType.IS_NOT_SWIMMING) & 1) != 0){
+			if(OGUtils.isPlayerSwimming(player) == true)  
+				curConditionStates |= ((long) 1 << WidgetModifierConditionType.IS_SWIMMING); 
+			else 
+				curConditionStates |= ((long) 1 << WidgetModifierConditionType.IS_NOT_SWIMMING); 	
+		}			
+		
+		int lightLevel = OGUtils.getLightLevelPlayer(player);
+				
+		for(int i = WidgetModifierConditionType.IS_LIGHTLEVEL_MIN_0, l=0; i < WidgetModifierConditionType.IS_LIGHTLEVEL_MIN_15; i++, l++)
+			if(((checkConditions >>> i) & 1) != 0 && lightLevel >= l)
+				curConditionStates |= ((long) 1 << i);
+		
+		for(int i = WidgetModifierConditionType.IS_LIGHTLEVEL_MAX_0, l=0; i < WidgetModifierConditionType.IS_LIGHTLEVEL_MAX_15; i++, l++)
+			if(((checkConditions >>> i) & 1) != 0 && lightLevel <= l)
+				curConditionStates |= ((long) 1 << i);
+		
+		
+		return curConditionStates;
+	}
+	
+	
 	@SubscribeEvent
 	public void onRenderGameOverlay(RenderGameOverlayEvent evt) {
 		if (evt.getType() != ElementType.HELMET) return;
@@ -80,6 +134,8 @@ public class ClientSurface {
 		if(!shouldRenderStart(evt, player)) return;
 		if(renderables.size() < 1) return;		
 		
+		this.conditionStates = getConditionStates(player);
+		
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glPushMatrix();
 		GL11.glScaled(evt.getResolution().getScaledWidth_double()/512D, evt.getResolution().getScaledHeight_double()/512D*16D/9D, 0);
@@ -88,7 +144,7 @@ public class ClientSurface {
 		for(IRenderableWidget renderable : renderables.values()){
 			if(renderable.shouldWidgetBeRendered(player) && (renderable.getWidgetOwner() == null || playerUUID.equals(renderable.getWidgetOwner()))){
 				GL11.glPushMatrix();
-				renderable.render(player, lastBind, this.OverlayActive);
+				renderable.render(player, lastBind, this.conditionStates);
 				GL11.glPopMatrix();
 			}			
 		}
@@ -105,7 +161,7 @@ public class ClientSurface {
 				GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 				GL11.glPushMatrix();
 				GL11.glScaled(evt.getResolution().getScaledWidth_double()/512D, evt.getResolution().getScaledHeight_double()/512D*16D/9D, 0);
-				noPowerRender.render(player, lastBind, this.OverlayActive); 
+				noPowerRender.render(player, lastBind, ~0); 
 				GL11.glPopMatrix();
 				GL11.glPopAttrib();
 			}
@@ -135,7 +191,9 @@ public class ClientSurface {
 		UUID playerUUID = player.getGameProfile().getId();		
 		
 		double[] playerLocation = getEntityPlayerLocation(player, event.getPartialTicks());
-						
+		
+		this.conditionStates = getConditionStates(player);
+		
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glPushMatrix();
 		
@@ -147,7 +205,7 @@ public class ClientSurface {
 		for(IRenderableWidget renderable : renderablesWorld.values()){
 			if(renderable.shouldWidgetBeRendered(player) && (renderable.getWidgetOwner() == null || playerUUID.equals(renderable.getWidgetOwner()))){
 				GL11.glPushMatrix();
-				renderable.render(player, lastBind, this.OverlayActive);
+				renderable.render(player, lastBind, this.conditionStates);
 				GL11.glPopMatrix();	
 		} }		
 		//Stop Drawing In World
@@ -156,10 +214,8 @@ public class ClientSurface {
 	}
 	
 	public static RayTraceResult getBlockCoordsLookingAt(EntityPlayer player){
-		RayTraceResult objectMouseOver;
-		objectMouseOver = player.rayTrace(200, 1);	
-		if(objectMouseOver != null && objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK)
-		{
+		RayTraceResult objectMouseOver = player.rayTrace(200, 1);	
+		if(objectMouseOver != null && objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK){
 			return objectMouseOver;
 		}
 		return null;

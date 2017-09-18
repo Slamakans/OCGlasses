@@ -63,8 +63,12 @@ public class Item3D extends WidgetGLWorld implements IItem{
 	}
 	
 	class RenderableItem3D extends RenderableGLWidget{
+		int alphaColor;
+		Tessellator tessellator;
+		VertexBuffer vertexbuffer;
+		
 		@Override
-		public void render(EntityPlayer player, Location glassesTerminalLocation, boolean overlayActive) {
+		public void render(EntityPlayer player, Location glassesTerminalLocation, long conditionStates) {
 			if(itmStack == null) return;
 			IBakedModel ibakedmodel = null;
 			
@@ -76,10 +80,10 @@ public class Item3D extends WidgetGLWorld implements IItem{
 			tm.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 			tm.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);       
 			
-			int alphaColor = this.applyModifiers(player, glassesTerminalLocation, overlayActive);		
+			alphaColor = this.applyModifiers(player, glassesTerminalLocation, conditionStates);		
 			
-			Tessellator tessellator = Tessellator.getInstance();
-			VertexBuffer vertexbuffer = tessellator.getBuffer();
+			tessellator = Tessellator.getInstance();
+			vertexbuffer = tessellator.getBuffer();
 			vertexbuffer.begin(7, DefaultVertexFormats.ITEM);
 			EnumFacing[] var6 = EnumFacing.values();			
 			
@@ -88,17 +92,12 @@ public class Item3D extends WidgetGLWorld implements IItem{
 			
 			renderQuads(vertexbuffer, ibakedmodel.getQuads(null, null, 0L), alphaColor, itmStack);
 			tessellator.draw();
-			this.revokeModifiers();
-			
+			this.revokeModifiers();			
 		}
 
 		private  void renderQuads(VertexBuffer renderer, List<BakedQuad> quads, int color, ItemStack stack) {
 			for (int j = quads.size(), i = 0; i < j; ++i)
 				LightUtil.renderQuadColor(renderer, quads.get(i), color);
-		}
-		
-		public float clamp(float val, float min, float max) {
-			return Math.max(min, Math.min(max, val));
 		}
 	}
 	

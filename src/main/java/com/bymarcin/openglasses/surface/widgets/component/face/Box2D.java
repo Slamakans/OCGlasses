@@ -48,11 +48,11 @@ public class Box2D extends WidgetGLOverlay {
 	@SideOnly(Side.CLIENT)
 	public class RenderableBox2DWidget extends RenderableGLWidget{
 		@Override
-		public void render(EntityPlayer player, Location glassesTerminalLocation, boolean overlayActive) {
-			this.applyModifiers(player, glassesTerminalLocation, overlayActive);
+		public void render(EntityPlayer player, Location glassesTerminalLocation, long conditionStates) {
+			this.applyModifiers(player, glassesTerminalLocation, conditionStates);
 			
-			float[] col1 = this.getCurrentColorFloat(player, overlayActive, 1);
-			float[] col2 = this.getCurrentColorFloat(player, overlayActive, 0);
+			float[] col1 = this.getCurrentColorFloat(conditionStates, 1);
+			float[] col2 = this.getCurrentColorFloat(conditionStates, 0);
 			
 			Tessellator tessellator = Tessellator.getInstance();
 			createGradient(tessellator.getBuffer(), col1, col1, col2, col2);			

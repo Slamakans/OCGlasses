@@ -44,9 +44,9 @@ public class Cube3D extends WidgetGLWorld {
 	@SideOnly(Side.CLIENT)
 	class RenderCube3D extends RenderableGLWidget{
 		@Override
-		public void render(EntityPlayer player, Location glassesTerminalLocation, boolean overlayActive) {
+		public void render(EntityPlayer player, Location glassesTerminalLocation, long conditionStates) {
 			
-			this.applyModifiers(player, glassesTerminalLocation, overlayActive);
+			this.applyModifiers(player, glassesTerminalLocation, conditionStates);
 						
 			GL11.glBegin(GL11.GL_QUADS);    // Draw The Cube Using quads			    
 			GL11.glVertex3f(1.0f,1.0f,0.0f);    // Top Right Of The Quad (Top)

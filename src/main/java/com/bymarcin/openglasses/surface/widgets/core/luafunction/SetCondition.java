@@ -20,13 +20,7 @@ public class SetCondition extends LuaFunction{
 			boolean state = arguments.checkBoolean(2);
 			short conditionIndex = WidgetModifierConditionType.getIndex(arguments.checkString(1));
 			
-			if(conditionIndex == 1 || conditionIndex == 2) { // 1 = IS_LIGHTLEVEL_MIN, 2 = IS_LIGHTLEVEL_MAX
-				short lightlevel = (short) arguments.checkInteger(3);
-				widget.WidgetModifierList.setCondition(modifierIndex, conditionIndex, state, lightlevel);
-			}
-			else
-				widget.WidgetModifierList.setCondition(modifierIndex, conditionIndex, state);
-			
+			widget.WidgetModifierList.setCondition(modifierIndex, conditionIndex, state);			
 			
 			getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());
 			return null;

@@ -34,12 +34,6 @@ import java.util.ArrayList;
 import org.lwjgl.util.vector.Vector4f;
 
 
-
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-
 public abstract class WidgetGLOverlay extends Widget implements IResizable, IPrivate {
 	RenderType rendertype;
 	
@@ -135,12 +129,12 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 		boolean depthtest, texture2d, blending, smoothshading, alpha;
 		boolean doBlending, doTexture, doSmoothShade, doAlpha;
 		@Override
-		public void render(EntityPlayer player, Location glassesTerminalLocation, boolean overlayActive) {}
+		public void render(EntityPlayer player, Location glassesTerminalLocation, long conditionStates) {}
 		
-		public int applyModifiers(EntityPlayer player, Location glassesTerminalLocation, boolean overlayActive){ 
+		public int applyModifiers(EntityPlayer player, Location glassesTerminalLocation, long conditionStates){ 
 			if(getRenderType() == RenderType.WorldLocated){
 				if(player.world.getWorldTime() % 20 == 0){
-					Vector4f renderPosition = WidgetModifierList.calcPosition(player, overlayActive);
+					Vector4f renderPosition = WidgetModifierList.calcPosition(conditionStates);
 					x = renderPosition.x + glassesTerminalLocation.x;
 					y = renderPosition.y + glassesTerminalLocation.y;
 					z = renderPosition.z + glassesTerminalLocation.z;	
@@ -209,14 +203,14 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 			else 
 				GL11.glShadeModel(GL11.GL_FLAT);
 			
-			WidgetModifierList.apply(player, overlayActive);			
+			WidgetModifierList.apply(conditionStates);			
 			
-			return WidgetModifierList.getCurrentColor(player, overlayActive, 0);
+			return WidgetModifierList.getCurrentColor(conditionStates, 0);
 		}
 		
 		
-		public float[] getCurrentColorFloat(EntityPlayer player, boolean overlayActive, int index){
-			return WidgetModifierList.getCurrentColorFloat(player, overlayActive, index);
+		public float[] getCurrentColorFloat(long conditionStates, int index){
+			return WidgetModifierList.getCurrentColorFloat(conditionStates, index);
 		}
 		 
 		

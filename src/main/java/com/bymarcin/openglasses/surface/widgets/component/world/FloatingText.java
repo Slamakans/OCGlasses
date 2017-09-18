@@ -54,14 +54,14 @@ public class FloatingText extends WidgetGLWorld implements ITextable{
 		double offsetX, offsetY;
 		
 		@Override
-		public void render(EntityPlayer player, Location glassesTerminalLocation, boolean overlayActive) {
+		public void render(EntityPlayer player, Location glassesTerminalLocation, long conditionStates) {
 			if(text.length() < 1) return;
 			
 			FontRenderer fontRender = Minecraft.getMinecraft().fontRendererObj;			
 			offsetY = fontRender.FONT_HEIGHT/2D;
 			offsetX = fontRender.getStringWidth(text)/2D;
 						
-			int currentColor = this.applyModifiers(player, glassesTerminalLocation, overlayActive);		
+			int currentColor = this.applyModifiers(player, glassesTerminalLocation, conditionStates);		
 			
 			// center text on current block position
 			GL11.glTranslatef(0.5F, 0.5F, 0.5F); 

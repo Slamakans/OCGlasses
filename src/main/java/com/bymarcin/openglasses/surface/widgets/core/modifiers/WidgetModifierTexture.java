@@ -38,8 +38,8 @@ public class WidgetModifierTexture extends WidgetModifier {
 		//this.textureLocation = Minecraft.getMinecraft().getTextureManager().getResource(texloc);	
 	}
 		
-	public void apply(EntityPlayer player, boolean overlayActive){	
-		if(!shouldApplyModifier(player, overlayActive)) return;
+	public void apply(long conditionStates){	
+		if(!shouldApplyModifier(conditionStates)) return;
 		
 		//GL11.glBindTexture(GL11.GL_TEXTURE_2D, mc.renderEngine.getTexture(imgFile));
 		

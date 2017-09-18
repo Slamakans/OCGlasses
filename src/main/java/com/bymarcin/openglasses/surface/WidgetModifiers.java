@@ -9,8 +9,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import java.util.ArrayList;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import com.bymarcin.openglasses.utils.OGUtils;
 
 import net.minecraft.item.Item;
@@ -22,15 +20,6 @@ import org.lwjgl.util.vector.Vector4f;
 
 public class WidgetModifiers {
 	public ArrayList<WidgetModifier> modifiers = new ArrayList<WidgetModifier>();
-	
-	
-	public void setCondition(int modifierIndex, short conditionIndex, boolean state, short lightLevel){
-		switch(conditionIndex){
-		  case 1: this.modifiers.get(modifierIndex).condition_lightlevel_min = lightLevel; break;
-		  case 2: this.modifiers.get(modifierIndex).condition_lightlevel_max = lightLevel; break;
-		}
-		this.modifiers.get(modifierIndex).configureCondition(conditionIndex, state);
-	}
 	
 	public void setCondition(int modifierIndex, short conditionIndex, boolean state){
 		this.modifiers.get(modifierIndex).configureCondition(conditionIndex, state);
@@ -64,15 +53,15 @@ public class WidgetModifiers {
 		return this.modifiers.get(element).getType();	
 	}
 	
-	public int getCurrentColor(EntityPlayer player, boolean overlayActive, int index){
-		float[] col = getCurrentColorFloat(player, overlayActive, index);
+	public int getCurrentColor(long conditionStates, int index){
+		float[] col = getCurrentColorFloat(conditionStates, index);
 		return OGUtils.getIntFromColor(col[0], col[1], col[2], col[3]);
 	}
 	
-	public float[] getCurrentColorFloat(EntityPlayer player, boolean overlayActive, int index){
+	public float[] getCurrentColorFloat(long conditionStates, int index){
 		for(int i=this.modifiers.size() - 1; i >= 0; i--){
 			if(this.modifiers.get(i).getType() == WidgetModifierType.COLOR &&
-				this.modifiers.get(i).shouldApplyModifier(player, overlayActive) == true){					
+				this.modifiers.get(i).shouldApplyModifier(conditionStates) == true){					
 				if(index > 0){
 					index--;
 				}
@@ -85,16 +74,16 @@ public class WidgetModifiers {
 		return new float[]{ 1, 1, 1, 1 };
 	}	
 	
-	public void apply(EntityPlayer player, boolean overlayActive){
+	public void apply(long conditionStates){
 		for(int i=0, count = this.modifiers.size(); i < count; i++) 
-			this.modifiers.get(i).apply(player, overlayActive);
+			this.modifiers.get(i).apply(conditionStates);
 	}
 	
-	public Vector4f calcPosition(EntityPlayer player, boolean overlayActive){
+	public Vector4f calcPosition(long conditionStates){
 		Matrix4f m = new Matrix4f();
 		Object[] b;
 		for(int i=0, count = this.modifiers.size(); i < count; i++)
-			if(this.modifiers.get(i).shouldApplyModifier(player, overlayActive)) switch(this.modifiers.get(i).getType()){
+			if(this.modifiers.get(i).shouldApplyModifier(conditionStates)) switch(this.modifiers.get(i).getType()){
 				case WidgetModifierType.TRANSLATE: 
 					b = this.modifiers.get(i).getValues();
 					m.translate(new Vector3f((float) b[0], (float) b[1], (float) b[2])); 

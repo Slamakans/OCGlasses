@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @SideOnly(Side.CLIENT)
 public interface IRenderableWidget {
-	public void render(EntityPlayer player, Location glassesTerminalLocation, boolean overlayActive);
+	public void render(EntityPlayer player, Location glassesTerminalLocation, long conditionStates);
 	public RenderType getRenderType();
 	public boolean shouldWidgetBeRendered(EntityPlayer player);
 	public UUID getWidgetOwner();
