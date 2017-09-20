@@ -83,10 +83,6 @@ public class ClientSurface {
 		else 
 			curConditionStates |= ((long) 1 << WidgetModifierConditionType.OVERLAY_INACTIVE); 
 		
-		
-		if(player.world.getWorldTime() % 20 == 0)
-			return this.conditionStates;
-				
 		if(((checkConditions >>> WidgetModifierConditionType.IS_SNEAKING) & 1) != 0 || ((checkConditions >>> WidgetModifierConditionType.IS_NOT_SNEAKING) & 1) != 0){
 			if(player.isSneaking() == true)  
 				curConditionStates |= ((long) 1 << WidgetModifierConditionType.IS_SNEAKING); 
@@ -94,6 +90,15 @@ public class ClientSurface {
 				curConditionStates |= ((long) 1 << WidgetModifierConditionType.IS_NOT_SNEAKING);				
 		}
 		
+		//bs
+		if(player.world.getWorldTime() % 20 != 0){
+			this.conditionStates &= ~((long) 1 << WidgetModifierConditionType.OVERLAY_ACTIVE); 
+			this.conditionStates &= ~((long) 1 << WidgetModifierConditionType.OVERLAY_INACTIVE); 
+			this.conditionStates &= ~((long) 1 << WidgetModifierConditionType.IS_SNEAKING); 
+			this.conditionStates &= ~((long) 1 << WidgetModifierConditionType.IS_NOT_SNEAKING); 
+			return (curConditionStates | this.conditionStates);
+		}
+				
 		if(((checkConditions >>> WidgetModifierConditionType.IS_WEATHER_RAIN) & 1) != 0 || ((checkConditions >>> WidgetModifierConditionType.IS_WEATHER_CLEAR) & 1) != 0){
 			if(player.world.isRaining() == true)  
 				curConditionStates |= ((long) 1 << WidgetModifierConditionType.IS_WEATHER_RAIN); 
@@ -127,7 +132,7 @@ public class ClientSurface {
 	public void onRenderGameOverlay(RenderGameOverlayEvent evt) {
 		if (evt.getType() != ElementType.HELMET) return;
 		if (!(evt instanceof RenderGameOverlayEvent.Post)) return;
-		
+
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		UUID playerUUID = player.getGameProfile().getId();		
 		

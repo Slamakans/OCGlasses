@@ -36,6 +36,12 @@ public class Quad3D extends Triangle3D{
 		@Override
 		public void render(EntityPlayer player, Location glassesTerminalLocation, long conditionStates) {
 			this.applyModifiers(player, glassesTerminalLocation, conditionStates);
+			
+			GL11.glTranslatef(0.5F, 0.5F, 0.5F);			
+			GL11.glRotated(180.0D, 0.0D, 0.0D, 1.0D);
+			this.addPlayerRotation(player);
+			GL11.glTranslatef(-0.5F, -0.5F, -0.5F);						
+			
 			GL11.glBegin(GL11.GL_QUADS);			
 			GL11.glVertex3f(0, 0, 0);
 			GL11.glVertex3f(0, height, 0);

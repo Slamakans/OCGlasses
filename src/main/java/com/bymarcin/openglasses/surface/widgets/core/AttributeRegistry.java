@@ -8,6 +8,8 @@ import com.bymarcin.openglasses.lua.LuaReference;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.*;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.*;
 
+import com.bymarcin.openglasses.surface.WidgetGLWorld;
+
 public class AttributeRegistry {
 	static{
 		attributes = new HashMap<Class<? extends IAttribute>, LinkedList<Class<? extends LuaFunction>>>();
@@ -17,17 +19,17 @@ public class AttributeRegistry {
 		addAtribute(IAttribute.class, SetVisible.class);
 		addAtribute(IAttribute.class, SetVisibleCompat.class);
 		
+		addAtribute(IAttribute.class, RemoveWidget.class);
+		
 		addAtribute(IAttribute.class, AddColor.class);
 		addAtribute(IAttribute.class, AddTranslation.class);
 		addAtribute(IAttribute.class, AddRotation.class);
 		addAtribute(IAttribute.class, AddScale.class);
 		addAtribute(IAttribute.class, AddTexture.class);
-		addAtribute(IAttribute.class, GetModifiers.class);
 		addAtribute(IAttribute.class, RemoveModifier.class);
-		addAtribute(IAttribute.class, RemoveWidget.class);
+		addAtribute(IAttribute.class, GetModifiers.class);		
 		addAtribute(IAttribute.class, SetCondition.class);
 		
-
 		addAtribute(IResizable.class, GetSize.class);
 		addAtribute(IResizable.class, SetSize.class);
 		
@@ -36,19 +38,21 @@ public class AttributeRegistry {
 		
 		addAtribute(IItem.class, SetItem.class);
 		addAtribute(IItem.class, GetItem.class);
-		
-		addAtribute(IThroughVisibility.class, SetVisibleThroughObjects.class);
-		addAtribute(IThroughVisibility.class, IsVisibleThroughObjects.class);
-		
+				
 		addAtribute(I3DVertex.class, SetVertex.class);
 		addAtribute(I3DVertex.class, GetVertexCount.class);
 				
+		addAtribute(IThroughVisibility.class, SetVisibleThroughObjects.class);
+		addAtribute(IThroughVisibility.class, IsVisibleThroughObjects.class);
+		
+		addAtribute(ILookable.class, SetFaceWidgetToPlayer.class);
+		
 		addAtribute(IViewDistance.class, SetViewDistance.class);
 		addAtribute(IViewDistance.class, GetViewDistance.class);
 		
 		addAtribute(ILookable.class, SetLookingAt.class);
 		addAtribute(ILookable.class, GetLookingAt.class);
-		
+				
 		addAtribute(IPrivate.class, SetOwner.class);
 		addAtribute(IPrivate.class, GetOwner.class);
 		addAtribute(IPrivate.class, GetOwnerUUID.class);		

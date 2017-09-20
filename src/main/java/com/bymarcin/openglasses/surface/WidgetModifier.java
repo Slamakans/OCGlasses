@@ -15,9 +15,8 @@ public abstract class WidgetModifier{
 		
 	public Object[] getConditions(){
 		Object[] foo = new Object[64];
-		short s = 0;
-		
-		for(short i=0; i < 64; i++){
+				
+		for(short i=0, s=0; i < 64; i++){
 			if(((conditions >>> i) & (long) 1) != 0){
 				foo[s] = WidgetModifierConditionType.getName(i);
 				s++;

@@ -23,14 +23,12 @@ public class Triangle3D extends WidgetGLWorld {
 	public void writeData(ByteBuf buff) {
 		super.writeData(buff);
 		writeDataSIZE(buff);
-		writeDataWORLD(buff);
 	}
 
 	@Override
 	public void readData(ByteBuf buff) {
 		super.readData(buff);
 		readDataSIZE(buff);
-		readDataWORLD(buff);
 	}
 
 	@Override
@@ -41,14 +39,20 @@ public class Triangle3D extends WidgetGLWorld {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public IRenderableWidget getRenderable() {
-		return new RenderTriangle3D();
+		return new RenderableTriangle3D();
 	}
 	
 	@SideOnly(Side.CLIENT)
-	class RenderTriangle3D extends RenderableGLWidget{
+	class RenderableTriangle3D extends RenderableGLWidget{
 		@Override
 		public void render(EntityPlayer player, Location glassesTerminalLocation, long conditionStates) {
 			this.applyModifiers(player, glassesTerminalLocation, conditionStates);
+			
+			GL11.glTranslatef(0.5F, 0.5F, 0.5F);
+			GL11.glRotated(180.0D, 0.0D, 0.0D, 1.0D);
+			this.addPlayerRotation(player);
+			GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
+			
 			GL11.glBegin(GL11.GL_TRIANGLES);
 			GL11.glVertex3f(0, 0, 0);
 			GL11.glVertex3f(0, height, 0);

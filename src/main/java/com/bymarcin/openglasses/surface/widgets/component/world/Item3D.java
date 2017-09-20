@@ -81,17 +81,27 @@ public class Item3D extends WidgetGLWorld implements IItem{
 			tm.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);       
 			
 			alphaColor = this.applyModifiers(player, glassesTerminalLocation, conditionStates);		
-			
+				
+			GL11.glTranslatef(0.5F, 0.5F, 0.5F);
+			GL11.glRotated(180.0D, 0.0D, 0.0D, 1.0D);
+			this.addPlayerRotation(player);
+			GL11.glRotated(180.0D, 0.0D, 0.0D, 1.0D);
+			GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
+						
+						
 			tessellator = Tessellator.getInstance();
 			vertexbuffer = tessellator.getBuffer();
 			vertexbuffer.begin(7, DefaultVertexFormats.ITEM);
 			EnumFacing[] var6 = EnumFacing.values();			
-			
+						
 			for (int var8 = 0, var7 = var6.length; var8 < var7; ++var8) 
 				renderQuads(vertexbuffer, ibakedmodel.getQuads(null, var6[var8], 0L), alphaColor, itmStack);
 			
 			renderQuads(vertexbuffer, ibakedmodel.getQuads(null, null, 0L), alphaColor, itmStack);
 			tessellator.draw();
+			
+			
+			
 			this.revokeModifiers();			
 		}
 

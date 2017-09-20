@@ -25,6 +25,12 @@ public class OGUtils {
 	    return A | R | G | B;
 	}
 	
+	public static boolean isIntColorVisible(int color){
+		if((color & 0x000000FF) > 0) return true;
+		
+		return false;		
+	}
+	
 	public static boolean inRange(double x, double y, double z, double sx, double sy, double sz, double r){
 		return (((x-sx)*(x-sx)) + ((y-sy)*(y-sy)) + ((z-sz)*(z-sz))) <= (r*r);
 	}

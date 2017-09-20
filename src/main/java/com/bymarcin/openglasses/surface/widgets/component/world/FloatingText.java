@@ -22,19 +22,19 @@ import net.minecraft.client.renderer.GlStateManager;
 public class FloatingText extends WidgetGLWorld implements ITextable{
 	String text ="";
 	
-	public FloatingText() {}
+	public FloatingText() {
+		faceWidgetToPlayer = true;
+	}
 	
 	@Override
 	public void writeData(ByteBuf buff) {
 		super.writeData(buff);
-		writeDataWORLD(buff);
 		ByteBufUtils.writeUTF8String(buff, text);		
 	}
 
 	@Override
 	public void readData(ByteBuf buff) {
 		super.readData(buff);
-		readDataWORLD(buff);
 		text = ByteBufUtils.readUTF8String(buff);
 	}
 	
@@ -72,8 +72,9 @@ public class FloatingText extends WidgetGLWorld implements ITextable{
 			GL11.glTranslated(offsetX, offsetY, 0.0D);
 			GL11.glRotated(180.0D, 0.0D, 0.0D, 1.0D);
 			GL11.glTranslated(offsetX, offsetY, 0.0D);
-			GL11.glRotated(player.rotationYaw,0.0D,1.0D,0.0D);
-			GL11.glRotated(-player.rotationPitch,1.0D,0.0D,0.0D);
+			
+			this.addPlayerRotation(player);
+			
 			GL11.glTranslated(-offsetX, -offsetY, 0.0D);
 			
 			fontRender.drawString(text, 0, 0, currentColor);

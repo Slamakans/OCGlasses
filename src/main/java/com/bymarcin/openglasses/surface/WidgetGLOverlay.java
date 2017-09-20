@@ -15,6 +15,7 @@ import com.bymarcin.openglasses.surface.widgets.component.face.ItemIcon;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IResizable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IPrivate;
 
+
 import com.bymarcin.openglasses.surface.WidgetType;
 
 import com.bymarcin.openglasses.surface.WidgetModifierType;
@@ -43,6 +44,7 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 	
 	public boolean isThroughVisibility = false;
 	public boolean isLookingAtEnable = false;
+	public boolean faceWidgetToPlayer = false;
 	
 	public int lookAtX=0, lookAtY=0, lookAtZ=0;
 	
@@ -73,7 +75,7 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 		x = buff.readFloat();
 		y = buff.readFloat();
 		z = buff.readFloat();
-		isLookingAtEnable = buff.readBoolean();
+		isLookingAtEnable = buff.readBoolean();		
 	}
 
 	public void writeDataSIZE(ByteBuf buff) {
@@ -114,6 +116,9 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 
 	public void setLookingAtEnable(boolean enable) {
 		isLookingAtEnable = enable; }
+		
+	public void setFaceWidgetToPlayer(boolean enable) {
+		faceWidgetToPlayer = enable; }
 
 	public int getLookingAtX() {
 		return lookAtX; }
@@ -168,7 +173,7 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 					case WidgetModifierType.TEXTURE: doTexture = true; break;
 					default: break;
 				}
-			}
+			}			
 			
 			WidgetType type = getType();	
 			if(type == WidgetType.BOX2D){
@@ -208,6 +213,13 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 			return WidgetModifierList.getCurrentColor(conditionStates, 0);
 		}
 		
+		
+		public void addPlayerRotation(EntityPlayer player){
+			if(faceWidgetToPlayer == true){
+				GL11.glRotated(player.rotationYaw,0.0D,1.0D,0.0D);
+				GL11.glRotated(-player.rotationPitch,1.0D,0.0D,0.0D);
+			}
+		}
 		
 		public float[] getCurrentColorFloat(long conditionStates, int index){
 			return WidgetModifierList.getCurrentColorFloat(conditionStates, index);

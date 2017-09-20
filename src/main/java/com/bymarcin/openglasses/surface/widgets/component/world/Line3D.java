@@ -25,14 +25,12 @@ public class Line3D extends WidgetGLWorld{
 	@Override
 	public void writeData(ByteBuf buff) {
 		super.writeData(buff);
-		writeDataWORLD(buff);
 		writeDataSIZE(buff);
 	}
 
 	@Override
 	public void readData(ByteBuf buff) {
 		super.readData(buff);
-		readDataWORLD(buff);
 		readDataSIZE(buff);
 	}
 

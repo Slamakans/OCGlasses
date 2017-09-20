@@ -19,18 +19,6 @@ public class Cube3D extends WidgetGLWorld {
 	public Cube3D() {}
 	
 	@Override
-	public void writeData(ByteBuf buff) {
-		super.writeData(buff);
-		writeDataWORLD(buff);		
-	}
-
-	@Override
-	public void readData(ByteBuf buff) {
-		super.readData(buff);
-		readDataWORLD(buff);		
-	}
-
-	@Override
 	public WidgetType getType() {
 		return WidgetType.CUBE3D;
 	}

@@ -19,12 +19,16 @@ public abstract class WidgetGLWorld extends WidgetGLOverlay implements IThroughV
 		this.rendertype = RenderType.WorldLocated; 
 	}	
 	
-	public void writeDataWORLD(ByteBuf buff){
+	public void writeData(ByteBuf buff){
+		super.writeData(buff);
 		buff.writeBoolean(isThroughVisibility);	
+		buff.writeBoolean(faceWidgetToPlayer);
 	}
 	
-	public void readDataWORLD(ByteBuf buff){
+	public void readData(ByteBuf buff){
+		super.readData(buff);
 		isThroughVisibility = buff.readBoolean();		
+		faceWidgetToPlayer = buff.readBoolean();
 	}
 	
 	public boolean isVisibleThroughObjects() {
