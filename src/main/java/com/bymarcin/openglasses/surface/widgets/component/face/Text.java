@@ -50,7 +50,7 @@ public class Text extends Dot implements ITextable{
 		@Override
 		public void render(EntityPlayer player, Location glassesTerminalLocation, long conditionStates) {
 			int currentColor = this.applyModifiers(player, glassesTerminalLocation, conditionStates);
-			Minecraft.getMinecraft().fontRendererObj.drawString(text, 0, 0, currentColor);
+			Minecraft.getMinecraft().fontRenderer.drawString(text, 0, 0, currentColor);
 			GlStateManager.disableAlpha();
 			this.revokeModifiers();
 		}

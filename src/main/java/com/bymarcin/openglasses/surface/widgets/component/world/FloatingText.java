@@ -57,7 +57,7 @@ public class FloatingText extends WidgetGLWorld implements ITextable{
 		public void render(EntityPlayer player, Location glassesTerminalLocation, long conditionStates) {
 			if(text.length() < 1) return;
 			
-			FontRenderer fontRender = Minecraft.getMinecraft().fontRendererObj;			
+			FontRenderer fontRender = Minecraft.getMinecraft().fontRenderer;
 			offsetY = fontRender.FONT_HEIGHT/2D;
 			offsetX = fontRender.getStringWidth(text)/2D;
 						
