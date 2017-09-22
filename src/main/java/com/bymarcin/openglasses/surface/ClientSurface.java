@@ -1,6 +1,5 @@
 package com.bymarcin.openglasses.surface;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -24,8 +23,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import net.minecraft.client.renderer.GlStateManager;
-
 import com.bymarcin.openglasses.utils.OGUtils;
 
 @SideOnly(Side.CLIENT)
@@ -35,12 +32,17 @@ public class ClientSurface {
 	public Map<Integer, IRenderableWidget> renderablesWorld = new ConcurrentHashMap<Integer, IRenderableWidget>();
 	boolean isPowered = false;
 	public boolean haveGlasses = false;
+	public boolean glassesHaveSensorWater = false;
+	public boolean glassesHaveSensorRain = false;
+	public boolean glassesHaveSensorSneaking = false;
+	public boolean glassesHaveSensorLight = false;
 	public boolean OverlayActive = false;
 	public Location lastBind;
-	IRenderableWidget noPowerRender;
+	private IRenderableWidget noPowerRender;
 	
 	public long conditionStates = 0;
-	
+	private long lastExtendedConditionCheck = 0;
+
 	private ClientSurface() {
 		noPowerRender = getNoPowerRender();
 	}	
@@ -71,57 +73,59 @@ public class ClientSurface {
 		renderables.clear();
 		renderablesWorld.clear();
 	}
-	
-	public long getConditionStates(EntityPlayer player){
+
+	private long getConditionStates(EntityPlayer player){
 		long curConditionStates = 0;
-		
 		long checkConditions = ~0;
 		
-		
-		if(OverlayActive == true) 
+		if(OverlayActive)
 			curConditionStates |= ((long) 1 << WidgetModifierConditionType.OVERLAY_ACTIVE); 
 		else 
 			curConditionStates |= ((long) 1 << WidgetModifierConditionType.OVERLAY_INACTIVE); 
 		
-		if(((checkConditions >>> WidgetModifierConditionType.IS_SNEAKING) & 1) != 0 || ((checkConditions >>> WidgetModifierConditionType.IS_NOT_SNEAKING) & 1) != 0){
-			if(player.isSneaking() == true)  
+		if(glassesHaveSensorSneaking && (((checkConditions >>> WidgetModifierConditionType.IS_SNEAKING) & 1) != 0 || ((checkConditions >>> WidgetModifierConditionType.IS_NOT_SNEAKING) & 1) != 0)){
+			if(player.isSneaking())
 				curConditionStates |= ((long) 1 << WidgetModifierConditionType.IS_SNEAKING); 
 			else 
 				curConditionStates |= ((long) 1 << WidgetModifierConditionType.IS_NOT_SNEAKING);				
 		}
 		
 		//bs
-		if(player.world.getWorldTime() % 20 != 0){
+		if((player.world.getWorldTime() - lastExtendedConditionCheck) < 20){
 			this.conditionStates &= ~((long) 1 << WidgetModifierConditionType.OVERLAY_ACTIVE); 
 			this.conditionStates &= ~((long) 1 << WidgetModifierConditionType.OVERLAY_INACTIVE); 
 			this.conditionStates &= ~((long) 1 << WidgetModifierConditionType.IS_SNEAKING); 
 			this.conditionStates &= ~((long) 1 << WidgetModifierConditionType.IS_NOT_SNEAKING); 
 			return (curConditionStates | this.conditionStates);
 		}
-				
-		if(((checkConditions >>> WidgetModifierConditionType.IS_WEATHER_RAIN) & 1) != 0 || ((checkConditions >>> WidgetModifierConditionType.IS_WEATHER_CLEAR) & 1) != 0){
-			if(player.world.isRaining() == true)  
+
+		lastExtendedConditionCheck = player.world.getWorldTime();
+
+		if(glassesHaveSensorRain && (((checkConditions >>> WidgetModifierConditionType.IS_WEATHER_RAIN) & 1) != 0 || ((checkConditions >>> WidgetModifierConditionType.IS_WEATHER_CLEAR) & 1) != 0)){
+			if(player.world.isRaining())
 				curConditionStates |= ((long) 1 << WidgetModifierConditionType.IS_WEATHER_RAIN); 
 			else 
 				curConditionStates |= ((long) 1 << WidgetModifierConditionType.IS_WEATHER_CLEAR); 
 		}
 		
-		if(((checkConditions >>> WidgetModifierConditionType.IS_SWIMMING) & 1) != 0 || ((checkConditions >>> WidgetModifierConditionType.IS_NOT_SWIMMING) & 1) != 0){
-			if(OGUtils.isPlayerSwimming(player) == true)  
+		if(glassesHaveSensorWater && (((checkConditions >>> WidgetModifierConditionType.IS_SWIMMING) & 1) != 0 || ((checkConditions >>> WidgetModifierConditionType.IS_NOT_SWIMMING) & 1) != 0)){
+			if(OGUtils.isPlayerSwimming(player))
 				curConditionStates |= ((long) 1 << WidgetModifierConditionType.IS_SWIMMING); 
 			else 
 				curConditionStates |= ((long) 1 << WidgetModifierConditionType.IS_NOT_SWIMMING); 	
 		}			
 		
-		int lightLevel = OGUtils.getLightLevelPlayer(player);
-				
-		for(int i = WidgetModifierConditionType.IS_LIGHTLEVEL_MIN_0, l=0; i < WidgetModifierConditionType.IS_LIGHTLEVEL_MIN_15; i++, l++)
-			if(((checkConditions >>> i) & 1) != 0 && lightLevel >= l)
-				curConditionStates |= ((long) 1 << i);
-		
-		for(int i = WidgetModifierConditionType.IS_LIGHTLEVEL_MAX_0, l=0; i < WidgetModifierConditionType.IS_LIGHTLEVEL_MAX_15; i++, l++)
-			if(((checkConditions >>> i) & 1) != 0 && lightLevel <= l)
-				curConditionStates |= ((long) 1 << i);
+		if(glassesHaveSensorLight) {
+			int lightLevel = OGUtils.getLightLevelPlayer(player);
+
+			for (int i = WidgetModifierConditionType.IS_LIGHTLEVEL_MIN_0, l = 0; i < WidgetModifierConditionType.IS_LIGHTLEVEL_MIN_15; i++, l++)
+				if (((checkConditions >>> i) & 1) != 0 && lightLevel >= l)
+					curConditionStates |= ((long) 1 << i);
+
+			for (int i = WidgetModifierConditionType.IS_LIGHTLEVEL_MAX_0, l = 0; i < WidgetModifierConditionType.IS_LIGHTLEVEL_MAX_15; i++, l++)
+				if (((checkConditions >>> i) & 1) != 0 && lightLevel <= l)
+					curConditionStates |= ((long) 1 << i);
+		}
 		
 		
 		return curConditionStates;

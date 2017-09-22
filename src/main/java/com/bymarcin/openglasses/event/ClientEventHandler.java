@@ -3,7 +3,6 @@ package com.bymarcin.openglasses.event;
 import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.gui.InteractGui;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
-import com.bymarcin.openglasses.item.OpenGlassesBaubleItem;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket.EventType;
@@ -12,17 +11,19 @@ import com.bymarcin.openglasses.utils.Location;
 import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
 
-import li.cil.oc.client.KeyBindings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.common.discovery.JarDiscoverer;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
@@ -116,6 +117,10 @@ public class ClientEventHandler {
 
 	private void unEquiped(PlayerTickEvent e){
 		ClientSurface.instances.haveGlasses = false;
+		ClientSurface.instances.glassesHaveSensorWater = false;
+		ClientSurface.instances.glassesHaveSensorRain = false;
+		ClientSurface.instances.glassesHaveSensorSneaking = false;
+		ClientSurface.instances.glassesHaveSensorLight = false;
 		ClientSurface.instances.removeAllWidgets();
 		NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.UNEQUIPED_GLASSES,null, e.player));
 	}
@@ -124,7 +129,59 @@ public class ClientEventHandler {
 		ClientSurface.instances.lastBind = uuid;
 		NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.EQUIPED_GLASSES, uuid, e.player));
 		ClientSurface.instances.haveGlasses = true;
+
+		NBTTagCompound glassesTags = OpenGlasses.getGlassesStack(e.player).getTagCompound();
+
+		ClientSurface.instances.glassesHaveSensorWater = glassesTags.getBoolean("geolyzer");
+		ClientSurface.instances.glassesHaveSensorRain = glassesTags.getBoolean("tankUpgrade");
+		ClientSurface.instances.glassesHaveSensorSneaking = glassesTags.getBoolean("motionsensor");
+		ClientSurface.instances.glassesHaveSensorLight = glassesTags.getBoolean("daylightDetector");
 	}
 
+	@SubscribeEvent
+	public void handleAnvilEvent(AnvilUpdateEvent evt) {
+		boolean validUpgrade = false;
 
+		if(evt.getLeft() == null || evt.getRight() == null) return;
+
+		if(!(evt.getLeft().getItem() instanceof OpenGlassesItem)) return;
+
+		ItemStack res = new ItemStack(evt.getLeft().getItem());
+
+		NBTTagCompound tag = evt.getLeft().getTagCompound().copy();
+
+		Item itm = evt.getRight().getItem();
+
+		if(itm == Item.getItemFromBlock(Blocks.DAYLIGHT_DETECTOR)) {
+			tag.setBoolean("daylightDetector", true);
+			evt.setCost(20);
+			validUpgrade = true;
+		}
+		else if(itm.getRegistryName().equals(new ResourceLocation("opencomputers", "upgrade")) && evt.getRight().getMetadata() == 23) { //oc tankUpgrade
+			tag.setBoolean("tankUpgrade", true);
+			evt.setCost(20);
+			validUpgrade = true;
+		}
+		else if(itm.getRegistryName().equals(new ResourceLocation("opencomputers", "motionSensor"))) {
+			tag.setBoolean("motionsensor", true);
+			evt.setCost(20);
+			validUpgrade = true;
+		}
+		else if(itm.getRegistryName().equals(new ResourceLocation("opencomputers", "geolyzer"))) {
+			tag.setBoolean("geolyzer", true);
+			evt.setCost(20);
+			validUpgrade = true;
+		}
+		/*
+		else if(itm.getRegistryName().equals(new ResourceLocation("opencomputers", "upgrade")) && evt.getRight().getMetadata() == 1) { //battery upgrade T1
+		}
+		*/
+
+		if(validUpgrade) {
+			res.setTagCompound(tag);
+			evt.setOutput(res);
+		}
+
+		return;
+	}
 }

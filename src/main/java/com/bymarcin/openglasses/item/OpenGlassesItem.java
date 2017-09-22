@@ -17,8 +17,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.utils.Location;
 
-
 public class OpenGlassesItem extends ItemArmor {
+
 	public OpenGlassesItem() {
 		super(ArmorMaterial.IRON, 0, EntityEquipmentSlot.HEAD);
 		setMaxDamage(0);
@@ -28,7 +28,7 @@ public class OpenGlassesItem extends ItemArmor {
 		setUnlocalizedName("openglasses");
 		setRegistryName("openglasses");
 	}
-	
+
 	@Override
 	public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
 		return OpenGlasses.MODID + ":textures/models/glasses.png";
@@ -42,18 +42,39 @@ public class OpenGlassesItem extends ItemArmor {
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean par4) {
-		NBTTagCompound ogc = getItemTag(itemStack);
-		super.addInformation(itemStack, player, list, par4);
+	public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> tooltip, boolean par4) {
+		super.addInformation(itemStack, player, tooltip, par4);
+
+		NBTTagCompound tag = getItemTag(itemStack);
 		Location uuid = getUUID(itemStack);
-		if(ogc.getLong("uniqueKey") > 0){
-			list.add("linked to: X: " + ogc.getInteger("X") + ", Y: " + ogc.getInteger("Y") + ", Z: "+ ogc.getInteger("Z") + " (DIM: " + ogc.getInteger("DIM") +")");			
-			list.add("terminal: " + ogc.getLong("uniqueKey"));			
-			list.add("user: " + ogc.getString("user"));
+		if(tag.getLong("uniqueKey") > 0){
+			tooltip.add("linked to: X: " + tag.getInteger("X") + ", Y: " + tag.getInteger("Y") + ", Z: " + tag.getInteger("Z") + " (DIM: " + tag.getInteger("DIM") +")");
+			tooltip.add("terminal: " + tag.getLong("uniqueKey"));
+			tooltip.add("user: " + tag.getString("user"));
 		}
 		else
-			list.add("use at glassesterminal to link glasses");
+			tooltip.add("use at glassesterminal to link glasses");
+
+
+		if(tag.getBoolean("daylightDetector"))
+			tooltip.add("lightsensor: installed");
+		else
+			tooltip.add("lightsensor: not installed (install on anvil with minecraft daylight sensor)");
+
+		if(tag.getBoolean("tankUpgrade"))
+			tooltip.add("rainsensor: installed");
+		else
+			tooltip.add("rainsensor: not installed (install on anvil with opencomputers tank upgrade)");
+
+		if(tag.getBoolean("motionsensor"))
+			tooltip.add("sneak detection: installed");
+		else
+			tooltip.add("sneak detection: not installed (install on anvil with opencomputers motionsensor)");
+
+		if(tag.getBoolean("geolyzer"))
+			tooltip.add("geolyzer: installed");
+		else
+			tooltip.add("geolyzer: not installed (install on anvil with opencomputers geolyzer to enable swimming detection)");
 	}
 
 	public static NBTTagCompound getItemTag(ItemStack stack) {
