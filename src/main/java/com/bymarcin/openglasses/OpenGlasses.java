@@ -49,10 +49,10 @@ public class OpenGlasses
 	public static OpenGlasses instance;
 
 	public static CreativeTabs creativeTab = CreativeTabs.REDSTONE;
-	
+
 	public static Item openGlasses;
 	public static OpenGlassesTerminalBlock openTerminal;
-	
+
 	public static int energyBuffer = 100;
 	public static double energyMultiplier  = 1;
 
@@ -62,81 +62,81 @@ public class OpenGlasses
 	public void preInit(FMLPreInitializationEvent event)
 	{
 		if(Loader.isModLoaded("Baubles")) this.baubles = true;
-		
+
 		config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
 		NetworkRegistry.initialize();
 		energyBuffer = config.get("Energy", "energyBuffer", 100).getInt(100);
 		energyMultiplier = config.get("Energy", "energyMultiplier", 1.0, "PowerDrain= (NumberOfWidgets / 10) * energyMultiplier").getDouble(1.0);
-		
-		
+
+
 		openTerminal = GameRegistry.register(new OpenGlassesTerminalBlock());
 		Item i = GameRegistry.register(new ItemBlock(openTerminal).setRegistryName(openTerminal.getRegistryName()));
 		proxy.registermodel(i, 0);
-		
-		
+
+
 		GameRegistry.registerTileEntity(OpenGlassesTerminalTileEntity.class, "openglassesterminalte");
-		
+
 		openGlasses = getOGCObject(this.baubles);
-		
-		proxy.registermodel(openGlasses, 0);			
+
+		proxy.registermodel(openGlasses, 0);
 		GameRegistry.register(openGlasses);
-		
-		proxy.init();			
+
+		proxy.init();
 	}
-	
+
 	public Item getOGCObject(boolean bauble){
 		if(bauble == true)
 			return new OpenGlassesBaubleItem();
 		else
 			return new OpenGlassesItem();
 	}
-	
+
 	public static Item getGlasses(EntityPlayer e){
 		ItemStack glassesStack = getGlassesStack(e);
-		
+
 		if(!isGlassesStack(glassesStack))
 			return null;
-		
+
 		Item glasses = glassesStack!=null?glassesStack.getItem():null;
-		
+
 		return glasses;
 	}
-	
+
 	public static boolean isGlassesStack(ItemStack stack){
 		Item glasses = stack!=null?stack.getItem():null;
-		
+
 		if(glasses instanceof OpenGlassesItem)
 			return true;
 		else
-			return false;		
+			return false;
 	}
-	
+
 	public static ItemStack getGlassesStack(EntityPlayer e){
 		//get armor slot
 		ItemStack glassesStack = e.inventory.armorInventory[3];
-		
-		if(isGlassesStack(glassesStack)) 
+
+		if(isGlassesStack(glassesStack))
 			return glassesStack;
-				
+
 		return getGlassesStackBaubles(e);
 	}
-	
+
 	public static ItemStack getGlassesStackBaubles(EntityPlayer e){
 		//get baubles slot if glasses arent found in armor slot
 		if(!Loader.isModLoaded("Baubles")) return null;
-		
+
 		IBaublesItemHandler handler = BaublesApi.getBaublesHandler(e);
-		
+
 		if (handler == null) return null;
-		
+
 		ItemStack glassesStack = handler.getStackInSlot(4);
-			if(isGlassesStack(glassesStack)) 
+			if(isGlassesStack(glassesStack))
 				return glassesStack;
-		
-		return null;		
+
+		return null;
 	}
-	
+
 	@EventHandler
 	public void init(FMLInitializationEvent event)
 	{
@@ -144,8 +144,8 @@ public class OpenGlasses
 		NetworkRegistry.registerPacket(1, WidgetUpdatePacket.class, Side.CLIENT);
 		NetworkRegistry.registerPacket(2, TerminalStatusPacket.class, Side.CLIENT);
 	}
-	
-	
+
+
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event)
 	{
@@ -155,12 +155,12 @@ public class OpenGlasses
 		ItemStack server = Items.get("geolyzer").createItemStack(1);
 		ItemStack screen = Items.get("screen3").createItemStack(1);
 		ItemStack cpu = Items.get("cpu3").createItemStack(1);
-		
+
 		GameRegistry.addRecipe(new ItemStack(openGlasses),"SCS"," W ","   ", 'S', screen, 'W', wlanCard, 'C', graphics);
 		GameRegistry.addRecipe(new ItemStack(openTerminal),"R  ","S  ","M  ", 'S', server, 'R', ram, 'M', cpu);
-		
+
 		config.save();
-		
-		proxy.postInit();			
+
+		proxy.postInit();
 	}
 }
