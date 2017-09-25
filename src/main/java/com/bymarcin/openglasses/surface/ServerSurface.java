@@ -29,7 +29,7 @@ public class ServerSurface {
 			if(terminal != null && terminal.getTerminalUUID().equals(UUID)){
 				players.put(player, UUID);
 				sendSync(player, UUID, terminal);
-				sendPowerInfo(UUID, terminal.isPowered()?TerminalStatus.HavePower:TerminalStatus.NoPower);
+				//sendPowerInfo(UUID, terminal.isPowered()?TerminalStatus.HavePower:TerminalStatus.NoPower);
 				terminal.onGlassesPutOn(player.getDisplayNameString());
 			}
 		}
@@ -57,7 +57,7 @@ public class ServerSurface {
 	}
 	
 	public void sendSync(EntityPlayer p,Location coords, OpenGlassesTerminalTileEntity t){
-			WidgetUpdatePacket packet = new WidgetUpdatePacket( ((OpenGlassesTerminalTileEntity)t).widgetList);
+			WidgetUpdatePacket packet = new WidgetUpdatePacket(t.widgetList);
 			NetworkRegistry.packetHandler.sendTo(packet, (EntityPlayerMP) p);
 	}
 	

@@ -1,6 +1,7 @@
 package com.bymarcin.openglasses.item;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
 import baubles.api.BaubleType;
@@ -26,8 +27,9 @@ public class OpenGlassesBaubleItem extends OpenGlassesItem implements IBauble {
     }
 
     @Override
-    public boolean willAutoSync(ItemStack itemstack, EntityLivingBase player) {
-        return false;
-    }
+    public boolean willAutoSync(ItemStack itemstack, EntityLivingBase player) { return true; }
+
+    @Override
+    public void onWornTick(ItemStack itemstack, EntityLivingBase player){ this.consumeEnergy(itemstack); }
     
 }

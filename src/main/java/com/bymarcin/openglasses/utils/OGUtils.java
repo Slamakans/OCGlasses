@@ -49,7 +49,7 @@ public class OGUtils {
 	}
 	
 	public static int getLightLevelPlayer(EntityPlayer e){		
-		return (int) e.world.getLightFor(EnumSkyBlock.SKY, new BlockPos(e.posX, e.posY + 1, e.posZ));
+		return e.world.getLightFor(EnumSkyBlock.SKY, new BlockPos(e.posX, e.posY + 1, e.posZ));
     }
     
     public static boolean isPlayerSwimming(EntityPlayer e){

@@ -27,6 +27,7 @@ import li.cil.oc.api.prefab.TileEntityEnvironment;
 import net.minecraft.nbt.NBTTagCompound;
 
 import net.minecraftforge.fml.common.Optional;
+import org.apache.logging.log4j.LogManager;
 
 @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers")
 public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
@@ -34,10 +35,10 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
 	public HashMap<Integer,Widget> widgetList = new HashMap<Integer,Widget>();
 	int currID=0;
 	Location loc;
-	boolean isPowered;
+	//boolean isPowered;
 	
 	public OpenGlassesTerminalTileEntity() {
-		node = API.network.newNode(this, Visibility.Network).withComponent(getComponentName()).withConnector(OpenGlasses.energyBuffer).create();
+		node = API.network.newNode(this, Visibility.Network).withComponent(getComponentName()).withConnector().create();
 	}
 
 	public void sendInteractEvent(String eventType, String name, double x, double y, double z, double lx, double ly, double lz, double eyeh){
@@ -327,21 +328,25 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
             addedToNetwork = true;
             Network.joinOrCreateNetwork(this);
         }
-        
-		if(world.isRemote) return;
-		boolean lastStatus = isPowered;
-		if((node()!=null) && ((Connector)node()).tryChangeBuffer(-widgetList.size()/10f*OpenGlasses.energyMultiplier) ){
-			isPowered = true;
-		}else{
-			isPowered = false;
-		}
-		
-		if(lastStatus != isPowered){
-			ServerSurface.instance.sendPowerInfo(getTerminalUUID(), isPowered?TerminalStatus.HavePower:TerminalStatus.NoPower);
-		}		
+
+		/*
+			if(world.isRemote) return;
+
+			boolean lastStatus = isPowered;
+			if(node()!=null) {
+				double energyCost = -widgetList.size() / 10f * OpenGlasses.energyMultiplier;
+				((Connector) node()).tryChangeBuffer(energyCost);
+			}
+
+			if(lastStatus != isPowered){
+				ServerSurface.instance.sendPowerInfo(getTerminalUUID(), isPowered?TerminalStatus.HavePower:TerminalStatus.NoPower);
+			}
+		*/
 	}
 
+	/*
 	public boolean isPowered() {
 		return isPowered;
 	}
+	*/
 }

@@ -32,12 +32,9 @@ public abstract class Widget implements IAttribute{
 	public abstract void readData(ByteBuf buff);
 	
 	public UUID string2UUID(String input){
-		UUID output = null;
 		try {
-			output = UUID.fromString(input);
-		} catch (Exception ex) {}
-		
-		return output;
+			return UUID.fromString(input);
+		} catch (Exception ex) { return null; }
 	}
 	
 	public final void write(ByteBuf buff){
@@ -106,7 +103,7 @@ public abstract class Widget implements IAttribute{
 		if(this.widgetOwner != null)
 			return UsernameCache.getLastKnownUsername(this.widgetOwner);
 		else
-			return (String) "";
+			return "";
 	}
 	
 	//sets widget owner and returns the uuid

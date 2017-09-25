@@ -7,9 +7,13 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.bymarcin.openglasses.OpenGlasses;
+import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.surface.widgets.component.face.Text;
 import com.bymarcin.openglasses.utils.Location;
 
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -30,21 +34,24 @@ public class ClientSurface {
 	public static ClientSurface instances = new ClientSurface();
 	public Map<Integer, IRenderableWidget> renderables = new ConcurrentHashMap<Integer, IRenderableWidget>();
 	public Map<Integer, IRenderableWidget> renderablesWorld = new ConcurrentHashMap<Integer, IRenderableWidget>();
-	boolean isPowered = false;
-	public boolean haveGlasses = false;
 	public boolean glassesHaveSensorWater = false;
 	public boolean glassesHaveSensorRain = false;
 	public boolean glassesHaveSensorSneaking = false;
 	public boolean glassesHaveSensorLight = false;
 	public boolean OverlayActive = false;
+	public OpenGlassesItem glasses;
+	public ItemStack glassesStack;
 	public Location lastBind;
-	private IRenderableWidget noPowerRender;
+
+
+	private IRenderableWidget noPowerRender, noLinkRender;
 	
 	public long conditionStates = 0;
 	private long lastExtendedConditionCheck = 0;
 
 	private ClientSurface() {
 		noPowerRender = getNoPowerRender();
+		noLinkRender = getNoLinkRender();
 	}	
 	
 	//gets the current widges and puts them to the correct hashmap
@@ -162,31 +169,40 @@ public class ClientSurface {
 	}
 	
 	public boolean shouldRenderStart(RenderGameOverlayEvent evt, EntityPlayer player){
-		if(!haveGlasses) 
+		if(glasses == null)
 			return false;
-		
-		if(!isPowered && noPowerRender != null){
+
+		if(glasses.getEnergyBuffer(glassesStack) == 0 && noPowerRender != null){
 			if(evt != null){
 				GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 				GL11.glPushMatrix();
 				GL11.glScaled(evt.getResolution().getScaledWidth_double()/512D, evt.getResolution().getScaledHeight_double()/512D*16D/9D, 0);
-				noPowerRender.render(player, lastBind, ~0); 
+				noPowerRender.render(player, lastBind, ~0);
 				GL11.glPopMatrix();
 				GL11.glPopAttrib();
 			}
 			return false;
 		}
 		
-		if(lastBind == null) 
+		if(lastBind == null && noLinkRender != null) {
+			if(evt != null){
+				GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+				GL11.glPushMatrix();
+				GL11.glScaled(evt.getResolution().getScaledWidth_double()/512D, evt.getResolution().getScaledHeight_double()/512D*16D/9D, 0);
+				noPowerRender.render(player, lastBind, ~0);
+				GL11.glPopMatrix();
+				GL11.glPopAttrib();
+			}
 			return false;
+		}
 		
 		return true;		
 	}		
 	
 	public double[] getEntityPlayerLocation(EntityPlayer e, float partialTicks){
-		double x = (double) e.prevPosX + (e.posX - e.prevPosX) * partialTicks; 
-		double y = (double) e.prevPosY + (e.posY - e.prevPosY) * partialTicks;
-		double z = (double) e.prevPosZ + (e.posZ - e.prevPosZ) * partialTicks;
+		double x = e.prevPosX + (e.posX - e.prevPosX) * partialTicks;
+		double y = e.prevPosY + (e.posY - e.prevPosY) * partialTicks;
+		double z = e.prevPosZ + (e.posZ - e.prevPosZ) * partialTicks;
 		return new double[]{x, y, z};
 	}	 	
 	
@@ -229,15 +245,18 @@ public class ClientSurface {
 		}
 		return null;
 	}
-	
-	public void setPowered(boolean isPowered) {
-		this.isPowered = isPowered;
-	}
-	
+
 	private IRenderableWidget getNoPowerRender(){
 		Text t = new Text();
 		t.setText("NO POWER");
 		t.WidgetModifierList.addColor(1F, 0F, 0F, 0.5F);		
+		return t.getRenderable();
+	}
+
+	private IRenderableWidget getNoLinkRender(){
+		Text t = new Text();
+		t.setText("NOT LINKED");
+		t.WidgetModifierList.addColor(1F, 1F, 1F, 0.5F);
 		return t.getRenderable();
 	}
 	

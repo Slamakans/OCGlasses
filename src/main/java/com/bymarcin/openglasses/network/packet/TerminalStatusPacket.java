@@ -32,7 +32,6 @@ public class TerminalStatusPacket extends Packet<TerminalStatusPacket, IMessage>
 	@SideOnly(Side.CLIENT)
 	@Override
 	protected IMessage executeOnClient() {
-		ClientSurface.instances.setPowered(status==TerminalStatus.HavePower?true:false);
 		return null;
 	}
 

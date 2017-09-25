@@ -41,37 +41,37 @@ public class ClientEventHandler {
 	public void onPlayerTick(PlayerTickEvent e){
 		if(e.player != Minecraft.getMinecraft().player) return;
 		tick++;
+
 		if(tick%20 != 0) return;
-		
+
 		tick = 0;		
 		checkGlasses(e);		
 	}
 	
-	public boolean checkGlasses(PlayerTickEvent e){
-		Item glasses = OpenGlasses.getGlasses(e.player);
-		
-		if(glasses instanceof OpenGlassesItem){
-			Location uuid  = ((OpenGlassesItem) glasses).getUUID(OpenGlasses.getGlassesStack(e.player));
-			
-			if(uuid!=null && ClientSurface.instances.haveGlasses==false){
-				equiped(e, uuid);
+	public boolean checkGlasses(PlayerTickEvent e) {
+		ItemStack glassesStack = OpenGlasses.getGlassesStack(e.player);
+
+		if(glassesStack != null){
+			if (glassesStack == ClientSurface.instances.glassesStack)
+				return true;
+			else if (ClientSurface.instances.glassesStack == null) {
+				equiped(e, glassesStack);
+				return true;
 			}
-			else if(ClientSurface.instances.haveGlasses == true && (uuid ==null || !uuid.equals(ClientSurface.instances.lastBind) ) ) {
-				unEquiped(e);
-			}			
-			return true;
 		}
-		else {
-			if(ClientSurface.instances.haveGlasses == true)	unEquiped(e);
-			return false;
+		else if(ClientSurface.instances.glassesStack != null) {
+			unEquiped(e);
 		}
+
+		return false;
 	}
 	
 	@SubscribeEvent
 	public void onJoin(EntityJoinWorldEvent e){
 		if ((e.getEntity() == Minecraft.getMinecraft().player) && (e.getWorld().isRemote)){
 			ClientSurface.instances.removeAllWidgets();
-			ClientSurface.instances.haveGlasses = false;
+			ClientSurface.instances.glasses = null;
+			ClientSurface.instances.glassesStack = null;
 		}
 	}
 
@@ -101,36 +101,42 @@ public class ClientEventHandler {
 	}
 
 	private void onInteractEvent(EventType type, PlayerInteractEvent event){
-		if(event.getSide().isClient() && event.getHand() == EnumHand.MAIN_HAND && ClientSurface.instances.haveGlasses) {
+		if(event.getSide().isClient() && event.getHand() == EnumHand.MAIN_HAND && ClientSurface.instances.glasses != null) {
 			NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.INTERACT_WORLD_RIGHT, ClientSurface.instances.lastBind, event.getEntityPlayer()));
 		}
 	}
 
 	@SubscribeEvent
 	public void onKeyInput(InputEvent.KeyInputEvent event) {
-		if(ClientSurface.instances.haveGlasses == true && interactGUIKey.isPressed()){
+		if(ClientSurface.instances.glasses != null && interactGUIKey.isPressed()){
 			ClientSurface.instances.OverlayActive = true;
 			Minecraft.getMinecraft().displayGuiScreen(new InteractGui());
 		}
-
 	}
 
 	private void unEquiped(PlayerTickEvent e){
-		ClientSurface.instances.haveGlasses = false;
+		ClientSurface.instances.glasses = null;
+		ClientSurface.instances.glassesStack = null;
 		ClientSurface.instances.glassesHaveSensorWater = false;
 		ClientSurface.instances.glassesHaveSensorRain = false;
 		ClientSurface.instances.glassesHaveSensorSneaking = false;
 		ClientSurface.instances.glassesHaveSensorLight = false;
 		ClientSurface.instances.removeAllWidgets();
-		NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.UNEQUIPED_GLASSES,null, e.player));
+		NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.UNEQUIPED_GLASSES, ClientSurface.instances.lastBind, e.player));
+		ClientSurface.instances.lastBind = null;
 	}
 	
-	private void equiped(PlayerTickEvent e, Location uuid){
-		ClientSurface.instances.lastBind = uuid;
-		NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.EQUIPED_GLASSES, uuid, e.player));
-		ClientSurface.instances.haveGlasses = true;
+	private void equiped(PlayerTickEvent e, ItemStack glassesStack){
+		ClientSurface.instances.glassesStack = glassesStack;
+		ClientSurface.instances.glasses = (OpenGlassesItem) glassesStack.getItem();
 
-		NBTTagCompound glassesTags = OpenGlasses.getGlassesStack(e.player).getTagCompound();
+		Location uuid  = ClientSurface.instances.glasses.getUUID(glassesStack);
+
+		ClientSurface.instances.lastBind = uuid;
+
+		NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.EQUIPED_GLASSES, uuid, e.player));
+
+		NBTTagCompound glassesTags = glassesStack.getTagCompound();
 
 		ClientSurface.instances.glassesHaveSensorWater = glassesTags.getBoolean("geolyzer");
 		ClientSurface.instances.glassesHaveSensorRain = glassesTags.getBoolean("tankUpgrade");
