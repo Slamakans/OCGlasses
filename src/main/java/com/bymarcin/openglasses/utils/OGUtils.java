@@ -5,12 +5,6 @@ import net.minecraft.util.math.BlockPos;
 
 import net.minecraft.entity.player.EntityPlayer;
 
-import net.minecraft.block.material.Material;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-
 public class OGUtils {
 	
 	public static int getIntFromColor(float red, float green, float blue, float alpha){

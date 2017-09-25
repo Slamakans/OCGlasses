@@ -4,7 +4,6 @@ import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
@@ -26,7 +25,6 @@ import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraft.util.EnumFacing;
 
 import net.minecraft.world.World;
-import org.apache.logging.log4j.LogManager;
 
 public class OpenGlassesItem extends ItemArmor {
 	private final int energyBuffer;
@@ -37,7 +35,7 @@ public class OpenGlassesItem extends ItemArmor {
 		super(ArmorMaterial.IRON, 0, EntityEquipmentSlot.HEAD);
 
 		this.energyBuffer = 1000000; //buffer
-		this.energyMultiplier = 1; //cost for each widget
+		this.energyMultiplier = 1; 	 //upkeep cost
 		this.energyTransfer = 10000; //charge rate
 
 		setMaxDamage(0);
@@ -141,7 +139,6 @@ public class OpenGlassesItem extends ItemArmor {
 		IEnergyStorage storage = stack.getCapability(CapabilityEnergy.ENERGY, null);
 		return 1 - (((double) 1 / storage.getMaxEnergyStored()) * storage.getEnergyStored());
 	}
-
 
 	public int getEnergyBuffer(ItemStack stack){
 		IEnergyStorage storage = stack.getCapability(CapabilityEnergy.ENERGY, null);

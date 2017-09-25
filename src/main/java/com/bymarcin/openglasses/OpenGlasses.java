@@ -53,7 +53,7 @@ public class OpenGlasses
 	public static Item openGlasses;
 	public static OpenGlassesTerminalBlock openTerminal;
 
-	public static double energyMultiplier = 1;
+	//public static double energyMultiplier = 1;
 
 	public static boolean baubles = false;
 
@@ -65,8 +65,8 @@ public class OpenGlasses
 		config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
 		NetworkRegistry.initialize();
-		int energyBuffer = config.get("Energy", "energyBuffer", 100).getInt(100);
-		energyMultiplier = config.get("Energy", "energyMultiplier", 1.0, "PowerDrain= (NumberOfWidgets / 10) * energyMultiplier").getDouble(1.0);
+		//int energyBuffer = config.get("Energy", "energyBuffer", 100).getInt(100);
+		//energyMultiplier = config.get("Energy", "energyMultiplier", 1.0, "PowerDrain= (NumberOfWidgets / 10) * energyMultiplier").getDouble(1.0);
 
 		openTerminal = GameRegistry.register(new OpenGlassesTerminalBlock());
 		Item i = GameRegistry.register(new ItemBlock(openTerminal).setRegistryName(openTerminal.getRegistryName()));
