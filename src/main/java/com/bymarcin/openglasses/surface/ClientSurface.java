@@ -189,7 +189,7 @@ public class ClientSurface {
 				GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 				GL11.glPushMatrix();
 				GL11.glScaled(evt.getResolution().getScaledWidth_double()/512D, evt.getResolution().getScaledHeight_double()/512D*16D/9D, 0);
-				noPowerRender.render(player, lastBind, ~0);
+				noLinkRender.render(player, lastBind, ~0);
 				GL11.glPopMatrix();
 				GL11.glPopAttrib();
 			}
@@ -225,7 +225,7 @@ public class ClientSurface {
 		GL11.glTranslated(-playerLocation[0], -playerLocation[1], -playerLocation[2]);
 		GL11.glTranslated(lastBind.x, lastBind.y, lastBind.z);
 		
-		GL11.glDepthMask(false);
+		GL11.glDepthMask(true);
 		//Start Drawing In World		
 		for(IRenderableWidget renderable : renderablesWorld.values()){
 			if(renderable.shouldWidgetBeRendered(player) && (renderable.getWidgetOwner() == null || playerUUID.equals(renderable.getWidgetOwner()))){
