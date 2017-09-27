@@ -20,9 +20,9 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 targetCompatibility = "1.8"
 sourceCompatibility = "1.8"
 
-def simpleVersion = "1.5.0-b11"
+def simpleVersion = "1.5.0-b12"
 
-group= "com.bymarcin.openglasses" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group= "com.bymarcin.openglasses"
 archivesBaseName = "OpenGlasses"
 version = simpleVersion
 
@@ -49,8 +49,7 @@ dependencies {
     provided  "li.cil.oc:OpenComputers:MC1.10.2-1.6.0.3-rc.1"
 }
 
-processResources
-{
+processResources{
     // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version

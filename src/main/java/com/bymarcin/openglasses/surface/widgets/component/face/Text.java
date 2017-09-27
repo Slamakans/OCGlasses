@@ -1,12 +1,11 @@
 package com.bymarcin.openglasses.surface.widgets.component.face;
 
-import com.bymarcin.openglasses.surface.WidgetGLOverlay;
 import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.WidgetType;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.ITextable;
-import com.bymarcin.openglasses.utils.OGUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
@@ -14,9 +13,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 import net.minecraft.client.renderer.GlStateManager;
 
-import org.lwjgl.BufferUtils;
-import java.nio.FloatBuffer;
-import com.bymarcin.openglasses.utils.OGUtils;
 import com.bymarcin.openglasses.utils.Location;
 public class Text extends Dot implements ITextable{
 	String text="";
@@ -49,8 +45,35 @@ public class Text extends Dot implements ITextable{
 	class RenderText extends RenderableGLWidget{
 		@Override
 		public void render(EntityPlayer player, Location glassesTerminalLocation, long conditionStates) {
+			FontRenderer fontRender = Minecraft.getMinecraft().fontRenderer;
+
 			int currentColor = this.applyModifiers(player, glassesTerminalLocation, conditionStates);
-			Minecraft.getMinecraft().fontRenderer.drawString(text, 0, 0, currentColor);
+
+			float offsetX = 0, offsetY = 0;
+			switch(this.getHorizontalAlign()) {
+				case CENTER:
+					offsetX = (float) -fontRender.getStringWidth(text);
+					offsetX/= 2F;
+					break;
+
+				case RIGHT:
+					offsetX = (float) -fontRender.getStringWidth(text);
+					break;
+			}
+
+			switch(this.getVerticalAlign()) {
+				case MIDDLE:
+					offsetY = (float) -fontRender.FONT_HEIGHT;
+					offsetY/= 2F;
+					break;
+				case BOTTOM:
+					offsetY = (float) -fontRender.FONT_HEIGHT;
+					break;
+			}
+
+			GL11.glTranslatef(offsetX, offsetY, 0F);
+
+			fontRender.drawString(text, 0, 0, currentColor);
 			GlStateManager.disableAlpha();
 			this.revokeModifiers();
 		}

@@ -8,7 +8,6 @@ import com.bymarcin.openglasses.lua.LuaReference;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.*;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.*;
 
-import com.bymarcin.openglasses.surface.WidgetGLWorld;
 
 public class AttributeRegistry {
 	static{
@@ -17,7 +16,6 @@ public class AttributeRegistry {
 		addAtribute(IAttribute.class, GetID.class);
 		addAtribute(IAttribute.class, IsVisible.class);
 		addAtribute(IAttribute.class, SetVisible.class);
-		addAtribute(IAttribute.class, SetVisibleCompat.class);
 		
 		addAtribute(IAttribute.class, RemoveWidget.class);
 		
@@ -25,11 +23,14 @@ public class AttributeRegistry {
 		addAtribute(IAttribute.class, AddTranslation.class);
 		addAtribute(IAttribute.class, AddRotation.class);
 		addAtribute(IAttribute.class, AddScale.class);
-		addAtribute(IAttribute.class, AddTexture.class);
+		//addAtribute(IAttribute.class, AddTexture.class);
 		addAtribute(IAttribute.class, RemoveModifier.class);
 		addAtribute(IAttribute.class, GetModifiers.class);		
 		addAtribute(IAttribute.class, SetCondition.class);
-		
+
+		addAtribute(IAttribute.class, SetHorizontalAlign.class);
+		addAtribute(IAttribute.class, SetVerticalAlign.class);
+
 		addAtribute(IResizable.class, GetSize.class);
 		addAtribute(IResizable.class, SetSize.class);
 		
@@ -45,11 +46,13 @@ public class AttributeRegistry {
 		addAtribute(IThroughVisibility.class, SetVisibleThroughObjects.class);
 		addAtribute(IThroughVisibility.class, IsVisibleThroughObjects.class);
 		
-		addAtribute(ILookable.class, SetFaceWidgetToPlayer.class);
-		
 		addAtribute(IViewDistance.class, SetViewDistance.class);
 		addAtribute(IViewDistance.class, GetViewDistance.class);
-		
+
+		addAtribute(IViewDistance.class, SetFaceWidgetToPlayer.class);
+
+		addAtribute(IViewDistance.class, GetRenderPosition.class);
+
 		addAtribute(ILookable.class, SetLookingAt.class);
 		addAtribute(ILookable.class, GetLookingAt.class);
 				

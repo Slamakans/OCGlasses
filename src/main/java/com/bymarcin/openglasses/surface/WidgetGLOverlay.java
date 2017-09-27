@@ -1,47 +1,36 @@
 package com.bymarcin.openglasses.surface;
 
-import com.bymarcin.openglasses.surface.IRenderableWidget;
-import com.bymarcin.openglasses.surface.WidgetModifier;
-
-import com.bymarcin.openglasses.surface.RenderType;
-
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import com.bymarcin.openglasses.surface.widgets.component.world.FloatingText;
-import com.bymarcin.openglasses.surface.widgets.component.face.Text;
-import com.bymarcin.openglasses.surface.widgets.component.face.ItemIcon;
 
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IResizable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IPrivate;
 
-
-import com.bymarcin.openglasses.surface.WidgetType;
-
-import com.bymarcin.openglasses.surface.WidgetModifierType;
-import com.bymarcin.openglasses.surface.WidgetModifiers;
-import org.lwjgl.opengl.GL11;
+import net.minecraft.entity.player.EntityPlayer;
 
 import net.minecraft.util.math.RayTraceResult;
 import com.bymarcin.openglasses.utils.OGUtils;
 import com.bymarcin.openglasses.utils.Location;
 
-import net.minecraft.entity.player.EntityPlayer;
 import io.netty.buffer.ByteBuf;
 import java.util.UUID;
-import java.util.List;
-import java.util.ArrayList;
 
-import org.lwjgl.util.vector.Vector4f;
-
+import org.lwjgl.opengl.GL11;
 
 public abstract class WidgetGLOverlay extends Widget implements IResizable, IPrivate {
 	RenderType rendertype;
 	
 	private float x = 0, y = 0, z = 0;
-	
+
 	public float width = 0, height = 0;
-	
+
+	public static enum VAlignment{	TOP, MIDDLE, BOTTOM }
+	public static enum HAlignment{	LEFT, CENTER, RIGHT }
+
+	public VAlignment valign;
+	public HAlignment halign;
+
 	public boolean isThroughVisibility = false;
 	public boolean isLookingAtEnable = false;
 	public boolean faceWidgetToPlayer = false;
@@ -51,7 +40,9 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 	public int distance=64; 
 
 	public WidgetGLOverlay(){
-		this.rendertype = RenderType.GameOverlayLocated;		
+		this.valign = VAlignment.TOP;
+		this.halign = HAlignment.LEFT;
+		this.rendertype = RenderType.GameOverlayLocated;
 	}
 	
 	public void writeData(ByteBuf buff) {
@@ -63,6 +54,8 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 		buff.writeFloat(x);
 		buff.writeFloat(y);
 		buff.writeFloat(z);
+		buff.writeInt(valign.ordinal());
+		buff.writeInt(halign.ordinal());
 		buff.writeBoolean(isLookingAtEnable);
 	}
 	
@@ -75,7 +68,9 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 		x = buff.readFloat();
 		y = buff.readFloat();
 		z = buff.readFloat();
-		isLookingAtEnable = buff.readBoolean();		
+		valign = VAlignment.values()[buff.readInt()];
+		halign = HAlignment.values()[buff.readInt()];
+		isLookingAtEnable = buff.readBoolean();
 	}
 
 	public void writeDataSIZE(ByteBuf buff) {
@@ -128,8 +123,17 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 
 	public int getLookingAtZ() {
 		return lookAtZ;	}
-			
-	@SideOnly(Side.CLIENT)	
+
+	public void setVerticalAlignment(String align){
+		this.valign = VAlignment.valueOf(align.toUpperCase());
+	}
+
+	public void setHorizontalAlignment(String align){
+		this.halign = HAlignment.valueOf(align.toUpperCase());
+	}
+
+
+	@SideOnly(Side.CLIENT)
 	public class RenderableGLWidget implements IRenderableWidget {		
 		boolean depthtest, texture2d, blending, smoothshading, alpha;
 		boolean doBlending, doTexture, doSmoothShade, doAlpha;
@@ -139,10 +143,10 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 		public int applyModifiers(EntityPlayer player, Location glassesTerminalLocation, long conditionStates){ 
 			if(getRenderType() == RenderType.WorldLocated){
 				if(player.world.getWorldTime() % 20 == 0){
-					Vector4f renderPosition = WidgetModifierList.calcPosition(conditionStates);
-					x = renderPosition.x + glassesTerminalLocation.x;
-					y = renderPosition.y + glassesTerminalLocation.y;
-					z = renderPosition.z + glassesTerminalLocation.z;	
+					BlockPos renderPosition = WidgetModifierList.getRenderPosition(conditionStates, glassesTerminalLocation);
+					x = renderPosition.getX();
+					y = renderPosition.getY();
+					z = renderPosition.getZ();
 				}
 			}
 			
@@ -209,8 +213,35 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 			else 
 				GL11.glShadeModel(GL11.GL_FLAT);
 			
-			WidgetModifierList.apply(conditionStates);			
-			
+			if(getRenderType() == RenderType.GameOverlayLocated) {
+				switch (halign) {
+					case CENTER:
+						GL11.glTranslated(Math.floor(ClientSurface.instances.resolution.getScaledWidth() / 2), 0, 0);
+						break;
+					case RIGHT:
+						GL11.glTranslated(ClientSurface.instances.resolution.getScaledWidth(), 0, 0);
+						break;
+					default:
+					case LEFT:
+						break;
+				}
+
+				switch (valign) {
+					case MIDDLE:
+						GL11.glTranslated(0, Math.floor(ClientSurface.instances.resolution.getScaledHeight() / 2), 0);
+						break;
+					case BOTTOM:
+						GL11.glTranslated(0, ClientSurface.instances.resolution.getScaledHeight(), 0);
+						break;
+					default:
+					case TOP:
+						break;
+				}
+			}
+
+			WidgetModifierList.apply(conditionStates);
+
+
 			return WidgetModifierList.getCurrentColor(conditionStates, 0);
 		}
 		
@@ -267,6 +298,18 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 		@Override
 		public RenderType getRenderType() {
 			return rendertype;
+		}
+
+		public VAlignment getVerticalAlign(){
+			return valign;
+		}
+
+		public HAlignment getHorizontalAlign(){
+			return halign;
+		}
+
+		public float[] getCurrentScale(long conditions){
+			return WidgetModifierList.getCurrentScaleFloat(conditions);
 		}
 	}
 }

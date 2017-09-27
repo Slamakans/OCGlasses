@@ -1,25 +1,25 @@
 package com.bymarcin.openglasses.surface;
 
-import com.bymarcin.openglasses.surface.WidgetModifier;
-import com.bymarcin.openglasses.surface.WidgetModifierType;
-
 import com.bymarcin.openglasses.surface.widgets.core.modifiers.*;
+import com.bymarcin.openglasses.utils.Location;
 import io.netty.buffer.ByteBuf;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import java.util.ArrayList;
 
 import com.bymarcin.openglasses.utils.OGUtils;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 public class WidgetModifiers {
 	public ArrayList<WidgetModifier> modifiers = new ArrayList<WidgetModifier>();
+
+	private Location lastOffset = new Location();
 	
 	public void setCondition(int modifierIndex, short conditionIndex, boolean state){
 		this.modifiers.get(modifierIndex).configureCondition(conditionIndex, state);
@@ -72,14 +72,49 @@ public class WidgetModifiers {
 			}
 		}
 		return new float[]{ 1, 1, 1, 1 };
-	}	
-	
+	}
+
+	public float[] getCurrentScaleFloat(long conditionStates){
+		float scaleX = 1, scaleY = 1, scaleZ = 1;
+		for(int i=0; i < this.modifiers.size(); i++){
+			if(this.modifiers.get(i).getType() == WidgetModifierType.SCALE && this.modifiers.get(i).shouldApplyModifier(conditionStates) == true){
+				Object[] scale = this.modifiers.get(i).getValues();
+				scaleX *= (float) scale[0];
+				scaleY *= (float) scale[1];
+				scaleZ *= (float) scale[2];
+			}
+		}
+		return new float[]{ scaleX, scaleY, scaleZ };
+	}
+
 	public void apply(long conditionStates){
 		for(int i=0, count = this.modifiers.size(); i < count; i++) 
 			this.modifiers.get(i).apply(conditionStates);
 	}
-	
-	public Vector4f calcPosition(long conditionStates){
+
+	public BlockPos getRenderPosition(long conditionStates, Location offset){
+		Vector4f renderPosition = this.generateGlMatrix(conditionStates);
+		this.lastOffset = offset;
+		renderPosition.x += offset.x;
+		renderPosition.y += offset.y;
+		renderPosition.z += offset.z;
+
+		return new BlockPos(renderPosition.x, renderPosition.y, renderPosition.z);
+	}
+
+	public BlockPos getRenderPosition(String ForPlayerName){
+		EntityPlayer player;
+
+		if(Minecraft.getMinecraft().world.isRemote)
+			player = Minecraft.getMinecraft().player;
+		else
+			player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(ForPlayerName);
+
+		long conditions = ClientSurface.instances.getConditionStates(player);
+		return this.getRenderPosition(conditions, this.lastOffset);
+	}
+
+	public Vector4f generateGlMatrix(long conditionStates){
 		Matrix4f m = new Matrix4f();
 		Object[] b;
 		for(int i=0, count = this.modifiers.size(); i < count; i++)
@@ -100,7 +135,6 @@ public class WidgetModifiers {
 		
 		return m.transform(m, new Vector4f(0F, 0F, 0F, 1F), null);
 	}
-	
 		
 	public void writeData(ByteBuf buff){
 		int modifierCount = this.modifiers.size();
