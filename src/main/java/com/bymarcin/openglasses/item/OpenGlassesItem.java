@@ -5,9 +5,11 @@ import java.util.List;
 import com.bymarcin.openglasses.surface.ClientSurface;
 import com.bymarcin.openglasses.utils.OGUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -36,6 +38,25 @@ public class OpenGlassesItem extends ItemArmor {
 		setCreativeTab(OpenGlasses.creativeTab);
 		setUnlocalizedName("openglasses");
 		setRegistryName("openglasses");
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void getSubItems(Item item, CreativeTabs par2CreativeTabs, List<ItemStack> par3List) {
+		ItemStack is = new ItemStack(item);
+
+		par3List.add(is.copy());
+
+		NBTTagCompound tag = is.getTagCompound();
+		tag.setInteger("Energy", 5000000);
+		tag.setInteger("EnergyCapacity", 5000000);
+		tag.setInteger("widgetLimit", 255);
+		tag.setInteger("upkeepCost", 0);
+		tag.setBoolean("daylightDetector", true);
+		tag.setBoolean("tankUpgrade", true);
+		tag.setBoolean("motionsensor", true);
+		tag.setBoolean("geolyzer", true);
+		par3List.add(is);
 	}
 
 	@Override
