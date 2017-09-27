@@ -7,12 +7,12 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.bymarcin.openglasses.OpenGlasses;
+import com.bymarcin.openglasses.event.ClientEventHandler;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.surface.widgets.component.face.Text;
 import com.bymarcin.openglasses.utils.Location;
 
-import net.minecraft.item.Item;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.item.ItemStack;
 import org.lwjgl.opengl.GL11;
 
@@ -32,6 +32,7 @@ import com.bymarcin.openglasses.utils.OGUtils;
 @SideOnly(Side.CLIENT)
 public class ClientSurface {
 	public static ClientSurface instances = new ClientSurface();
+	public static ClientEventHandler eventHandler;
 	public Map<Integer, IRenderableWidget> renderables = new ConcurrentHashMap<Integer, IRenderableWidget>();
 	public Map<Integer, IRenderableWidget> renderablesWorld = new ConcurrentHashMap<Integer, IRenderableWidget>();
 	public boolean glassesHaveSensorWater = false;
@@ -42,16 +43,17 @@ public class ClientSurface {
 	public OpenGlassesItem glasses;
 	public ItemStack glassesStack;
 	public Location lastBind;
+	public static ScaledResolution resolution = new ScaledResolution(Minecraft.getMinecraft());
 
+	private IRenderableWidget noPowerRender, noLinkRender, widgetLimitRender;
 
-	private IRenderableWidget noPowerRender, noLinkRender;
-	
 	public long conditionStates = 0;
 	private long lastExtendedConditionCheck = 0;
 
 	private ClientSurface() {
 		noPowerRender = getNoPowerRender();
 		noLinkRender = getNoLinkRender();
+		widgetLimitRender = getWidgetLimitRender();
 	}	
 	
 	//gets the current widges and puts them to the correct hashmap
@@ -67,6 +69,10 @@ public class ClientSurface {
 				break;
 			}
 		}
+	}
+
+	public int getWidgetCount(){
+		return (renderables.size() + renderablesWorld.size());
 	}
 	
 	public void removeWidgets(List<Integer> ids){
@@ -138,25 +144,22 @@ public class ClientSurface {
 		return curConditionStates;
 	}
 	
-	
-	@SubscribeEvent
+ 	@SubscribeEvent
 	public void onRenderGameOverlay(RenderGameOverlayEvent evt) {
 		if (evt.getType() != ElementType.HELMET) return;
 		if (!(evt instanceof RenderGameOverlayEvent.Post)) return;
 
+		if(!shouldRenderStart()) return;
+		if(renderables.size() < 1) return;
+
 		EntityPlayer player = Minecraft.getMinecraft().player;
-		UUID playerUUID = player.getGameProfile().getId();		
-		
-		if(!shouldRenderStart(evt, player)) return;
-		if(renderables.size() < 1) return;		
-		
+		UUID playerUUID = player.getGameProfile().getId();
+
 		this.conditionStates = getConditionStates(player);
 		
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glPushMatrix();
-		GL11.glScaled(evt.getResolution().getScaledWidth_double()/512D, evt.getResolution().getScaledHeight_double()/512D*16D/9D, 0);
-		
-		GL11.glDepthMask(false);		
+		GL11.glDepthMask(false);
 		for(IRenderableWidget renderable : renderables.values()){
 			if(renderable.shouldWidgetBeRendered(player) && (renderable.getWidgetOwner() == null || playerUUID.equals(renderable.getWidgetOwner()))){
 				GL11.glPushMatrix();
@@ -168,31 +171,37 @@ public class ClientSurface {
 		GL11.glPopAttrib();
 	}
 	
-	public boolean shouldRenderStart(RenderGameOverlayEvent evt, EntityPlayer player){
+	public boolean shouldRenderStart(){
 		if(glasses == null)
 			return false;
 
-		if(glasses.getEnergyBuffer(glassesStack) == 0 && noPowerRender != null){
-			if(evt != null){
-				GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-				GL11.glPushMatrix();
-				GL11.glScaled(evt.getResolution().getScaledWidth_double()/512D, evt.getResolution().getScaledHeight_double()/512D*16D/9D, 0);
-				noPowerRender.render(player, lastBind, ~0);
-				GL11.glPopMatrix();
-				GL11.glPopAttrib();
-			}
+		if(getWidgetCount() > glassesStack.getTagCompound().getInteger("widgetLimit")){
+			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+			GL11.glPushMatrix();
+			GL11.glDepthMask(false);
+			widgetLimitRender.render(Minecraft.getMinecraft().player, lastBind, ~0);
+			GL11.glPopMatrix();
+			GL11.glPopAttrib();
+			return false;
+		}
+
+		if(glasses.getEnergyStored(glassesStack) == 0 && noPowerRender != null){
+			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+			GL11.glPushMatrix();
+			GL11.glDepthMask(false);
+			noPowerRender.render(Minecraft.getMinecraft().player, lastBind, ~0);
+			GL11.glPopMatrix();
+			GL11.glPopAttrib();
 			return false;
 		}
 		
 		if(lastBind == null && noLinkRender != null) {
-			if(evt != null){
-				GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-				GL11.glPushMatrix();
-				GL11.glScaled(evt.getResolution().getScaledWidth_double()/512D, evt.getResolution().getScaledHeight_double()/512D*16D/9D, 0);
-				noLinkRender.render(player, lastBind, ~0);
-				GL11.glPopMatrix();
-				GL11.glPopAttrib();
-			}
+			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+			GL11.glPushMatrix();
+			GL11.glDepthMask(false);
+			noLinkRender.render(Minecraft.getMinecraft().player, lastBind, ~0);
+			GL11.glPopMatrix();
+			GL11.glPopAttrib();
 			return false;
 		}
 		
@@ -209,11 +218,10 @@ public class ClientSurface {
 	@SubscribeEvent
 	public void renderWorldLastEvent(RenderWorldLastEvent event)	{	
 		if(renderablesWorld.size() < 1) return;		
+		if(!shouldRenderStart()) return;
+
 		EntityPlayer player = Minecraft.getMinecraft().player;
-		
-		if(!shouldRenderStart(null, player)) return;
-		
-		UUID playerUUID = player.getGameProfile().getId();		
+		UUID playerUUID = player.getGameProfile().getId();
 		
 		double[] playerLocation = getEntityPlayerLocation(player, event.getPartialTicks());
 		
@@ -249,15 +257,22 @@ public class ClientSurface {
 	private IRenderableWidget getNoPowerRender(){
 		Text t = new Text();
 		t.setText("NO POWER");
-		t.WidgetModifierList.addColor(1F, 0F, 0F, 0.5F);		
+		t.WidgetModifierList.addColor(1F, 0F, 0F, 0.5F);
 		return t.getRenderable();
 	}
 
 	private IRenderableWidget getNoLinkRender(){
 		Text t = new Text();
 		t.setText("NOT LINKED");
-		t.WidgetModifierList.addColor(1F, 1F, 1F, 0.5F);
+		t.WidgetModifierList.addColor(1F, 1F, 1F, 0.7F);
 		return t.getRenderable();
 	}
-	
+
+	private IRenderableWidget getWidgetLimitRender(){
+		Text t = new Text();
+		t.setText("WIDGET LIMIT REACHED, please remove widgets to get rid of this message xD");
+		t.WidgetModifierList.addColor(1F, 1F, 1F, 0.7F);
+		return t.getRenderable();
+	}
+
 }

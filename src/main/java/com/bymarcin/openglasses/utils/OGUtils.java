@@ -1,4 +1,6 @@
 package com.bymarcin.openglasses.utils;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.util.math.BlockPos;
@@ -41,7 +43,13 @@ public class OGUtils {
 					
 		return true;
 	}
-	
+
+	public static Location getGlassesTerminalUUID(ItemStack itemStack){
+		NBTTagCompound tag = itemStack.getTagCompound();
+		if (!tag.hasKey("uniqueKey")) return null;
+		return new Location(new BlockPos(tag.getInteger("X"),tag.getInteger("Y"),tag.getInteger("Z")),tag.getInteger("DIM"), tag.getLong("uniqueKey"));
+	}
+
 	public static int getLightLevelPlayer(EntityPlayer e){		
 		return e.world.getLightFor(EnumSkyBlock.SKY, new BlockPos(e.posX, e.posY + 1, e.posZ));
     }

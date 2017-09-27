@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.lua.LuaReference;
-import com.bymarcin.openglasses.network.packet.TerminalStatusPacket.TerminalStatus;
+import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.WidgetUpdatePacket;
+import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
 import com.bymarcin.openglasses.surface.ServerSurface;
 import com.bymarcin.openglasses.surface.Widget;
 import com.bymarcin.openglasses.surface.WidgetType;
@@ -24,10 +24,11 @@ import li.cil.oc.api.network.Connector;
 import li.cil.oc.api.network.Visibility;
 import li.cil.oc.api.prefab.TileEntityEnvironment;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 
 import net.minecraftforge.fml.common.Optional;
-import org.apache.logging.log4j.LogManager;
 
 @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers")
 public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
@@ -40,33 +41,36 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
 		node = API.network.newNode(this, Visibility.Network).withComponent(getComponentName()).withConnector().create();
 	}
 
-	public void sendInteractEvent(String eventType, String name, double x, double y, double z, double lx, double ly, double lz, double eyeh){
-		if(node!=null){
-			node.sendToReachable("computer.signal", eventType.toLowerCase(), name, x - getPos().getX(), y  - getPos().getY(), z - getPos().getZ(), lx, ly, lz, eyeh);
-		}
+	public void sendInteractEventWorld(String eventType, String name, double x, double y, double z, double lx, double ly, double lz, double eyeh){
+		if(node == null) return;
+		node.sendToReachable("computer.signal", eventType.toLowerCase(), name, x - getPos().getX(), y  - getPos().getY(), z - getPos().getZ(), lx, ly, lz, eyeh);
 	}
 
-	public void sendInteractEvent(String eventType, String name, double button, double x, double y, double width, double height){
-		if(node!=null){
-			node.sendToReachable("computer.signal", eventType.toLowerCase(), name, button, x, y, width, height);
-		}
+	public void sendInteractEventOverlay(String eventType, String name, double button, double x, double y){
+		if(node == null) return;
+		node.sendToReachable("computer.signal", eventType.toLowerCase(), name, button, x, y);
 	}
-	
+
+	public void sendChangeSizeEvent(String eventType, String player, int width, int height, int scaleFactor){
+		if(node == null) return;
+		node.sendToReachable("computer.signal", eventType.toLowerCase(), player, width, height, scaleFactor);
+	}
+
+
 	public String getComponentName() {
 		return "glasses";
 	}
-	
+
 	public Location getTerminalUUID(){
-		if(loc!=null){
-			return loc;
-		}
-		return loc = new Location(getPos(), world.provider.getDimension(), UUID.randomUUID().getMostSignificantBits());
+		if(loc == null)
+			loc = new Location(getPos(), world.provider.getDimension(), UUID.randomUUID().getMostSignificantBits());
+
+		return loc;
 	}
-	
+
 	public void onGlassesPutOn(String user){
-		if(node!=null){
-			node.sendToReachable("computer.signal","glasses_on",user);
-		}
+		if(node == null) return;
+		node.sendToReachable("computer.signal","glasses_on",user);
 	}
 	
 	public void onGlassesPutOff(String user){
@@ -78,9 +82,24 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
 	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] getBindPlayers(Context context, Arguments args) {
-		return ServerSurface.instance.getActivePlayers(getTerminalUUID());
+		Object[] ret = ServerSurface.instance.getActivePlayers(getTerminalUUID());
+		return ret;
 	}
-	
+
+	@Callback(direct = true)
+	@Optional.Method(modid = "OpenComputers")
+	public Object[] getResolutionEvents(Context context, Arguments args) {
+		TerminalStatusPacket packet = new TerminalStatusPacket(TerminalStatusPacket.TerminalEvent.ASYNC_SCREEN_SIZES);
+		int i=0;
+		for(Entry<EntityPlayer, Location> e: ServerSurface.instance.players.entrySet()){
+			if(e.getValue().equals(getTerminalUUID())){
+				NetworkRegistry.packetHandler.sendTo(packet, (EntityPlayerMP) e.getKey());
+				i++;
+			}
+		}
+		return new Object[]{ i };
+	}
+
 	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] getObjectCount(Context context, Arguments args){
@@ -251,14 +270,14 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
 	
 	public void updateWidget(int id){
 		Widget w = widgetList.get(id);
-		if(w!=null)
-			ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(id, w), getTerminalUUID());
+		if(w == null) return;
+		ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(id, w), getTerminalUUID());
 	}
 	
 	public Widget getWidget(int id){
 		return widgetList.get(id);
 	}
-	
+
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);

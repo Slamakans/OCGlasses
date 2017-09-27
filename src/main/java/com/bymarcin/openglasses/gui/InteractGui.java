@@ -23,7 +23,7 @@ public class InteractGui extends GuiScreen {
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         if(ClientSurface.instances.glasses != null) {
-            NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.INTERACT_OVERLAY, ClientSurface.instances.lastBind, mc.player, mouseX, mouseY, mouseButton, width, height));
+            NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.INTERACT_OVERLAY, ClientSurface.instances.lastBind, mc.player, mouseX, mouseY, mouseButton));
         }
     }
 

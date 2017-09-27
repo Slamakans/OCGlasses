@@ -14,19 +14,15 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
@@ -39,34 +35,21 @@ public class OpenGlasses
 	public static final String MODID = "openglasses";
 	public static final String VERSION = "@VERSION@";
 
-	public Configuration config;
-	public static Logger logger = LogManager.getLogger(OpenGlasses.MODID);
-
 	@SidedProxy(clientSide = "com.bymarcin.openglasses.proxy.ClientProxy", serverSide = "com.bymarcin.openglasses.proxy.CommonProxy")
 	public static CommonProxy proxy;
-
-	@Instance(value = OpenGlasses.MODID)
-	public static OpenGlasses instance;
 
 	public static CreativeTabs creativeTab = CreativeTabs.REDSTONE;
 
 	public static Item openGlasses;
 	public static OpenGlassesTerminalBlock openTerminal;
 
-	//public static double energyMultiplier = 1;
-
 	public static boolean baubles = false;
 
 	@EventHandler
-	public void preInit(FMLPreInitializationEvent event)
-	{
+	public void preInit(FMLPreInitializationEvent event){
 		if(Loader.isModLoaded("Baubles")) this.baubles = true;
 
-		config = new Configuration(event.getSuggestedConfigurationFile());
-		config.load();
 		NetworkRegistry.initialize();
-		//int energyBuffer = config.get("Energy", "energyBuffer", 100).getInt(100);
-		//energyMultiplier = config.get("Energy", "energyMultiplier", 1.0, "PowerDrain= (NumberOfWidgets / 10) * energyMultiplier").getDouble(1.0);
 
 		openTerminal = GameRegistry.register(new OpenGlassesTerminalBlock());
 		Item i = GameRegistry.register(new ItemBlock(openTerminal).setRegistryName(openTerminal.getRegistryName()));
@@ -91,13 +74,9 @@ public class OpenGlasses
 
 	public static Item getGlasses(EntityPlayer e){
 		ItemStack glassesStack = getGlassesStack(e);
+		if(!isGlassesStack(glassesStack)) return null;
 
-		if(!isGlassesStack(glassesStack))
-			return null;
-
-		Item glasses = glassesStack!=null?glassesStack.getItem():null;
-
-		return glasses;
+		return glassesStack.getItem();
 	}
 
 	public static boolean isGlassesStack(ItemStack stack){
@@ -110,33 +89,28 @@ public class OpenGlasses
 	}
 
 	public static ItemStack getGlassesStack(EntityPlayer e){
-		//get armor slot
-		ItemStack glassesStack = e.inventory.armorInventory[3];
+		ItemStack glassesStack = e.inventory.armorInventory[3]; //armor helmet slot
 
 		if(isGlassesStack(glassesStack))
 			return glassesStack;
-
-		return getGlassesStackBaubles(e);
+		else
+			return getGlassesStackBaubles(e);
 	}
 
 	public static ItemStack getGlassesStackBaubles(EntityPlayer e){
-		//get baubles slot if glasses arent found in armor slot
 		if(!Loader.isModLoaded("Baubles")) return null;
 
 		IBaublesItemHandler handler = BaublesApi.getBaublesHandler(e);
-
 		if (handler == null) return null;
 
 		ItemStack glassesStack = handler.getStackInSlot(4);
-			if(isGlassesStack(glassesStack))
-				return glassesStack;
+		if(!isGlassesStack(glassesStack)) return null;
 
-		return null;
+		return glassesStack;
 	}
 
 	@EventHandler
-	public void init(FMLInitializationEvent event)
-	{
+	public void init(FMLInitializationEvent event){
 		NetworkRegistry.registerPacket(0, GlassesEventPacket.class, Side.SERVER);
 		NetworkRegistry.registerPacket(1, WidgetUpdatePacket.class, Side.CLIENT);
 		NetworkRegistry.registerPacket(2, TerminalStatusPacket.class, Side.CLIENT);
@@ -144,8 +118,7 @@ public class OpenGlasses
 
 
 	@EventHandler
-	public void postInit(FMLPostInitializationEvent event)
-	{
+	public void postInit(FMLPostInitializationEvent event){
 		ItemStack ram= Items.get("ram5").createItemStack(1);
 		ItemStack graphics = Items.get("graphicsCard3").createItemStack(1);
 		ItemStack wlanCard = Items.get("wlanCard").createItemStack(1);
@@ -155,8 +128,6 @@ public class OpenGlasses
 
 		GameRegistry.addRecipe(new ItemStack(openGlasses),"SCS"," W ","   ", 'S', screen, 'W', wlanCard, 'C', graphics);
 		GameRegistry.addRecipe(new ItemStack(openTerminal),"R  ","S  ","M  ", 'S', server, 'R', ram, 'M', cpu);
-
-		config.save();
 
 		proxy.postInit();
 	}

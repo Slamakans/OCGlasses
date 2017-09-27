@@ -30,5 +30,5 @@ public class OpenGlassesBaubleItem extends OpenGlassesItem implements IBauble {
 
     @Override
     public void onWornTick(ItemStack itemstack, EntityLivingBase player){ this.consumeEnergy(itemstack); }
-    
+
 }
