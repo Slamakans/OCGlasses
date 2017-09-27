@@ -33,6 +33,7 @@ public class AttributeRegistry {
 		addAtribute(ICustomShape.class, SetShading.class);
 		addAtribute(ICustomShape.class, SetVertex.class);
 		addAtribute(ICustomShape.class, AddVertex.class);
+		addAtribute(ICustomShape.class, RemoveVertex.class);
 		addAtribute(ICustomShape.class, GetVertexCount.class);
 
 		addAtribute(IAttribute.class, SetHorizontalAlign.class);
