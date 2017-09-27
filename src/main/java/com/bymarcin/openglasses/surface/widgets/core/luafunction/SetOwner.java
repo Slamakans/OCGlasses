@@ -7,8 +7,6 @@ import com.bymarcin.openglasses.lua.LuaFunction;
 import com.bymarcin.openglasses.surface.Widget;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IPrivate;
 
-import java.util.UUID;
-
 public class SetOwner extends LuaFunction{
 
 	@Override

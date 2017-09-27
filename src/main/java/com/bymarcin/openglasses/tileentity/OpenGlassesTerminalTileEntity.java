@@ -226,6 +226,20 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
 		Widget w = new Item3D();
 		return addWidget(w);
 	}
+
+	@Callback(direct = true)
+	@Optional.Method(modid = "OpenComputers")
+	public Object[] addCustom(Context context, Arguments args){
+		Widget w = new Custom();
+		return addWidget(w);
+	}
+
+	@Callback(direct = true)
+	@Optional.Method(modid = "OpenComputers")
+	public Object[] addCustom3D(Context context, Arguments args){
+		Widget w = new Custom3D();
+		return addWidget(w);
+	}
 	
 	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")

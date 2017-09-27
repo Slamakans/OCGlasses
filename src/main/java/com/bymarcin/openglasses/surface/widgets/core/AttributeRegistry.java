@@ -28,6 +28,13 @@ public class AttributeRegistry {
 		addAtribute(IAttribute.class, GetModifiers.class);		
 		addAtribute(IAttribute.class, SetCondition.class);
 
+
+		addAtribute(ICustomShape.class, SetGLMODE.class);
+		addAtribute(ICustomShape.class, SetShading.class);
+		addAtribute(ICustomShape.class, SetVertex.class);
+		addAtribute(ICustomShape.class, AddVertex.class);
+		addAtribute(ICustomShape.class, GetVertexCount.class);
+
 		addAtribute(IAttribute.class, SetHorizontalAlign.class);
 		addAtribute(IAttribute.class, SetVerticalAlign.class);
 
@@ -39,10 +46,7 @@ public class AttributeRegistry {
 		
 		addAtribute(IItem.class, SetItem.class);
 		addAtribute(IItem.class, GetItem.class);
-				
-		addAtribute(I3DVertex.class, SetVertex.class);
-		addAtribute(I3DVertex.class, GetVertexCount.class);
-				
+
 		addAtribute(IThroughVisibility.class, SetVisibleThroughObjects.class);
 		addAtribute(IThroughVisibility.class, IsVisibleThroughObjects.class);
 		

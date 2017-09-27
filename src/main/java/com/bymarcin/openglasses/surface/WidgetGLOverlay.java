@@ -19,8 +19,8 @@ import java.util.UUID;
 import org.lwjgl.opengl.GL11;
 
 public abstract class WidgetGLOverlay extends Widget implements IResizable, IPrivate {
-	RenderType rendertype;
-	
+	public RenderType rendertype;
+
 	private float x = 0, y = 0, z = 0;
 
 	public float width = 0, height = 0;
