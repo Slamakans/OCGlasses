@@ -20,7 +20,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 targetCompatibility = "1.8"
 sourceCompatibility = "1.8"
 
-def simpleVersion = "1.5.0-b13"
+def simpleVersion = "2.0.0-alpha1"
 
 group= "com.bymarcin.openglasses"
 archivesBaseName = "OpenGlasses"
