@@ -18,7 +18,7 @@ import org.lwjgl.util.vector.Vector4f;
 
 public class WidgetModifiers {
 	public ArrayList<WidgetModifier> modifiers = new ArrayList<WidgetModifier>();
-
+	public long lastConditionStates;
 	private Location lastOffset = new Location();
 	
 	public void setCondition(int modifierIndex, short conditionIndex, boolean state){
@@ -57,7 +57,11 @@ public class WidgetModifiers {
 		float[] col = getCurrentColorFloat(conditionStates, index);
 		return OGUtils.getIntFromColor(col[0], col[1], col[2], col[3]);
 	}
-	
+
+	public float[] getCurrentColorFloat(int index){
+		return getCurrentColorFloat(this.lastConditionStates, index);
+	}
+
 	public float[] getCurrentColorFloat(long conditionStates, int index){
 		for(int i=this.modifiers.size() - 1; i >= 0; i--){
 			if(this.modifiers.get(i).getType() == WidgetModifierType.COLOR &&
@@ -88,6 +92,7 @@ public class WidgetModifiers {
 	}
 
 	public void apply(long conditionStates){
+		this.lastConditionStates = conditionStates;
 		for(int i=0, count = this.modifiers.size(); i < count; i++) 
 			this.modifiers.get(i).apply(conditionStates);
 	}

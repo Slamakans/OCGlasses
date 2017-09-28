@@ -6,7 +6,6 @@ import li.cil.oc.api.machine.Context;
 import com.bymarcin.openglasses.lua.LuaFunction;
 import com.bymarcin.openglasses.surface.Widget;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IItem;
-import net.minecraft.item.Item;
 
 public class SetItem extends LuaFunction{
 	@Override

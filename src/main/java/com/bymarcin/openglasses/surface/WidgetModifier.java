@@ -1,7 +1,6 @@
 package com.bymarcin.openglasses.surface;
 
 import io.netty.buffer.ByteBuf;
-import com.bymarcin.openglasses.surface.WidgetModifierType;
 
 public abstract class WidgetModifier{
 	public long conditions = 0;

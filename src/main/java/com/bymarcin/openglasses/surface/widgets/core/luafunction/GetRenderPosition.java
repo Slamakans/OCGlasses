@@ -5,11 +5,7 @@ import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Context;
 
 import com.bymarcin.openglasses.lua.LuaFunction;
-import com.bymarcin.openglasses.surface.Widget;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IPrivate;
 import net.minecraft.util.math.BlockPos;
-
-import java.util.UUID;
 
 public class GetRenderPosition extends LuaFunction{
 

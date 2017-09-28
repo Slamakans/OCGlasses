@@ -27,6 +27,7 @@ public class AttributeRegistry {
 		addAtribute(IAttribute.class, RemoveModifier.class);
 		addAtribute(IAttribute.class, GetModifiers.class);		
 		addAtribute(IAttribute.class, SetCondition.class);
+		addAtribute(IAttribute.class, GetColor.class);
 
 
 		addAtribute(ICustomShape.class, SetGLMODE.class);

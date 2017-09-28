@@ -6,7 +6,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
 
 import com.bymarcin.openglasses.event.ClientEventHandler;
 import com.bymarcin.openglasses.item.OpenGlassesItem;

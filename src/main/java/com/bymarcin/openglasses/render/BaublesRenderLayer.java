@@ -7,10 +7,8 @@ import net.minecraft.client.model.ModelBiped;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import com.bymarcin.openglasses.item.OpenGlassesBaubleItem;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
 import net.minecraftforge.client.ForgeHooksClient; 
@@ -18,9 +16,6 @@ import baubles.api.render.IRenderBauble;
 import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
 import net.minecraftforge.fml.common.Optional;
-
-import net.minecraft.util.math.MathHelper;
-
 
 @Optional.Interface(iface="baubles.api.render.IRenderBauble",modid="Baubles")
 public class BaublesRenderLayer implements IRenderBauble, LayerRenderer<EntityLivingBase> {
